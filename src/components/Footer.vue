@@ -39,7 +39,7 @@ export default {
     flex-direction: column;
     justify-content: space-around;
     margin: auto;
-    padding: 0 $space-sm;
+    padding: 0 $container-padding;
   }
 }
 </style>

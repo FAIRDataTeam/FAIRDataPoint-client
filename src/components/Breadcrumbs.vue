@@ -1,0 +1,90 @@
+<template>
+  <div class="breadcrumbs">
+    <div class="breadcrumbs__container">
+      <ul>
+        <li
+          v-for="(link, index) in links"
+          :key="index"
+        >
+          <router-link :to="link.to">
+            {{ link.label }}
+          </router-link>
+        </li>
+        <li>{{ current }}</li>
+      </ul>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  name: 'Breadcrumbs',
+  props: {
+    links: {
+      type: Array,
+      required: true,
+    },
+    current: {
+      type: String,
+      required: true,
+    },
+  },
+}
+</script>
+<style scoped lang="scss">
+@import "../scss/variables";
+@import "../scss/text-styles";
+@import "../scss/mixins";
+
+.breadcrumbs {
+  @include text-style-default-14;
+  width: 100%;
+  background: $color-background-highlighted;
+  height: $breadcrumbs-height;
+
+  @media (max-width: $breakpoint-small - 1px) {
+    display: none;
+  }
+
+  &__container {
+    max-width: $container-max-width;
+    padding: 0 $container-padding;
+    margin: auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+
+    ul {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+
+      li {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        max-width: 24.5%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:not(:first-child)::before {
+          content: "/";
+          margin: 0 $space-sm;
+        }
+
+        a {
+          @include text-style-default-14;
+          @include transition-default(color);
+          display: inline-block;
+
+          &:hover {
+            color: $color-primary;
+          }
+        }
+      }
+    }
+  }
+}
+</style>
