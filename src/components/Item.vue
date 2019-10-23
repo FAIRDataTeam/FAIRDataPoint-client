@@ -1,11 +1,11 @@
 <template>
   <div class="item">
-    <a
-      href="#"
+    <router-link
+      :to="item.link"
       class="item__title"
     >
       {{ item.title }}
-    </a>
+    </router-link>
     <p
       v-if="item.description"
       class="item__description"

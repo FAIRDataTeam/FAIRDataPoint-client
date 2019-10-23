@@ -1,6 +1,8 @@
 <template>
   <div class="item-list">
-    <h2 v-if="items.length > 0">{{ title }}</h2>
+    <h2 v-if="items.length > 0">
+      {{ title }}
+    </h2>
     <Item
       v-for="(item, index) in items"
       :key="index"

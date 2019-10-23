@@ -1,9 +1,12 @@
 <template>
   <div class="header">
     <div class="header__container">
-      <div class="header__fdp-name">
+      <router-link
+        to="/"
+        class="header__fdp-name"
+      >
         FAIR Data Point
-      </div>
+      </router-link>
       <div class="header__search-field">
         <fa :icon="['fas', 'search']" />
         <input
@@ -52,6 +55,7 @@ export default {
     padding-left: $header-logo-width + $header-logo-indent;
     background: url($header-logo-url) left center no-repeat;
     background-size: $header-logo-width $header-logo-height;
+    text-decoration: none;
   }
 
   &__search-field {

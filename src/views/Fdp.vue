@@ -1,14 +1,14 @@
 <template>
-  <Page title="Catalog">
+  <Page>
     <template v-slot:column>
       <Metadata :metadata="data" />
     </template>
     <template v-slot:content>
       <p class="description">
-        This is catalog description.
+        This is FDP description.
       </p>
       <ItemList
-        title="Datasets"
+        title="Catalogs"
         :items="items"
       />
     </template>
@@ -20,7 +20,7 @@ import Metadata from '../components/Metadata.vue'
 import Page from '../components/Page.vue'
 
 export default {
-  name: 'Catalog',
+  name: 'Fdp',
   components: {
     ItemList,
     Metadata,
@@ -43,9 +43,9 @@ export default {
         uri: 'http://example.com',
       }],
       items: [{
-        title: 'Dataset',
-        description: 'Dataset description.',
-        link: '/fdp/dataset/dataset-1',
+        title: 'Catalog',
+        description: 'Catalog description.',
+        link: '/fdp/catalog/catalog-1',
       }],
     }
   },

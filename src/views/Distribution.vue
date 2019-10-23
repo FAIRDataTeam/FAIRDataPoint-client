@@ -1,28 +1,22 @@
 <template>
-  <Page title="Catalog">
+  <Page title="Distribution">
     <template v-slot:column>
       <Metadata :metadata="data" />
     </template>
     <template v-slot:content>
       <p class="description">
-        This is catalog description.
+        This is dataset description.
       </p>
-      <ItemList
-        title="Datasets"
-        :items="items"
-      />
     </template>
   </Page>
 </template>
 <script>
-import ItemList from '../components/ItemList.vue'
 import Metadata from '../components/Metadata.vue'
 import Page from '../components/Page.vue'
 
 export default {
-  name: 'Catalog',
+  name: 'Distribution',
   components: {
-    ItemList,
     Metadata,
     Page,
   },
@@ -41,11 +35,6 @@ export default {
         label: 'Something',
         value: 'This is something',
         uri: 'http://example.com',
-      }],
-      items: [{
-        title: 'Dataset',
-        description: 'Dataset description.',
-        link: '/fdp/dataset/dataset-1',
       }],
     }
   },
