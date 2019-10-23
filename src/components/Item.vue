@@ -88,6 +88,7 @@ export default {
       background: $color-background-primary;
       padding: $space-xs $space-sm;
       margin-bottom: $space-xs;
+      margin-right: $space-sm;
       text-decoration: none;
 
       &:hover {
@@ -103,16 +104,12 @@ export default {
       @include text-style-default-14-bold;
       display: inline-block;
       margin: 0;
-
-      &::after {
-        content: ":";
-      }
     }
 
     dd {
       @include text-style-default-14;
       display: inline-block;
-      margin: 0 $space-md 0 0;
+      margin: 0 $space-md 0 $space-xs;
     }
   }
 }

@@ -11,7 +11,10 @@ $color-background: #FFFFFF !default;
 $color-background-highlighted: #F1F1F1 !default;
 $color-background-primary: #BFD4E3 !default;
 $color-separator: #DCDCDC !default;
-
+$color-danger: #900 !default;
+$color-danger-light: lighten($color-danger, 65%) !default;
+$color-success: #090 !default;
+$color-success-light: lighten($color-success, 65%) !default;
 
 // Fonts
 $font-family: 'Open Sans', sans-serif !default;

@@ -1,34 +1,46 @@
 <template>
   <div>
     <Breadcrumbs
-      :links="links"
-      current="Dataset"
+      v-if="dataset !== null"
+      :links="breadcrumbs"
+      :current="dataset.title"
     />
-    <Page title="Dataset">
+    <StatusFlash :status="status" />
+    <Page
+      v-if="dataset !== null"
+      :title="dataset.title"
+    >
       <template v-slot:column>
-        <Metadata :metadata="data" />
+        <Metadata :metadata="metadata" />
       </template>
       <template v-slot:content>
         <p class="description">
-          This is dataset description.
+          {{ dataset.description }}
         </p>
         <ItemList
           title="Distributions"
-          :items="items"
+          :items="distributions"
         />
       </template>
     </Page>
   </div>
 </template>
 <script>
+import moment from 'moment'
+import api from '../api'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import ItemList from '../components/ItemList.vue'
 import Metadata from '../components/Metadata.vue'
 import Page from '../components/Page.vue'
+import StatusFlash from '../components/StatusFlash.vue'
+import Status from '../utils/Status'
+import trim from '../utils/trim'
+import metadata from '../utils/metadata'
 
 export default {
   name: 'Dataset',
   components: {
+    StatusFlash,
     Breadcrumbs,
     ItemList,
     Metadata,
@@ -37,32 +49,68 @@ export default {
 
   data() {
     return {
-      data: [{
-        label: 'Issued',
-        value: 'abcd',
-        sm: true,
-      }, {
-        label: 'Modified',
-        value: 'safda',
-        sm: true,
-      }, {
-        label: 'Something',
-        value: 'This is something',
-        uri: 'http://example.com',
-      }],
-      items: [{
-        title: 'Distribution',
-        description: 'Distribution description.',
-        link: '/fdp/distribution/distribution-1',
-      }],
-      links: [{
-        label: 'My FDP',
+      dataset: null,
+      metadata: null,
+      distributions: null,
+      breadcrumbs: null,
+      status: new Status(),
+    }
+  },
+
+  watch: {
+    $route: 'fetchData',
+  },
+
+  created() {
+    this.fetchData()
+  },
+
+  methods: {
+    fetchData() {
+      this.status.setPending()
+
+      api.getDataset(this.$route.params.id)
+        .then((response) => {
+          this.dataset = response.data
+          this.metadata = this.createMetadata(this.dataset)
+          this.distributions = this.createDistributions(this.dataset)
+          this.breadcrumbs = this.createBreadcrumbs(this.dataset)
+          this.status.setDone()
+        })
+        .catch(() => this.status.setError('Unable to get dataset data.'))
+    },
+
+    createMetadata(dataset) {
+      return [
+        ...metadata.commonMetadata(dataset),
+        metadata.fromField('Themes', dataset.themes),
+        metadata.fromField('Keywords', dataset.keywords.map(label => ({ label }))),
+        metadata.rdfLinks(dataset.uri),
+      ]
+    },
+
+    createDistributions(dataset) {
+      return dataset.distributions.map(distribution => ({
+        title: distribution.title,
+        link: `/fdp/distribution/${distribution.identifier}`,
+        description: trim(distribution.description),
+        metadata: [
+          metadata.fromField('Media Type:', distribution.mediaType),
+          metadata.fromField('Issued:', moment(distribution.issued).format('DD-MM-Y')),
+          metadata.fromField('Modified:', moment(distribution.modified).format('DD-MM-Y')),
+        ],
+      }))
+    },
+
+    createBreadcrumbs(dataset) {
+      return [{
+        label: dataset.links.repository.label,
         to: '/fdp',
       }, {
-        label: 'Catalog',
-        to: '/fdp/catalog/catalog-1',
-      }],
-    }
+        label: dataset.links.catalog.label,
+        to: `/fdp/catalog/${dataset.links.catalog.identifier}`,
+      }]
+    },
   },
 }
 </script>

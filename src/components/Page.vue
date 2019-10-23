@@ -33,6 +33,7 @@ export default {
   max-width: $container-max-width;
   padding: 0 $container-padding;
   margin: auto;
+  box-sizing: border-box;
 
   h1 {
     @include text-style-default-32-bold;

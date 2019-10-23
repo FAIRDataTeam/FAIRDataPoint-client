@@ -10,15 +10,47 @@
     >
       <h3>{{ data.label }}</h3>
       <p>
-        <a
-          v-if="data.uri"
-          :href="data.uri"
-          target="_blank"
-        >
-          {{ data.value }}
-        </a>
+        <template v-if="data.links">
+          <a
+            v-for="(link, linkIndex) in data.links"
+            :key="linkIndex"
+            :href="link.uri"
+            target="_blank"
+            class="link"
+          >
+            {{ link.label }}
+          </a>
+        </template>
+        <template v-else-if="data.items">
+          <ul>
+            <li
+              v-for="(item, itemIndex) in data.items"
+              :key="itemIndex"
+            >
+              <a
+                v-if="item.uri"
+                :href="item.uri"
+                target="_blank"
+              >
+                {{ item.label }}
+              </a>
+              <template v-else>
+                {{ item.label }}
+              </template>
+            </li>
+          </ul>
+        </template>
         <template v-else>
-          {{ data.value }}
+          <a
+            v-if="data.uri"
+            :href="data.uri"
+            target="_blank"
+          >
+            {{ data.value }}
+          </a>
+          <template v-else>
+            {{ data.value }}
+          </template>
         </template>
       </p>
     </div>
@@ -62,16 +94,14 @@ export default {
       width: 50%;
     }
 
-    &--list {
-      ul {
-        margin: 0;
-        padding-left: 1.25rem;
+    ul {
+      margin: 0;
+      padding-left: 1.25rem;
 
-        li {
-          @include text-style-dark-18-semibold;
-          word-break: break-word;
-          margin-top: $space-sm;
-        }
+      li {
+        @include text-style-dark-18-semibold;
+        word-break: break-word;
+        margin-top: $space-sm;
       }
     }
 
@@ -83,9 +113,14 @@ export default {
     a {
       @include text-style-dark-18-semibold;
       @include transition-default(color);
+      display: inline-block;
 
       &:hover {
         color: $color-primary;
+      }
+
+      &.link:not(:last-child) {
+        margin-right: $space-md;
       }
     }
 
