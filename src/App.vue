@@ -39,6 +39,18 @@ a {
   }
 }
 
+.text-right {
+  text-align: right;
+}
+
+.color-danger {
+  color: $color-danger;
+
+  &:hover {
+    color: $color-danger-lighter;
+  }
+}
+
 #app {
   display: flex;
   flex-direction: column;

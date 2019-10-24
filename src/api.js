@@ -18,8 +18,27 @@ function getAuthenticated(url) {
   })
 }
 
+function postAuthenticated(url, data) {
+  return axios.post(`${apiUrl}${url}`, data, {
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${getUserToken()}`,
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
 function putAuthenticated(url, data) {
   return axios.put(`${apiUrl}${url}`, data, {
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${getUserToken()}`,
+    },
+  })
+}
+
+function deleteAuthenticated(url) {
+  return axios.delete(`${apiUrl}${url}`, {
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${getUserToken()}`,
@@ -55,8 +74,16 @@ export function getUser(id) {
   return getAuthenticated(`/users/${id}`)
 }
 
+export function postUser(user) {
+  return postAuthenticated('/users', user)
+}
+
 export function putUser(user) {
   return putAuthenticated(`/users/${user.uuid}`, user)
+}
+
+export function deleteUser(user) {
+  return deleteAuthenticated(`/users/${user.uuid}`)
 }
 
 export function putUserPassword(user, password) {

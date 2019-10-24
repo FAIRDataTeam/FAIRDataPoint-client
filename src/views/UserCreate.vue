@@ -1,16 +1,14 @@
 <template>
   <Page
-    title="User Detail"
+    title="Create User"
     content-only
   >
     <template v-slot:content>
-      <StatusFlash :status="status" />
-      <div class="container" v-if="user">
+      <div class="container">
         <form
           class="form"
-          @submit.prevent="submitProfile"
+          @submit.prevent="submit"
         >
-          <h2>Profile</h2>
           <StatusFlash
             :status="profileSubmitStatus"
             no-loading
@@ -55,38 +53,19 @@
               This is not a valid email
             </p>
           </div>
-          <div>
-            <button
-              class="btn"
-              :disabled="profileSubmitStatus.isPending()"
-            >
-              Save
-            </button>
-          </div>
-        </form>
-
-        <form
-          class="form"
-          @submit.prevent="submitPassword"
-        >
-          <h2>Password</h2>
-          <StatusFlash
-            :status="passwordSubmitStatus"
-            no-loading
-          />
           <div
             class="form__group"
-            :class="{'form__group--error': $v.passwordForm.password.$error}"
+            :class="{'form__group--error': $v.user.password.$error}"
           >
             <label for="password-password">New password</label>
             <input
               id="password-password"
-              v-model.trim="$v.passwordForm.password.$model"
+              v-model.trim="$v.user.password.$model"
               placeholder="New password"
               type="password"
             >
             <p
-              v-if="!$v.passwordForm.password.required"
+              v-if="!$v.user.password.required"
               class="invalid-feedback"
             >
               Field is required
@@ -94,17 +73,17 @@
           </div>
           <div
             class="form__group"
-            :class="{'form__group--error': $v.passwordForm.passwordCheck.$error}"
+            :class="{'form__group--error': $v.user.passwordCheck.$error}"
           >
             <label for="password-confirmation">New password confirmation</label>
             <input
               id="password-confirmation"
-              v-model.trim="$v.passwordForm.passwordCheck.$model"
+              v-model.trim="$v.user.passwordCheck.$model"
               placeholder="New password again"
               type="password"
             >
             <p
-              v-if="!$v.passwordForm.passwordCheck.passwordMatch"
+              v-if="!$v.user.passwordCheck.passwordMatch"
               class="invalid-feedback"
             >
               Passwords don't match.
@@ -139,12 +118,10 @@ export default {
       user: {
         name: { required },
         email: { required, email },
-      },
-      passwordForm: {
         password: { required },
         passwordCheck: {
           passwordMatch(value) {
-            return this.passwordForm.password === value
+            return this.user.password === value
           },
         },
       },
@@ -153,8 +130,9 @@ export default {
 
   data() {
     return {
-      user: null,
-      passwordForm: {
+      user: {
+        name: null,
+        email: null,
         password: null,
         passwordCheck: null,
       },
@@ -181,28 +159,19 @@ export default {
           this.user = response.data
           this.status.setDone()
         })
-        .catch(() => this.status.setError('Unable to get user profile.'))
+        .catch(() => this.status.setError('Unable to get users.'))
     },
 
-    submitProfile() {
+    submit() {
       this.$v.user.$touch()
 
       if (!this.$v.user.$invalid) {
         this.profileSubmitStatus.setPending()
-        api.putUser(this.user)
-          .then(() => this.profileSubmitStatus.setDone('User profile was successfully updated!'))
+        api.postUser(this.user)
+          .then((response) => {
+            this.$router.replace(`/users/${response.data.uuid}`)
+          })
           .catch(() => this.profileSubmitStatus.setError('User profile could not be updated.'))
-      }
-    },
-
-    submitPassword() {
-      this.$v.passwordForm.$touch()
-
-      if (!this.$v.passwordForm.$invalid) {
-        this.passwordSubmitStatus.setPending()
-        api.putUserPassword(this.user, this.passwordForm.password)
-          .then(() => this.passwordSubmitStatus.setDone('Password was successfully updated!'))
-          .catch(() => this.passwordSubmitStatus.setError('Password could not be updated.'))
       }
     },
   },

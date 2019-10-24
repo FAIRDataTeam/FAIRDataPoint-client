@@ -24,7 +24,14 @@
             <td>
               {{ user.email }}
             </td>
-            <td>
+            <td class="text-right">
+              <a
+                class="color-danger"
+                @click.prevent="deleteUser(user)"
+              >
+                <fa :icon="['far', 'trash-alt']" />
+                Remove
+              </a>
             </td>
           </template>
 
@@ -36,6 +43,9 @@
             a new one.
           </template>
         </Table>
+        <router-link class="create-link" to="/users/create">
+          + Create user
+        </router-link>
       </template>
     </Page>
   </div>
@@ -77,6 +87,21 @@ export default {
         })
         .catch(() => this.status.setError('Unable to get users.'))
     },
+
+    deleteUser(user) {
+      if (window.confirm(`Are you sure you want to delete ${user.name}`)) {
+        api.deleteUser(user)
+          .then(() => this.fetchData())
+          .catch(() => this.status.setError('Unable to delete users.'))
+      }
+    },
   },
 }
 </script>
+<style scoped lang="scss">
+.create-link {
+  display: inline-block;
+  margin-top: 2rem;
+  text-decoration: none;
+}
+</style>
