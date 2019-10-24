@@ -4,6 +4,7 @@ import Catalog from '../views/Catalog.vue'
 import Dataset from '../views/Dataset.vue'
 import Distribution from '../views/Distribution.vue'
 import Fdp from '../views/Fdp.vue'
+import Login from '../views/Login.vue'
 import NotFound from '../views/NotFound.vue'
 
 Vue.use(VueRouter)
@@ -14,6 +15,7 @@ const routes = [
   { path: '/fdp/catalog/:id', component: Catalog },
   { path: '/fdp/dataset/:id', component: Dataset },
   { path: '/fdp/distribution/:id', component: Distribution },
+  { path: '/login', component: Login },
   { path: '*', component: NotFound },
 ]
 

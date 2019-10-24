@@ -8,25 +8,22 @@ function get(url) {
   })
 }
 
-function getFdp() {
+export function fetchToken(email, password) {
+  return axios.post(`${apiUrl}/tokens`, { email, password })
+}
+
+export function getFdp() {
   return get('/fdp')
 }
 
-function getCatalog(id) {
+export function getCatalog(id) {
   return get(`/fdp/catalog/${id}`)
 }
 
-function getDataset(id) {
+export function getDataset(id) {
   return get(`/fdp/dataset/${id}`)
 }
 
-function getDistribution(id) {
+export function getDistribution(id) {
   return get(`/fdp/distribution/${id}`)
-}
-
-export default {
-  getFdp,
-  getCatalog,
-  getDataset,
-  getDistribution,
 }

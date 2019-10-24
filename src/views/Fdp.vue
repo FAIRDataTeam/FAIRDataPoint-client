@@ -19,7 +19,7 @@
 </template>
 <script>
 import moment from 'moment'
-import api from '../api'
+import * as api from '../api'
 import ItemList from '../components/ItemList.vue'
 import Metadata from '../components/Metadata.vue'
 import Page from '../components/Page.vue'

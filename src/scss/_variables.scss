@@ -1,6 +1,7 @@
 // Colors
 $color-primary: #00518E !default;
 $color-primary-lighter: lighten($color-primary, 10%) !default;
+$color-primary-darker: darken($color-primary, 10%) !default;
 $color-light: #FFFFFF !default;
 $color-complementary: #EFC700 !default;
 $color-text-default: #4A4A4A !default;

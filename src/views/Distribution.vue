@@ -18,27 +18,30 @@
           {{ distribution.description }}
         </p>
         <p class="distribution-links">
-          <Button
+          <a
             v-if="distribution.downloadUrl"
-            title="Download"
-            :icon="['fa', 'download']"
+            class="btn btn--with-icon btn--rounded"
             :href="distribution.downloadUrl"
-          />
-          <Button
+          >
+            <fa :icon="['fa', 'download']" />
+            Download
+          </a>
+          <a
             v-if="distribution.accessUrl"
-            title="Access Online"
-            :icon="['fa', 'external-link-alt']"
+            class="btn btn--with-icon btn--rounded"
             :href="distribution.accessUrl"
-          />
+          >
+            <fa :icon="['fa', 'external-link-alt']" />
+            Access Online
+          </a>
         </p>
       </template>
     </Page>
   </div>
 </template>
 <script>
-import api from '../api'
+import * as api from '../api'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
-import Button from '../components/Button.vue'
 import Metadata from '../components/Metadata.vue'
 import Page from '../components/Page.vue'
 import StatusFlash from '../components/StatusFlash.vue'
@@ -48,7 +51,6 @@ import metadata from '../utils/metadata'
 export default {
   name: 'Distribution',
   components: {
-    Button,
     StatusFlash,
     Breadcrumbs,
     Metadata,
@@ -115,7 +117,7 @@ export default {
 .distribution-links {
   margin-top: $space-lg;
 
-  .button {
+  .btn {
     margin-right: $space-md;
   }
 }

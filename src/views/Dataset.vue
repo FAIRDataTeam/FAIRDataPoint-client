@@ -27,7 +27,7 @@
 </template>
 <script>
 import moment from 'moment'
-import api from '../api'
+import * as api from '../api'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import ItemList from '../components/ItemList.vue'
 import Metadata from '../components/Metadata.vue'

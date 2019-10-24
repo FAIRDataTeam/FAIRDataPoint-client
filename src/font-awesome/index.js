@@ -8,6 +8,7 @@ library.add([
   fas.faDownload,
   fas.faExternalLinkAlt,
   fas.faSearch,
+  fas.faSignInAlt,
   fas.faSpinner,
 ])
 

@@ -19,6 +19,7 @@ export default {
 <style lang="scss">
 @import "./scss/variables";
 @import "./scss/mixins";
+@import "./scss/text-styles";
 
 body {
   background: $color-background;
@@ -29,9 +30,86 @@ body {
   min-height: 100vh;
 }
 
+a {
+  cursor: pointer;
+}
+
 #app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+.btn {
+  @include text-style-inverse-16;
+  @include transition-default(background);
+  @include border-radius($border-radius-default);
+  padding: .75rem 1rem;
+  text-decoration: none;
+  font-weight: bold;
+  background: $color-primary;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    background: $color-primary-lighter;
+  }
+
+  &:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+
+    &:hover {
+      background: $color-primary;
+    }
+  }
+
+  &--rounded {
+    @include border-radius($border-radius-full);
+  }
+
+  &--full {
+    width: 100%;
+  }
+
+  &--with-icon {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    justify-content: space-around;
+    padding: $space-sm $space-lg;
+
+    svg {
+      max-width: $space-md;
+      max-height: $space-md;
+      margin-right: $space-sm;
+    }
+  }
+}
+
+.form {
+  &__group {
+    margin-bottom: $space-lg;
+
+    label {
+      @include text-style-default-14-semibold;
+      display: block;
+      margin-bottom: $space-xs;
+    }
+
+    input {
+      @include text-style-default-18;
+      padding: $space-xs 0;
+      width: 100%;
+      box-sizing: border-box;
+      border: none;
+      border-bottom: 2px solid $color-text-light;
+      outline: none;
+
+      &::placeholder {
+        color: $color-text-light;
+      }
+    }
+  }
 }
 </style>

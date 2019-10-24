@@ -9,6 +9,15 @@ export default class Status {
     this.clear()
   }
 
+  setStatus(status, msg) {
+    this.status = status
+    this.msg = msg
+  }
+
+  get message() {
+    return this.msg
+  }
+
   isPending() {
     return this.status === PENDING
   }
@@ -25,14 +34,6 @@ export default class Status {
     return this.status === SUCCESS
   }
 
-  get errorMsg() {
-    return this.msgError
-  }
-
-  get successMsg() {
-    return this.msgSuccess
-  }
-
   setPending() {
     this.clear()
     this.status = PENDING
@@ -40,17 +41,21 @@ export default class Status {
 
   setError(msg) {
     this.status = ERROR
-    this.msgError = msg
+    this.msg = msg
   }
 
   setDone(msg) {
-    this.msgSuccess = msg
+    this.msg = msg
     this.status = msg ? SUCCESS : DEFAULT
   }
 
   clear() {
     this.status = DEFAULT
-    this.msgError = null
-    this.msgSuccess = null
+    this.msg = null
   }
 }
+
+Status.PENDING = PENDING
+Status.ERROR = ERROR
+Status.SUCCESS = SUCCESS
+Status.DEFAULT = DEFAULT

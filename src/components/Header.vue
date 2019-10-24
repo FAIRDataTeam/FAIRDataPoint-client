@@ -7,24 +7,51 @@
       >
         FAIR Data Point
       </router-link>
-      <div class="header__search-field">
-        <fa :icon="['fas', 'search']" />
-        <input
-          type="text"
-          placeholder="Search FAIR Data Point..."
-        >
+      <div class="header__nav">
+        <div class="header__search-field">
+          <fa :icon="['fas', 'search']" />
+          <input
+            type="text"
+            placeholder="Search FAIR Data Point..."
+          >
+        </div>
+        <div class="header__menu">
+          <router-link
+            v-if="!authenticated"
+            to="/login"
+          >
+            Log in
+          </router-link>
+          <a
+            v-else
+            @click="logout"
+          >
+            Log out
+          </a>
+        </div>
       </div>
     </div>
     <Separator />
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import Separator from './Separator.vue'
 
 export default {
   name: 'Header',
   components: {
     Separator,
+  },
+  computed: {
+    ...mapGetters('auth', {
+      authenticated: 'authenticated',
+    }),
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('auth/logout')
+    },
   },
 }
 </script>
@@ -58,6 +85,26 @@ export default {
     text-decoration: none;
   }
 
+  &__nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__menu {
+    margin-left: $space-lg;
+
+    a {
+      @include text-style-default-16-semibold;
+      white-space: nowrap;
+      text-decoration: none;
+
+      &:hover {
+        color: $color-primary;
+      }
+    }
+  }
+
   &__search-field {
     @include border-radius($border-radius-full);
     background: $color-background-highlighted;
@@ -85,6 +132,7 @@ export default {
       height: 100%;
       outline: none;
       background: none;
+      box-sizing: border-box;
 
       &::placeholder {
         @include text-style-light-16;
