@@ -65,10 +65,19 @@ export default {
     }),
   },
 
-  mounted() {
+  created() {
     if (this.authenticated) {
       this.$router.replace('/fdp')
     }
+
+    this.$store.watch(
+      (state, getters) => getters['auth/authenticated'],
+      (newValue) => {
+        if (newValue) {
+          this.$router.push('/fdp')
+        }
+      },
+    )
   },
 
   methods: {

@@ -22,12 +22,14 @@
           >
             Log in
           </router-link>
-          <a
-            v-else
-            @click="logout"
-          >
-            Log out
-          </a>
+          <template v-else>
+            <router-link to="/users">
+              Users
+            </router-link>
+            <a @click="logout">
+              Log out
+            </a>
+          </template>
         </div>
       </div>
     </div>
@@ -51,6 +53,9 @@ export default {
   methods: {
     logout() {
       this.$store.dispatch('auth/logout')
+      if (this.$router.currentRoute.path !== '/fdp') {
+        this.$router.push('/fdp')
+      }
     },
   },
 }
@@ -98,6 +103,10 @@ export default {
       @include text-style-default-16-semibold;
       white-space: nowrap;
       text-decoration: none;
+
+      &:not(:last-child) {
+        margin-right: $space-md;
+      }
 
       &:hover {
         color: $color-primary;

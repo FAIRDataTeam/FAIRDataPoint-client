@@ -1,7 +1,6 @@
 import * as api from '../../api'
 import { clearUserToken, getUserToken, setUserToken } from '../../utils/localStorage'
 import Status from '../../utils/Status'
-import router from '../../router'
 
 export default {
   namespaced: true,
@@ -23,7 +22,6 @@ export default {
           setUserToken(response.data.token)
           commit('setLoginStatus', { status: Status.DEFAULT })
           commit('setToken', response.data.token)
-          router.push('/fdp')
         })
         .catch(() => {
           commit('setLoginStatus', { status: Status.ERROR, msg: 'Login failed' })
@@ -33,9 +31,6 @@ export default {
     logout({ commit }) {
       clearUserToken()
       commit('setToken', null)
-      if (router.currentRoute.path !== '/fdp') {
-        router.push('/fdp')
-      }
     },
   },
 

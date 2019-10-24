@@ -1,10 +1,18 @@
 <template>
-  <div class="page">
+  <div
+    class="page"
+    :class="{
+      'page--content-only': contentOnly
+    }"
+  >
     <h1 v-if="title">
       {{ title }}
     </h1>
     <div class="page__content-wrapper">
-      <div class="page__column">
+      <div
+        v-if="!contentOnly"
+        class="page__column"
+      >
         <slot name="column" />
       </div>
       <div class="page__content">
@@ -20,6 +28,10 @@ export default {
     title: {
       validator: value => typeof value === 'string' || value === null,
       default: null,
+    },
+    contentOnly: {
+      type: Boolean,
+      default: false,
     },
   },
 }
@@ -69,6 +81,12 @@ export default {
       @media (max-width: $breakpoint-small - 1px) {
         margin: $space-lg 0;
       }
+    }
+  }
+
+  &--content-only {
+    .page__content {
+      width: 100%;
     }
   }
 }
