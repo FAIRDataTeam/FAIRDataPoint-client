@@ -32,6 +32,11 @@ body {
 
 a {
   cursor: pointer;
+  color: $color-primary;
+
+  &:hover {
+    color: $color-primary-lighter;
+  }
 }
 
 #app {
@@ -50,6 +55,7 @@ a {
   background: $color-primary;
   cursor: pointer;
   outline: none;
+  border: none;
 
   &:hover {
     background: $color-primary-lighter;
@@ -108,6 +114,26 @@ a {
 
       &::placeholder {
         color: $color-text-light;
+      }
+    }
+
+    .invalid-feedback {
+      display: none;
+    }
+
+    &--error {
+      label {
+        color: $color-danger;
+      }
+
+      input {
+        border-bottom-color: $color-danger;
+      }
+
+      .invalid-feedback {
+        @include text-style-danger-14;
+        display: block;
+        margin: $space-xs 0;
       }
     }
   }

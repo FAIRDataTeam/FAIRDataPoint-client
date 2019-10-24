@@ -31,6 +31,11 @@ $font-size-base: 16;
   font-weight: $font-weight-bold;
 }
 
+@mixin text-style-danger-14 {
+  color: $color-danger;
+  font-size: 14rem / $font-size-base;
+}
+
 @mixin text-style-default-16 {
   color: $color-text-default;
   font-size: 16rem / $font-size-base;

@@ -108,6 +108,10 @@ export default {
   margin: 4rem auto;
   padding: $space-md;
 
+  .status-flash + .form {
+    margin-top: $space-md;
+  }
+
   .btn {
     svg {
       margin-right: $space-sm;

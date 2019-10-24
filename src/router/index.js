@@ -6,6 +6,7 @@ import Distribution from '../views/Distribution.vue'
 import Fdp from '../views/Fdp.vue'
 import Login from '../views/Login.vue'
 import NotFound from '../views/NotFound.vue'
+import UserDetail from '../views/UserDetail.vue'
 import Users from '../views/Users.vue'
 import store from '../store'
 
@@ -19,6 +20,7 @@ const routes = [
   { path: '/fdp/distribution/:id', component: Distribution },
   { path: '/login', component: Login },
   { path: '/users', component: Users, meta: { requiresAuth: true } },
+  { path: '/users/:id', component: UserDetail, meta: { requiresAuth: true } },
   { path: '*', component: NotFound },
 ]
 
