@@ -43,7 +43,10 @@
             a new one.
           </template>
         </Table>
-        <router-link class="create-link" to="/users/create">
+        <router-link
+          class="create-link"
+          to="/users/create"
+        >
           + Create user
         </router-link>
       </template>

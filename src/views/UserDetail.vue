@@ -5,7 +5,10 @@
   >
     <template v-slot:content>
       <StatusFlash :status="status" />
-      <div class="container" v-if="user">
+      <div
+        v-if="user"
+        class="container"
+      >
         <form
           class="form"
           @submit.prevent="submitProfile"
