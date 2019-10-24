@@ -2,7 +2,7 @@
 
 > This is the client for the [FAIR Data Point](https://github.com/FAIRDataTeam/FAIRDataPoint) providing interface for browsing the data and administration.
 
-[![Build Status](https://travis-ci.org/FAIRDataTeam/FAIRDataPoint-client.svg?branch=master)](https://travis-ci.org/FAIRDataTeam/admin-panel-server.svg?branch=master)
+[![Build Status](https://travis-ci.org/FAIRDataTeam/FAIRDataPoint-client.svg?branch=master)](https://travis-ci.org/FAIRDataTeam/FAIRDataPoint-client.svg?branch=master)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 
 ## Deployment
@@ -21,7 +21,7 @@ Or if you use [Docker Compose](https://docs.docker.com/compose/):
 version: '3'
 services:
     client:
-        image: fairdata/admin-panel-client
+        image: fairdata/fairdatapoint-client
         ports:
             - 8080:80
         environment:
