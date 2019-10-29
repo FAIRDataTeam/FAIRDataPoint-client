@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { getUserToken } from './utils/localStorage'
 
-const apiUrl = 'http://localhost:3000'
+const apiUrl = window.config.apiUrl || 'http://localhost:3000'
 
 function get(url) {
   return axios.get(`${apiUrl}${url}`, {
