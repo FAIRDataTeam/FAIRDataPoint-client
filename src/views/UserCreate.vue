@@ -104,6 +104,7 @@
 </template>
 <script>
 import { required, email } from 'vuelidate/lib/validators'
+import _ from 'lodash'
 import * as api from '../api'
 import Page from '../components/Page.vue'
 import StatusFlash from '../components/StatusFlash.vue'
@@ -142,26 +143,7 @@ export default {
     }
   },
 
-  watch: {
-    $route: 'fetchData',
-  },
-
-  created() {
-    this.fetchData()
-  },
-
   methods: {
-    fetchData() {
-      this.status.setPending()
-
-      api.getUser(this.$route.params.id)
-        .then((response) => {
-          this.user = response.data
-          this.status.setDone()
-        })
-        .catch(() => this.status.setError('Unable to get users.'))
-    },
-
     submit() {
       this.$v.user.$touch()
 
@@ -171,7 +153,7 @@ export default {
           .then((response) => {
             this.$router.replace(`/users/${response.data.uuid}`)
           })
-          .catch(() => this.profileSubmitStatus.setError('User profile could not be updated.'))
+          .catch(error => this.profileSubmitStatus.setError(_.get(error, 'response.data.message', 'User profile could not be created.')))
       }
     },
   },

@@ -63,7 +63,7 @@
               class="btn"
               :disabled="profileSubmitStatus.isPending()"
             >
-              Save
+              Save profile
             </button>
           </div>
         </form>
@@ -118,7 +118,7 @@
               class="btn"
               :disabled="passwordSubmitStatus.isPending()"
             >
-              Save
+              Update password
             </button>
           </div>
         </form>
