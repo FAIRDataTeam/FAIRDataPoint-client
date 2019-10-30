@@ -19,7 +19,21 @@ export default {
 <style lang="scss">
 @import "./scss/variables";
 @import "./scss/mixins";
-@import "./scss/text-styles";
+@import "./scss/typography";
+@import "./scss/bootstrap";
+
+
+h1 {
+  @include typography-default-32-bold;
+  margin-top: $space-lg;
+  margin-bottom: $space-md;
+}
+
+h2 {
+  @include typography-default-24-bold;
+  margin-top: $space-lg;
+  margin-bottom: $space-md;
+}
 
 body {
   background: $color-background;
@@ -39,10 +53,6 @@ a {
   }
 }
 
-.text-right {
-  text-align: right;
-}
-
 .color-danger {
   color: $color-danger;
 
@@ -57,66 +67,21 @@ a {
   min-height: 100vh;
 }
 
-.btn {
-  @include text-style-inverse-16;
-  @include transition-default(background);
-  @include border-radius($border-radius-default);
-  padding: .75rem 1rem;
-  text-decoration: none;
-  font-weight: bold;
-  background: $color-primary;
-  cursor: pointer;
-  outline: none;
-  border: none;
-
-  &:hover {
-    background: $color-primary-lighter;
-  }
-
-  &:disabled {
-    opacity: 0.8;
-    cursor: not-allowed;
-
-    &:hover {
-      background: $color-primary;
-    }
-  }
-
-  &--rounded {
-    @include border-radius($border-radius-full);
-  }
-
-  &--full {
-    width: 100%;
-  }
-
-  &--with-icon {
-    display: inline-flex;
-    align-items: center;
-    white-space: nowrap;
-    justify-content: space-around;
-    padding: $space-sm $space-lg;
-
-    svg {
-      max-width: $space-md;
-      max-height: $space-md;
-      margin-right: $space-sm;
-    }
-  }
-}
 
 .form {
+  margin-bottom: 6rem;
+
   &__group {
     margin-bottom: $space-lg;
 
     label {
-      @include text-style-default-14-semibold;
+      @include typography-default-14-semibold;
       display: block;
       margin-bottom: $space-xs;
     }
 
-    input {
-      @include text-style-default-18;
+    input, select {
+      @include typography-default-18;
       padding: $space-xs 0;
       width: 100%;
       box-sizing: border-box;
@@ -127,6 +92,12 @@ a {
       &::placeholder {
         color: $color-text-light;
       }
+    }
+
+    select {
+      background: none;
+      border-radius: 0;
+      -webkit-appearance: none;
     }
 
     .invalid-feedback {
@@ -143,11 +114,12 @@ a {
       }
 
       .invalid-feedback {
-        @include text-style-danger-14;
+        @include typography-danger-14;
         display: block;
         margin: $space-xs 0;
       }
     }
   }
 }
+
 </style>

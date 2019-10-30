@@ -1,10 +1,15 @@
 <template>
-  <Page
-    title="Create User"
-    content-only
-  >
-    <template v-slot:content>
-      <div class="container">
+  <div>
+    <Breadcrumbs
+      :links="breadcrumbs"
+      current="Create user"
+    />
+    <Page
+      title="Create user"
+      content-only
+      small
+    >
+      <template v-slot:content>
         <form
           class="form"
           @submit.prevent="submit"
@@ -15,16 +20,33 @@
           />
           <div
             class="form__group"
-            :class="{'form__group--error': $v.user.name.$error}"
+            :class="{'form__group--error': $v.user.firstName.$error}"
           >
-            <label for="user-name">Name</label>
+            <label for="user-first-name">First name</label>
             <input
-              id="user-name"
-              v-model.trim="$v.user.name.$model"
-              placeholder="Name"
+              id="user-first-name"
+              v-model.trim="$v.user.firstName.$model"
+              placeholder="First name"
             >
             <p
-              v-if="!$v.user.name.required"
+              v-if="!$v.user.firstName.required"
+              class="invalid-feedback"
+            >
+              Field is required
+            </p>
+          </div>
+          <div
+            class="form__group"
+            :class="{'form__group--error': $v.user.lastName.$error}"
+          >
+            <label for="user-last-name">Last name</label>
+            <input
+              id="user-last-name"
+              v-model.trim="$v.user.lastName.$model"
+              placeholder="Last name"
+            >
+            <p
+              v-if="!$v.user.lastName.required"
               class="invalid-feedback"
             >
               Field is required
@@ -52,6 +74,20 @@
             >
               This is not a valid email
             </p>
+          </div>
+          <div class="form__group">
+            <label for="user-role">Role</label>
+            <select
+              id="user-role"
+              v-model="user.role"
+            >
+              <option value="USER">
+                USER
+              </option>
+              <option value="ADMIN">
+                ADMIN
+              </option>
+            </select>
           </div>
           <div
             class="form__group"
@@ -91,33 +127,35 @@
           </div>
           <div>
             <button
-              class="btn"
+              class="btn btn-primary btn-rounded"
               :disabled="passwordSubmitStatus.isPending()"
             >
-              Save
+              Create user
             </button>
           </div>
         </form>
-      </div>
-    </template>
-  </Page>
+      </template>
+    </Page>
+  </div>
 </template>
 <script>
 import { required, email } from 'vuelidate/lib/validators'
 import _ from 'lodash'
 import * as api from '../api'
+import Breadcrumbs from '../components/Breadcrumbs.vue'
 import Page from '../components/Page.vue'
 import StatusFlash from '../components/StatusFlash.vue'
 import Status from '../utils/Status'
 
 export default {
   name: 'UserDetail',
-  components: { StatusFlash, Page },
+  components: { Breadcrumbs, StatusFlash, Page },
 
   validations() {
     return {
       user: {
-        name: { required },
+        firstName: { required },
+        lastName: { required },
         email: { required, email },
         password: { required },
         passwordCheck: {
@@ -132,14 +170,20 @@ export default {
   data() {
     return {
       user: {
-        name: null,
+        firstName: null,
+        lastName: null,
         email: null,
+        role: 'USER',
         password: null,
         passwordCheck: null,
       },
       status: new Status(),
       profileSubmitStatus: new Status(),
       passwordSubmitStatus: new Status(),
+      breadcrumbs: [{
+        label: 'Users',
+        to: '/users',
+      }],
     }
   },
 
@@ -159,15 +203,3 @@ export default {
   },
 }
 </script>
-<style scoped lang="scss">
-@import "../scss/variables";
-
-.container {
-  max-width: $container-small-max-width;
-  margin: auto;
-
-  .form {
-    margin-bottom: 6rem;
-  }
-}
-</style>

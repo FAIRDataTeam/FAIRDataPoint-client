@@ -70,7 +70,7 @@ export default {
 <style scoped lang="scss">
 @import "../scss/variables";
 @import "../scss/mixins";
-@import "../scss/text-styles";
+@import "../scss/typography";
 
 
 .metadata {
@@ -99,21 +99,22 @@ export default {
       padding-left: 1.25rem;
 
       li {
-        @include text-style-dark-18-semibold;
+        @include typography-dark-18-semibold;
         word-break: break-word;
         margin-top: $space-sm;
       }
     }
 
     h3 {
-      @include text-style-lighter-16-semibold;
+      @include typography-lighter-16-semibold;
       margin: 0;
     }
 
     a {
-      @include text-style-dark-18-semibold;
+      @include typography-dark-18-semibold;
       @include transition-default(color);
       display: inline-block;
+      text-decoration: underline;
 
       &:hover {
         color: $color-primary;
@@ -125,7 +126,7 @@ export default {
     }
 
     p {
-      @include text-style-dark-18-semibold;
+      @include typography-dark-18-semibold;
       margin: 0;
       word-break: break-word;
 

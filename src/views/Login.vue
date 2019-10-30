@@ -25,7 +25,7 @@
       </div>
       <div>
         <button
-          class="btn btn--full btn--rounded"
+          class="btn btn-primary btn-full btn-rounded"
           :disabled="status.isPending()"
         >
           <fa
@@ -95,11 +95,11 @@ export default {
 <style scoped lang="scss">
 @import "../scss/variables";
 @import "../scss/mixins";
-@import "../scss/text-styles";
+@import "../scss/typography";
 
 .login {
   h1 {
-    @include text-style-default-32-bold;
+    @include typography-default-32-bold;
   }
 
   @include border-radius($border-radius-default);

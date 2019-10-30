@@ -63,7 +63,7 @@ export default {
 <style scoped lang="scss">
 @import "../scss/variables";
 @import "../scss/mixins";
-@import "../scss/text-styles";
+@import "../scss/typography";
 
 .header {
   width: 100%;
@@ -80,7 +80,7 @@ export default {
   }
 
   &__fdp-name {
-    @include text-style-primary-32-bold;
+    @include typography-primary-32-bold;
     height: 100%;
     display: flex;
     align-items: center;
@@ -100,7 +100,7 @@ export default {
     margin-left: $space-lg;
 
     a {
-      @include text-style-default-16-semibold;
+      @include typography-default-16-semibold;
       white-space: nowrap;
       text-decoration: none;
 
@@ -109,7 +109,7 @@ export default {
       }
 
       &:hover {
-        color: $color-primary;
+        color: $color-primary !important;
       }
     }
   }
@@ -134,7 +134,7 @@ export default {
     }
 
     input {
-      @include text-style-default-16;
+      @include typography-default-16;
       border: none;
       width: 100%;
       padding: 0 $header-search-input-padding-right 0 $header-search-input-padding-left;
@@ -144,7 +144,7 @@ export default {
       box-sizing: border-box;
 
       &::placeholder {
-        @include text-style-light-16;
+        @include typography-light-16;
       }
     }
   }

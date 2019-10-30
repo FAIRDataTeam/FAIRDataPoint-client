@@ -2,7 +2,8 @@
   <div
     class="page"
     :class="{
-      'page--content-only': contentOnly
+      'page--content-only': contentOnly,
+      'page--small': small,
     }"
   >
     <h1 v-if="title">
@@ -33,12 +34,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    small: {
+      type: Boolean,
+      default: false,
+    },
   },
 }
 </script>
 <style scoped lang="scss">
 @import "../scss/variables";
-@import "../scss/text-styles";
+@import "../scss/typography";
 
 .page {
   width: 100%;
@@ -46,11 +51,6 @@ export default {
   padding: 0 $container-padding;
   margin: auto;
   box-sizing: border-box;
-
-  h1 {
-    @include text-style-default-32-bold;
-    margin-bottom: 0;
-  }
 
   &__content-wrapper {
     @media (min-width: $breakpoint-small) {
@@ -67,14 +67,12 @@ export default {
   }
 
   &__content {
-    padding: $space-md 0;
-
     @media (min-width: $breakpoint-small) {
       width: 63%;
     }
 
     .description {
-      @include text-style-default-18;
+      @include typography-default-18;
       margin: 0;
       text-align: justify;
 
@@ -88,6 +86,10 @@ export default {
     .page__content {
       width: 100%;
     }
+  }
+
+  &--small {
+    max-width: $container-small-max-width;
   }
 }
 </style>

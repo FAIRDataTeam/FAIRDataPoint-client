@@ -1,146 +1,184 @@
 <template>
-  <Page
-    title="User Detail"
-    content-only
-  >
-    <template v-slot:content>
-      <StatusFlash :status="status" />
-      <div
-        v-if="user"
-        class="container"
-      >
-        <form
-          class="form"
-          @submit.prevent="submitProfile"
-        >
-          <h2>Profile</h2>
-          <StatusFlash
-            :status="profileSubmitStatus"
-            no-loading
-          />
-          <div
-            class="form__group"
-            :class="{'form__group--error': $v.user.name.$error}"
+  <div>
+    <Breadcrumbs
+      v-if="user"
+      :links="breadcrumbs"
+      :current="title"
+    />
+    <Page
+      :title="title"
+      content-only
+      small
+    >
+      <template v-slot:content>
+        <StatusFlash :status="status" />
+        <div v-if="user">
+          <form
+            class="form"
+            @submit.prevent="submitProfile"
           >
-            <label for="user-name">Name</label>
-            <input
-              id="user-name"
-              v-model.trim="$v.user.name.$model"
-              placeholder="Name"
+            <h2>Profile</h2>
+            <StatusFlash
+              :status="profileSubmitStatus"
+              no-loading
+            />
+            <div
+              class="form__group"
+              :class="{'form__group--error': $v.user.firstName.$error}"
             >
-            <p
-              v-if="!$v.user.name.required"
-              class="invalid-feedback"
+              <label for="user-first-name">First name</label>
+              <input
+                id="user-first-name"
+                v-model.trim="$v.user.firstName.$model"
+                placeholder="First name"
+              >
+              <p
+                v-if="!$v.user.firstName.required"
+                class="invalid-feedback"
+              >
+                Field is required
+              </p>
+            </div>
+            <div
+              class="form__group"
+              :class="{'form__group--error': $v.user.lastName.$error}"
             >
-              Field is required
-            </p>
-          </div>
-          <div
-            class="form__group"
-            :class="{'form__group--error': $v.user.email.$error}"
-          >
-            <label for="user-email">Email</label>
-            <input
-              id="user-email"
-              v-model.trim="$v.user.email.$model"
-              placeholder="Email"
+              <label for="user-last-name">Last name</label>
+              <input
+                id="user-last-name"
+                v-model.trim="$v.user.lastName.$model"
+                placeholder="Last name"
+              >
+              <p
+                v-if="!$v.user.lastName.required"
+                class="invalid-feedback"
+              >
+                Field is required
+              </p>
+            </div>
+            <div
+              class="form__group"
+              :class="{'form__group--error': $v.user.email.$error}"
             >
-            <p
-              v-if="!$v.user.email.required"
-              class="invalid-feedback"
-            >
-              Field is required
-            </p>
-            <p
-              v-if="!$v.user.email.email"
-              class="invalid-feedback"
-            >
-              This is not a valid email
-            </p>
-          </div>
-          <div>
-            <button
-              class="btn"
-              :disabled="profileSubmitStatus.isPending()"
-            >
-              Save profile
-            </button>
-          </div>
-        </form>
+              <label for="user-email">Email</label>
+              <input
+                id="user-email"
+                v-model.trim="$v.user.email.$model"
+                placeholder="Email"
+              >
+              <p
+                v-if="!$v.user.email.required"
+                class="invalid-feedback"
+              >
+                Field is required
+              </p>
+              <p
+                v-if="!$v.user.email.email"
+                class="invalid-feedback"
+              >
+                This is not a valid email
+              </p>
+            </div>
+            <div class="form__group">
+              <label for="user-role">Role</label>
+              <select
+                id="user-role"
+                v-model="user.role"
+              >
+                <option value="USER">
+                  USER
+                </option>
+                <option value="ADMIN">
+                  ADMIN
+                </option>
+              </select>
+            </div>
+            <div>
+              <button
+                class="btn btn-primary btn-rounded"
+                :disabled="profileSubmitStatus.isPending()"
+              >
+                Save profile
+              </button>
+            </div>
+          </form>
 
-        <form
-          class="form"
-          @submit.prevent="submitPassword"
-        >
-          <h2>Password</h2>
-          <StatusFlash
-            :status="passwordSubmitStatus"
-            no-loading
-          />
-          <div
-            class="form__group"
-            :class="{'form__group--error': $v.passwordForm.password.$error}"
+          <form
+            class="form"
+            @submit.prevent="submitPassword"
           >
-            <label for="password-password">New password</label>
-            <input
-              id="password-password"
-              v-model.trim="$v.passwordForm.password.$model"
-              placeholder="New password"
-              type="password"
+            <h2>Password</h2>
+            <StatusFlash
+              :status="passwordSubmitStatus"
+              no-loading
+            />
+            <div
+              class="form__group"
+              :class="{'form__group--error': $v.passwordForm.password.$error}"
             >
-            <p
-              v-if="!$v.passwordForm.password.required"
-              class="invalid-feedback"
+              <label for="password-password">New password</label>
+              <input
+                id="password-password"
+                v-model.trim="$v.passwordForm.password.$model"
+                placeholder="New password"
+                type="password"
+              >
+              <p
+                v-if="!$v.passwordForm.password.required"
+                class="invalid-feedback"
+              >
+                Field is required
+              </p>
+            </div>
+            <div
+              class="form__group"
+              :class="{'form__group--error': $v.passwordForm.passwordCheck.$error}"
             >
-              Field is required
-            </p>
-          </div>
-          <div
-            class="form__group"
-            :class="{'form__group--error': $v.passwordForm.passwordCheck.$error}"
-          >
-            <label for="password-confirmation">New password confirmation</label>
-            <input
-              id="password-confirmation"
-              v-model.trim="$v.passwordForm.passwordCheck.$model"
-              placeholder="New password again"
-              type="password"
-            >
-            <p
-              v-if="!$v.passwordForm.passwordCheck.passwordMatch"
-              class="invalid-feedback"
-            >
-              Passwords don't match.
-            </p>
-          </div>
-          <div>
-            <button
-              class="btn"
-              :disabled="passwordSubmitStatus.isPending()"
-            >
-              Update password
-            </button>
-          </div>
-        </form>
-      </div>
-    </template>
-  </Page>
+              <label for="password-confirmation">New password confirmation</label>
+              <input
+                id="password-confirmation"
+                v-model.trim="$v.passwordForm.passwordCheck.$model"
+                placeholder="New password again"
+                type="password"
+              >
+              <p
+                v-if="!$v.passwordForm.passwordCheck.passwordMatch"
+                class="invalid-feedback"
+              >
+                Passwords don't match.
+              </p>
+            </div>
+            <div>
+              <button
+                class="btn btn-primary btn-rounded"
+                :disabled="passwordSubmitStatus.isPending()"
+              >
+                Update password
+              </button>
+            </div>
+          </form>
+        </div>
+      </template>
+    </Page>
+  </div>
 </template>
 <script>
 import { required, email } from 'vuelidate/lib/validators'
 import * as api from '../api'
+import Breadcrumbs from '../components/Breadcrumbs.vue'
 import Page from '../components/Page.vue'
 import StatusFlash from '../components/StatusFlash.vue'
 import Status from '../utils/Status'
 
 export default {
   name: 'UserDetail',
-  components: { StatusFlash, Page },
+  components: { Breadcrumbs, StatusFlash, Page },
 
   validations() {
     return {
       user: {
-        name: { required },
+        firstName: { required },
+        lastName: { required },
         email: { required, email },
       },
       passwordForm: {
@@ -156,6 +194,7 @@ export default {
 
   data() {
     return {
+      title: null,
       user: null,
       passwordForm: {
         password: null,
@@ -164,6 +203,10 @@ export default {
       status: new Status(),
       profileSubmitStatus: new Status(),
       passwordSubmitStatus: new Status(),
+      breadcrumbs: [{
+        label: 'Users',
+        to: '/users',
+      }],
     }
   },
 
@@ -182,6 +225,7 @@ export default {
       api.getUser(this.$route.params.id)
         .then((response) => {
           this.user = response.data
+          this.setTitle()
           this.status.setDone()
         })
         .catch(() => this.status.setError('Unable to get user profile.'))
@@ -193,7 +237,10 @@ export default {
       if (!this.$v.user.$invalid) {
         this.profileSubmitStatus.setPending()
         api.putUser(this.user)
-          .then(() => this.profileSubmitStatus.setDone('User profile was successfully updated!'))
+          .then(() => {
+            this.setTitle()
+            this.profileSubmitStatus.setDone('User profile was successfully updated!')
+          })
           .catch(() => this.profileSubmitStatus.setError('User profile could not be updated.'))
       }
     },
@@ -208,18 +255,10 @@ export default {
           .catch(() => this.passwordSubmitStatus.setError('Password could not be updated.'))
       }
     },
+
+    setTitle() {
+      this.title = `${this.user.firstName} ${this.user.lastName}`
+    },
   },
 }
 </script>
-<style scoped lang="scss">
-@import "../scss/variables";
-
-.container {
-  max-width: $container-small-max-width;
-  margin: auto;
-
-  .form {
-    margin-bottom: 6rem;
-  }
-}
-</style>

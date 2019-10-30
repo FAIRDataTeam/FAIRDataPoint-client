@@ -1,0 +1,49 @@
+@import "variables";
+@import "typography";
+
+// override BS variables with FDP variables
+$primary: $color-primary;
+$link-hover-color: $color-primary-lighter;
+
+@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-vue/src/index";
+
+
+// extend BS styles
+
+.dropdown-item {
+  svg {
+    margin-right: $space-xs;
+  }
+}
+
+.dropdown-item-danger a {
+  color: $color-danger !important;
+}
+
+.dropdown-item-danger a:active {
+  color: #fff !important;
+  background: $color-danger !important;
+}
+
+
+.btn {
+  @include typography-inverse-16;
+
+  &-rounded {
+    @include border-radius($border-radius-full);
+    padding: 0.375rem 1.5rem;
+  }
+
+  &-link {
+    @include typography-primary-16;
+
+    &:hover {
+      color: $color-primary-lighter;
+    }
+  }
+
+  &-full {
+    width: 100%;
+  }
+}

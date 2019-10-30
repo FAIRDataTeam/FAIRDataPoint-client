@@ -7,10 +7,12 @@ import * as fas from '@fortawesome/free-solid-svg-icons'
 library.add([
   far.faTrashAlt,
   fas.faDownload,
+  fas.faEllipsisV,
   fas.faExternalLinkAlt,
   fas.faSearch,
   fas.faSignInAlt,
   fas.faSpinner,
+  fas.faUserEdit,
 ])
 
 Vue.component('fa', FontAwesomeIcon)

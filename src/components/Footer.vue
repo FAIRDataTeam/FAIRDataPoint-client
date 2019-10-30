@@ -19,7 +19,7 @@ export default {
 <style scoped lang="scss">
 @import "../scss/variables";
 @import "../scss/mixins";
-@import "../scss/text-styles";
+@import "../scss/typography";
 
 .footer-wrapper {
   flex-grow: 1;

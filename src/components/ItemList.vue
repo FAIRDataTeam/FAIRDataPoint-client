@@ -28,14 +28,3 @@ export default {
   },
 }
 </script>
-<style scoped lang="scss">
-@import "../scss/variables";
-@import "../scss/mixins";
-@import "../scss/text-styles";
-
-.item-list {
-  h2 {
-    @include text-style-default-24-bold;
-  }
-}
-</style>

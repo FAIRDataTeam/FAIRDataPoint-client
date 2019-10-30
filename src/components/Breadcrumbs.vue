@@ -32,11 +32,11 @@ export default {
 </script>
 <style scoped lang="scss">
 @import "../scss/variables";
-@import "../scss/text-styles";
+@import "../scss/typography";
 @import "../scss/mixins";
 
 .breadcrumbs {
-  @include text-style-default-14;
+  @include typography-default-14;
   width: 100%;
   background: $color-background-highlighted;
   height: $breadcrumbs-height;
@@ -75,9 +75,10 @@ export default {
         }
 
         a {
-          @include text-style-default-14;
+          @include typography-default-14;
           @include transition-default(color);
           display: inline-block;
+          text-decoration: underline;
 
           &:hover {
             color: $color-primary;

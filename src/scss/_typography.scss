@@ -3,109 +3,114 @@
 $font-size-base: 16;
 
 
-@mixin text-style-default-14 {
+@mixin typography-default-14 {
   color: $color-text-default;
   font-size: 14rem / $font-size-base;
 }
 
-@mixin text-style-default-14-bold {
+@mixin typography-default-14-bold {
   color: $color-text-default;
   font-size: 14rem / $font-size-base;
   font-weight: $font-weight-bold;
 }
 
-@mixin text-style-default-14-semibold {
+@mixin typography-default-14-semibold {
   color: $color-text-default;
   font-size: 14rem / $font-size-base;
   font-weight: $font-weight-semibold;
 }
 
-@mixin text-style-primary-14 {
+@mixin typography-primary-14 {
   color: $color-primary;
   font-size: 14rem / $font-size-base;
 }
 
-@mixin text-style-primary-14-bold {
+@mixin typography-primary-14-bold {
   color: $color-primary;
   font-size: 14rem / $font-size-base;
   font-weight: $font-weight-bold;
 }
 
-@mixin text-style-danger-14 {
+@mixin typography-danger-14 {
   color: $color-danger;
   font-size: 14rem / $font-size-base;
 }
 
-@mixin text-style-default-16 {
+@mixin typography-default-16 {
   color: $color-text-default;
   font-size: 16rem / $font-size-base;
 }
 
-@mixin text-style-default-16-semibold {
+@mixin typography-default-16-semibold {
   color: $color-text-default;
   font-size: 16rem / $font-size-base;
   font-weight: $font-weight-semibold;
 }
 
-@mixin text-style-light-16 {
+@mixin typography-light-16 {
   color: $color-text-light;
   font-size: 16rem / $font-size-base;
 }
 
-@mixin text-style-inverse-16 {
+@mixin typography-inverse-16 {
   color: $color-light;
   font-size: 16rem / $font-size-base;
 }
 
-@mixin text-style-lighter-16-semibold {
+@mixin typography-primary-16 {
+  color: $color-primary;
+  font-size: 16rem / $font-size-base;
+}
+
+@mixin typography-lighter-16-semibold {
   color: $color-text-lighter;
   font-size: 16rem / $font-size-base;
   font-weight: $font-weight-semibold;
 }
 
-@mixin text-style-default-18 {
+@mixin typography-default-18 {
   color: $color-text-default;
   font-size: 18rem / $font-size-base;
 }
 
-@mixin text-style-default-18-semibold {
+@mixin typography-default-18-semibold {
   color: $color-text-default;
   font-size: 18rem / $font-size-base;
   font-weight: $font-weight-semibold;
 }
 
-@mixin text-style-primary-18-bold {
+@mixin typography-primary-18-bold {
   color: $color-primary;
   font-size: 18rem / $font-size-base;
   font-weight: $font-weight-bold;
 }
 
-@mixin text-style-light-18-bold {
+@mixin typography-light-18-bold {
   color: $color-light;
   font-size: 18rem / $font-size-base;
   font-weight: $font-weight-bold;
 }
 
-@mixin text-style-dark-18-semibold {
+@mixin typography-dark-18-semibold {
   color: $color-text-dark;
   font-size: 18rem / $font-size-base;
   font-weight: $font-weight-semibold;
 
 }
 
-@mixin text-style-default-24-bold {
+@mixin typography-default-24-bold {
   color: $color-text-default;
   font-size: 24rem / $font-size-base;
   font-weight: $font-weight-bold;
 }
 
-@mixin text-style-default-32-bold {
+@mixin typography-default-32-bold {
   color: $color-text-default;
   font-size: 32rem / $font-size-base;
   font-weight: $font-weight-bold;
 }
 
-@mixin text-style-primary-32-bold {
+@mixin typography-primary-32-bold {
   color: $color-primary;
   font-size: 32rem / $font-size-base;
   font-weight: $font-weight-bold;

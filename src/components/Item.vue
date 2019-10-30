@@ -55,7 +55,7 @@ export default {
 <style scoped lang="scss">
 @import "../scss/variables";
 @import "../scss/mixins";
-@import "../scss/text-styles";
+@import "../scss/typography";
 
 .item {
   @include border-radius($border-radius-default);
@@ -64,7 +64,7 @@ export default {
   padding: $space-md;
 
   &__title {
-    @include text-style-primary-18-bold;
+    @include typography-primary-18-bold;
     text-decoration: none;
 
     &:hover {
@@ -73,7 +73,7 @@ export default {
   }
 
   &__description {
-    @include text-style-default-16;
+    @include typography-default-16;
     margin: $space-sm 0;
     text-align: justify;
   }
@@ -82,7 +82,7 @@ export default {
     margin: $space-sm 0 $space-xs 0;
 
     &__tag {
-      @include text-style-primary-14;
+      @include typography-primary-14;
       @include border-radius($border-radius-full);
       display: inline-block;
       background: $color-background-primary;
@@ -101,13 +101,13 @@ export default {
     margin: 0;
 
     dt {
-      @include text-style-default-14-bold;
+      @include typography-default-14-bold;
       display: inline-block;
       margin: 0;
     }
 
     dd {
-      @include text-style-default-14;
+      @include typography-default-14;
       display: inline-block;
       margin: 0 $space-md 0 $space-xs;
     }
