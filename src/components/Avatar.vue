@@ -2,6 +2,9 @@
   <div
     class="avatar"
     :style="`background-color: ${toColor(value)}`"
+    :class="{
+      'avatar--smaller': smaller,
+    }"
   >
     {{ initials }}
   </div>
@@ -20,6 +23,10 @@ export default {
       type: String,
       default: null,
     },
+    smaller: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     toColor(value) {
@@ -34,7 +41,11 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+@import "../scss/typography";
+
 .avatar {
+  @include typography-default-18-semibold;
+  text-decoration: none;
   width: 3rem;
   height: 3rem;
   border-radius: 3rem;
@@ -42,6 +53,15 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.125rem;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &--smaller {
+    @include typography-default-16-semibold;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
 }
 </style>

@@ -22,14 +22,42 @@
           >
             Log in
           </router-link>
-          <template v-else>
-            <router-link to="/users">
-              Users
-            </router-link>
-            <a @click="logout">
+          <b-dropdown
+            v-else
+            right
+            variant="link"
+          >
+            <template v-slot:button-content>
+              <UserAvatar
+                :user="user"
+                smaller
+              />
+            </template>
+            <template v-if="user.role === 'ADMIN'">
+              <b-dropdown-header>
+                FAIR Data Point
+              </b-dropdown-header>
+              <b-dropdown-item @click="$router.push('/users')">
+                <fa :icon="['fas', 'user-friends']" />
+                Manage users
+              </b-dropdown-item>
+              <b-dropdown-divider />
+            </template>
+            <b-dropdown-header>
+              {{ user.firstName }} {{ user.lastName }}
+            </b-dropdown-header>
+            <b-dropdown-item
+              v-if="user.role === 'ADMIN'"
+              @click="$router.push(`/users/${user.uuid}`)"
+            >
+              <fa :icon="['fas', 'user-edit']" />
+              Edit profile
+            </b-dropdown-item>
+            <b-dropdown-item @click="logout">
+              <fa :icon="['fas', 'sign-out-alt']" />
               Log out
-            </a>
-          </template>
+            </b-dropdown-item>
+          </b-dropdown>
         </div>
       </div>
     </div>
@@ -39,15 +67,18 @@
 <script>
 import { mapGetters } from 'vuex'
 import Separator from './Separator.vue'
+import UserAvatar from './UserAvatar.vue'
 
 export default {
   name: 'Header',
   components: {
+    UserAvatar,
     Separator,
   },
   computed: {
     ...mapGetters('auth', {
       authenticated: 'authenticated',
+      user: 'user',
     }),
   },
   methods: {
@@ -60,7 +91,7 @@ export default {
   },
 }
 </script>
-<style scoped lang="scss">
+<style lang="scss">
 @import "../scss/variables";
 @import "../scss/mixins";
 @import "../scss/typography";
@@ -88,6 +119,11 @@ export default {
     background: url($header-logo-url) left center no-repeat;
     background-size: $header-logo-width $header-logo-height;
     text-decoration: none;
+
+    &:hover {
+      color: $color-primary;
+      text-decoration: none;
+    }
   }
 
   &__nav {
@@ -97,9 +133,9 @@ export default {
   }
 
   &__menu {
-    margin-left: $space-lg;
+    margin-left: $space-md;
 
-    a {
+    & > a {
       @include typography-default-16-semibold;
       white-space: nowrap;
       text-decoration: none;
@@ -110,6 +146,26 @@ export default {
 
       &:hover {
         color: $color-primary !important;
+      }
+    }
+
+    .dropdown {
+      .btn-link {
+        text-decoration: none !important;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+          text-decoration: none !important;
+        }
+      }
+
+      .dropdown-menu {
+        min-width: 17rem;
+
+        svg {
+          min-width: 1.5rem;
+        }
       }
     }
   }

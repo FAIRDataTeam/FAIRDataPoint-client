@@ -69,15 +69,6 @@ export default {
     if (this.authenticated) {
       this.$router.replace('/fdp')
     }
-
-    this.$store.watch(
-      (state, getters) => getters['auth/authenticated'],
-      (newValue) => {
-        if (newValue) {
-          this.$router.push('/fdp')
-        }
-      },
-    )
   },
 
   methods: {
@@ -87,6 +78,7 @@ export default {
       this.$store.dispatch('auth/authenticate', {
         email: this.email,
         password: this.password,
+        successCallback: () => this.$router.push('/fdp'),
       })
     },
   },

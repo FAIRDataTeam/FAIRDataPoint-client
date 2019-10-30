@@ -5,6 +5,7 @@ import Dataset from '../views/Dataset.vue'
 import Distribution from '../views/Distribution.vue'
 import Fdp from '../views/Fdp.vue'
 import Login from '../views/Login.vue'
+import NotAllowed from '../views/NotAllowed.vue'
 import NotFound from '../views/NotFound.vue'
 import UserCreate from '../views/UserCreate.vue'
 import UserDetail from '../views/UserDetail.vue'
@@ -20,9 +21,10 @@ const routes = [
   { path: '/fdp/dataset/:id', component: Dataset },
   { path: '/fdp/distribution/:id', component: Distribution },
   { path: '/login', component: Login },
-  { path: '/users', component: Users, meta: { requiresAuth: true } },
-  { path: '/users/create', component: UserCreate, meta: { requiresAuth: true } },
-  { path: '/users/:id', component: UserDetail, meta: { requiresAuth: true } },
+  { path: '/users', component: Users, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+  { path: '/users/create', component: UserCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+  { path: '/users/:id', component: UserDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+  { path: '/not-allowed', component: NotAllowed },
   { path: '*', component: NotFound },
 ]
 
@@ -35,6 +37,8 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !store.getters['auth/authenticated']) {
     next('/login')
+  } else if (to.meta.roles && to.meta.roles.indexOf(store.getters['auth/role']) === -1) {
+    next('/not-allowed')
   } else {
     next()
   }

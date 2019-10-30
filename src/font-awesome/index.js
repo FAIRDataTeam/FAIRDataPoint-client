@@ -11,8 +11,10 @@ library.add([
   fas.faExternalLinkAlt,
   fas.faSearch,
   fas.faSignInAlt,
+  fas.faSignOutAlt,
   fas.faSpinner,
   fas.faUserEdit,
+  fas.faUserFriends,
 ])
 
 Vue.component('fa', FontAwesomeIcon)

@@ -92,3 +92,10 @@ export default {
   },
 }
 </script>
+<style scoped lang="scss">
+@import "../scss/variables";
+
+.page {
+  margin-top: $space-lg;
+}
+</style>

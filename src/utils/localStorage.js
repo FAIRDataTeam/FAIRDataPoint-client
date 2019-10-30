@@ -1,13 +1,20 @@
-const authTokenKey = 'authToken'
+import _ from 'lodash'
+
+const sessionKey = 'session'
+
+export function saveSession(session) {
+  localStorage.setItem(sessionKey, JSON.stringify(session))
+}
+
+export function getSession() {
+  const session = localStorage.getItem(sessionKey)
+  return session !== null ? JSON.parse(session) : null
+}
+
+export function clearSession() {
+  localStorage.removeItem(sessionKey)
+}
 
 export function getUserToken() {
-  return localStorage.getItem(authTokenKey)
-}
-
-export function setUserToken(token) {
-  localStorage.setItem(authTokenKey, token)
-}
-
-export function clearUserToken() {
-  localStorage.removeItem(authTokenKey)
+  return _.get(getSession(), 'token')
 }

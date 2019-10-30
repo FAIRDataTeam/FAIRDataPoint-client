@@ -74,6 +74,10 @@ export function getUser(id) {
   return getAuthenticated(`/users/${id}`)
 }
 
+export function getUserCurrent() {
+  return getAuthenticated('/users/current')
+}
+
 export function postUser(user) {
   return postAuthenticated('/users', user)
 }

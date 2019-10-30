@@ -12,10 +12,7 @@
             :key="user.uuid"
             class="item-list__item"
           >
-            <Avatar
-              :initials="toInitials(user)"
-              :value="user.email"
-            />
+            <UserAvatar :user="user" />
             <div class="item-list__item__content">
               <div class="item-list__item__content__row">
                 <router-link :to="`/users/${user.uuid}`">
@@ -72,16 +69,15 @@
 </template>
 <script>
 import * as api from '../api'
-import Avatar from '../components/Avatar.vue'
 import Page from '../components/Page.vue'
 import StatusFlash from '../components/StatusFlash.vue'
-// import Table from '../components/Table.vue'
+import UserAvatar from '../components/UserAvatar.vue'
 import Status from '../utils/Status'
 
 export default {
   name: 'Users',
   components: {
-    Avatar,
+    UserAvatar,
     StatusFlash,
     Page,
   },
@@ -119,10 +115,6 @@ export default {
           .then(() => this.fetchData())
           .catch(() => this.status.setError('Unable to delete users.'))
       }
-    },
-
-    toInitials(user) {
-      return user.firstName[0] + user.lastName[0]
     },
   },
 }
