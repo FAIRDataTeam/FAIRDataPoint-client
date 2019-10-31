@@ -6,9 +6,14 @@
       'page--small': small,
     }"
   >
-    <h1 v-if="title">
-      {{ title }}
-    </h1>
+    <div class="page__title">
+      <h1 v-if="title">
+        {{ title }}
+      </h1>
+      <div class="page__actions">
+        <slot name="actions" />
+      </div>
+    </div>
     <div class="page__content-wrapper">
       <div
         v-if="!contentOnly"
@@ -51,6 +56,17 @@ export default {
   padding: 0 $container-padding;
   margin: auto;
   box-sizing: border-box;
+
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+  }
 
   &__content-wrapper {
     @media (min-width: $breakpoint-small) {

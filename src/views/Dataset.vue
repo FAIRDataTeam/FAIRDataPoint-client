@@ -10,6 +10,17 @@
       v-if="dataset !== null"
       :title="dataset.title"
     >
+      <template v-slot:actions>
+        <MembershipBadge :entity="dataset" />
+        <router-link
+          v-if="permissions.hasWrite(dataset)"
+          class="btn btn-link"
+          :to="`/fdp/dataset/${dataset.identifier}/settings`"
+        >
+          <fa :icon="['fas', 'cog']" />
+          Settings
+        </router-link>
+      </template>
       <template v-slot:column>
         <Metadata :metadata="metadata" />
       </template>
@@ -28,6 +39,7 @@
 <script>
 import moment from 'moment'
 import * as api from '../api'
+import * as permissions from '../utils/permissions'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import ItemList from '../components/ItemList.vue'
 import Metadata from '../components/Metadata.vue'
@@ -36,10 +48,12 @@ import StatusFlash from '../components/StatusFlash.vue'
 import Status from '../utils/Status'
 import trim from '../utils/trim'
 import metadata from '../utils/metadata'
+import MembershipBadge from './MembershipBadge.vue'
 
 export default {
   name: 'Dataset',
   components: {
+    MembershipBadge,
     StatusFlash,
     Breadcrumbs,
     ItemList,
@@ -54,6 +68,7 @@ export default {
       distributions: null,
       breadcrumbs: null,
       status: new Status(),
+      permissions,
     }
   },
 

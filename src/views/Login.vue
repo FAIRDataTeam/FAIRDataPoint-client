@@ -106,8 +106,6 @@ export default {
 
   .btn {
     svg {
-      margin-right: $space-sm;
-
       &.fa-spinner {
         margin-right: 0 !important;
       }

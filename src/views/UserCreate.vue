@@ -140,7 +140,6 @@
 </template>
 <script>
 import { required, email } from 'vuelidate/lib/validators'
-import _ from 'lodash'
 import * as api from '../api'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import Page from '../components/Page.vue'
@@ -194,10 +193,10 @@ export default {
       if (!this.$v.user.$invalid) {
         this.profileSubmitStatus.setPending()
         api.postUser(this.user)
-          .then((response) => {
-            this.$router.replace(`/users/${response.data.uuid}`)
+          .then(() => {
+            this.$router.replace('/users')
           })
-          .catch(error => this.profileSubmitStatus.setError(_.get(error, 'response.data.message', 'User profile could not be created.')))
+          .catch(error => this.profileSubmitStatus.setErrorFromResponse(error, 'User profile could not be created.'))
       }
     },
   },

@@ -10,6 +10,17 @@
       v-if="catalog !== null"
       :title="catalog.title"
     >
+      <template v-slot:actions>
+        <MembershipBadge :entity="catalog" />
+        <router-link
+          v-if="permissions.hasWrite(catalog)"
+          class="btn btn-link"
+          :to="`/fdp/catalog/${catalog.identifier}/settings`"
+        >
+          <fa :icon="['fas', 'cog']" />
+          Settings
+        </router-link>
+      </template>
       <template v-slot:column>
         <Metadata :metadata="metadata" />
       </template>
@@ -28,6 +39,7 @@
 <script>
 import moment from 'moment'
 import * as api from '../api'
+import * as permissions from '../utils/permissions'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import ItemList from '../components/ItemList.vue'
 import Metadata from '../components/Metadata.vue'
@@ -36,10 +48,12 @@ import StatusFlash from '../components/StatusFlash.vue'
 import Status from '../utils/Status'
 import metadata from '../utils/metadata'
 import trim from '../utils/trim'
+import MembershipBadge from './MembershipBadge.vue'
 
 export default {
   name: 'Catalog',
   components: {
+    MembershipBadge,
     StatusFlash,
     Breadcrumbs,
     ItemList,
@@ -54,6 +68,7 @@ export default {
       datasets: null,
       breadcrumbs: null,
       status: new Status(),
+      permissions,
     }
   },
 

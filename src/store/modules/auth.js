@@ -42,6 +42,15 @@ export default {
         })
     },
 
+    updateUser({ commit, state }, { user }) {
+      const session = {
+        user,
+        token: state.session.token,
+      }
+      saveSession(session)
+      commit('setSession', session)
+    },
+
     logout({ commit }) {
       clearSession()
       commit('setSession', null)

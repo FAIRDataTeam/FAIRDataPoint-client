@@ -28,15 +28,24 @@ $link-hover-color: $color-primary-lighter;
 
 
 .btn {
-  @include typography-inverse-16;
+  white-space: nowrap;
+
+  &-primary {
+    @include typography-inverse-16;
+  }
 
   &-rounded {
     @include border-radius($border-radius-full);
     padding: 0.375rem 1.5rem;
+
+    &.dropdown-toggle::after {
+      margin-left: $space-sm;
+    }
   }
 
   &-link {
     @include typography-primary-16;
+    text-decoration: none !important;
 
     &:hover {
       color: $color-primary-lighter;
@@ -45,5 +54,25 @@ $link-hover-color: $color-primary-lighter;
 
   &-full {
     width: 100%;
+  }
+
+  svg {
+    margin-right: $space-xs;
+  }
+}
+
+.card-list {
+  .card-body {
+    padding: 0;
+
+    .item-list {
+      &__item:first-child {
+        border-top: none;
+      }
+
+      &__item:last-child {
+        border-bottom: none;
+      }
+    }
   }
 }

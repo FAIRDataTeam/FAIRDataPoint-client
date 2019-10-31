@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 const PENDING = 'LOADING'
 const ERROR = 'ERROR'
 const SUCCESS = 'SUCCESS'
@@ -42,6 +44,11 @@ export default class Status {
   setError(msg) {
     this.status = ERROR
     this.msg = msg
+  }
+
+  setErrorFromResponse(error, defaultMsg) {
+    this.status = ERROR
+    this.msg = _.get(error, 'response.data.message', defaultMsg)
   }
 
   setDone(msg) {

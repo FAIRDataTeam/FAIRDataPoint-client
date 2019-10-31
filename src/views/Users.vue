@@ -7,29 +7,23 @@
       <template v-slot:content>
         <StatusFlash :status="status" />
         <div class="item-list">
-          <div
+          <UserItem
             v-for="user in users"
             :key="user.uuid"
-            class="item-list__item"
+            :user="user"
           >
-            <UserAvatar :user="user" />
-            <div class="item-list__item__content">
-              <div class="item-list__item__content__row">
-                <router-link :to="`/users/${user.uuid}`">
-                  {{ user.firstName }} {{ user.lastName }}
-                </router-link>
-                <b-badge
-                  pill
-                  variant="light"
-                >
-                  {{ user.role }}
-                </b-badge>
-              </div>
-              <div class="item-list__item__content__row">
-                {{ user.email }}
-              </div>
-            </div>
-            <div class="item-list__item__actions">
+            <template v-slot:name>
+              <router-link :to="`/users/${user.uuid}`">
+                {{ user.firstName }} {{ user.lastName }}
+              </router-link>
+              <b-badge
+                pill
+                variant="light"
+              >
+                {{ user.role }}
+              </b-badge>
+            </template>
+            <template v-slot:actions>
               <b-dropdown
                 text="Actions"
                 right
@@ -54,8 +48,8 @@
                   Remove
                 </b-dropdown-item>
               </b-dropdown>
-            </div>
-          </div>
+            </template>
+          </UserItem>
         </div>
         <router-link
           class="create-link"
@@ -68,16 +62,17 @@
   </div>
 </template>
 <script>
+import _ from 'lodash'
 import * as api from '../api'
 import Page from '../components/Page.vue'
 import StatusFlash from '../components/StatusFlash.vue'
-import UserAvatar from '../components/UserAvatar.vue'
+import UserItem from '../components/UserItem.vue'
 import Status from '../utils/Status'
 
 export default {
   name: 'Users',
   components: {
-    UserAvatar,
+    UserItem,
     StatusFlash,
     Page,
   },
@@ -103,7 +98,7 @@ export default {
 
       api.getUsers()
         .then((response) => {
-          this.users = response.data
+          this.users = _.orderBy(response.data, ['firstName', 'lastName'], ['asc'])
           this.status.setDone()
         })
         .catch(() => this.status.setError('Unable to get users.'))
@@ -130,45 +125,4 @@ export default {
   text-decoration: none;
 }
 
-.item-list {
-
-  &__item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: $space-md 0;
-    border-top: 1px solid $color-separator;
-
-    &:last-child {
-      border-bottom: 1px solid $color-separator;
-    }
-
-    &__content {
-      margin-left: $space-md;
-      flex-grow: 1;
-
-      &__row {
-        display: flex;
-        align-items: center;
-
-        .badge {
-          margin-left: $space-sm;
-
-          &-light {
-            background: $color-background-highlighted;
-          }
-        }
-
-        a {
-          font-weight: bold;
-          text-decoration: none;
-
-          &:hover {
-            text-decoration: underline;
-          }
-        }
-      }
-    }
-  }
-}
 </style>

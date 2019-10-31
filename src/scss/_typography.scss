@@ -20,6 +20,11 @@ $font-size-base: 16;
   font-weight: $font-weight-semibold;
 }
 
+@mixin typography-light-14 {
+  color: $color-text-light;
+  font-size: 14rem / $font-size-base;
+}
+
 @mixin typography-primary-14 {
   color: $color-primary;
   font-size: 14rem / $font-size-base;

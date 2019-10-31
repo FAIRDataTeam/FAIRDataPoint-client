@@ -3,46 +3,38 @@ import { getUserToken } from './utils/localStorage'
 
 const apiUrl = window.config.apiUrl || 'http://localhost:3000'
 
-function get(url) {
-  return axios.get(`${apiUrl}${url}`, {
-    headers: { Accept: 'application/json' },
-  })
+function createHeaders() {
+  const headers = {
+    Accept: 'application/json',
+  }
+  const token = getUserToken()
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
+  return headers
 }
 
 function getAuthenticated(url) {
   return axios.get(`${apiUrl}${url}`, {
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${getUserToken()}`,
-    },
+    headers: createHeaders(),
   })
 }
 
 function postAuthenticated(url, data) {
   return axios.post(`${apiUrl}${url}`, data, {
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${getUserToken()}`,
-      'Content-Type': 'application/json',
-    },
+    headers: createHeaders(),
   })
 }
 
 function putAuthenticated(url, data) {
   return axios.put(`${apiUrl}${url}`, data, {
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${getUserToken()}`,
-    },
+    headers: createHeaders(),
   })
 }
 
 function deleteAuthenticated(url) {
   return axios.delete(`${apiUrl}${url}`, {
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${getUserToken()}`,
-    },
+    headers: createHeaders(),
   })
 }
 
@@ -51,19 +43,47 @@ export function fetchToken(email, password) {
 }
 
 export function getFdp() {
-  return get('/fdp')
+  return getAuthenticated('/fdp')
 }
 
 export function getCatalog(id) {
-  return get(`/fdp/catalog/${id}`)
+  return getAuthenticated(`/fdp/catalog/${id}`)
+}
+
+export function getCatalogMembers(id) {
+  return getAuthenticated(`/fdp/catalog/${id}/members`)
+}
+
+export function putCatalogMember(catalogId, userUuid, membershipUuid) {
+  return putAuthenticated(`/fdp/catalog/${catalogId}/members/${userUuid}`, {
+    membershipUuid,
+  })
+}
+
+export function deleteCatalogMember(catalogId, userUuid) {
+  return deleteAuthenticated(`/fdp/catalog/${catalogId}/members/${userUuid}`)
 }
 
 export function getDataset(id) {
-  return get(`/fdp/dataset/${id}`)
+  return getAuthenticated(`/fdp/dataset/${id}`)
+}
+
+export function getDatasetMembers(id) {
+  return getAuthenticated(`/fdp/dataset/${id}/members`)
+}
+
+export function putDatasetMember(datasetId, userUuid, membershipUuid) {
+  return putAuthenticated(`/fdp/dataset/${datasetId}/members/${userUuid}`, {
+    membershipUuid,
+  })
+}
+
+export function deleteDatasetMember(datasetId, userUuid) {
+  return deleteAuthenticated(`/fdp/dataset/${datasetId}/members/${userUuid}`)
 }
 
 export function getDistribution(id) {
-  return get(`/fdp/distribution/${id}`)
+  return getAuthenticated(`/fdp/distribution/${id}`)
 }
 
 export function getUsers() {
@@ -92,4 +112,12 @@ export function deleteUser(user) {
 
 export function putUserPassword(user, password) {
   return putAuthenticated(`/users/${user.uuid}/password`, { password })
+}
+
+export function getMemberships() {
+  return getAuthenticated('/memberships')
+}
+
+export function getDashboard() {
+  return getAuthenticated('/fdp/dashboard')
 }

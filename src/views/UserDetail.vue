@@ -164,6 +164,7 @@
 </template>
 <script>
 import { required, email } from 'vuelidate/lib/validators'
+import { mapGetters } from 'vuex'
 import * as api from '../api'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import Page from '../components/Page.vue'
@@ -210,6 +211,12 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters('auth', {
+      currentUser: 'user',
+    }),
+  },
+
   watch: {
     $route: 'fetchData',
   },
@@ -240,6 +247,10 @@ export default {
           .then(() => {
             this.setTitle()
             this.profileSubmitStatus.setDone('User profile was successfully updated!')
+
+            if (this.user.uuid === this.currentUser.uuid) {
+              this.$store.dispatch('auth/updateUser', { user: this.user })
+            }
           })
           .catch(() => this.profileSubmitStatus.setError('User profile could not be updated.'))
       }

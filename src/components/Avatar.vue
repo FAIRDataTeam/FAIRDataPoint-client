@@ -1,7 +1,7 @@
 <template>
   <div
     class="avatar"
-    :style="`background-color: ${toColor(value)}`"
+    :style="`background: ${toColor(value)}`"
     :class="{
       'avatar--smaller': smaller,
     }"
@@ -31,11 +31,15 @@ export default {
   methods: {
     toColor(value) {
       if (value === null) return '#ddd'
-      const hash = _.sum(value.split('').map(a => a.charCodeAt(0)))
-      const h = hash % 360
-      const s = 25 + (hash % 71)
-      const l = 85 + (hash % 11)
-      return `hsl(${h}, ${s}%, ${l}%)`
+      const hash = _.sum(value.split('').map(a => 43 * a.charCodeAt(0)))
+      const h1 = hash % 360
+      const s1 = 125 + (hash % 71)
+      const l1 = 85 + (hash % 11)
+      const hash2 = hash + 60
+      const h2 = hash2 % 360
+      const s2 = 125 + (hash2 % 71)
+      const l2 = 85 + (hash2 % 11)
+      return `linear-gradient(45deg, hsl(${h1}, ${s1}%, ${l1}%), hsl(${h2}, ${s2}%, ${l2}%))`
     },
   },
 }

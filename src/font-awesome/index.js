@@ -6,15 +6,21 @@ import * as fas from '@fortawesome/free-solid-svg-icons'
 
 library.add([
   far.faTrashAlt,
+  fas.faChevronDown,
+  fas.faChevronRight,
+  fas.faCog,
   fas.faDownload,
   fas.faEllipsisV,
   fas.faExternalLinkAlt,
+  fas.faProjectDiagram,
   fas.faSearch,
   fas.faSignInAlt,
   fas.faSignOutAlt,
   fas.faSpinner,
   fas.faUserEdit,
   fas.faUserFriends,
+  fas.faUserPlus,
+  fas.faUserSlash,
 ])
 
 Vue.component('fa', FontAwesomeIcon)

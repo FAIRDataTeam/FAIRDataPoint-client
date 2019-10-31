@@ -46,6 +46,10 @@
             <b-dropdown-header>
               {{ user.firstName }} {{ user.lastName }}
             </b-dropdown-header>
+            <b-dropdown-item @click="$router.push(`/my-metadata`)">
+              <fa :icon="['fas', 'project-diagram']" />
+              My Metadata
+            </b-dropdown-item>
             <b-dropdown-item
               v-if="user.role === 'ADMIN'"
               @click="$router.push(`/users/${user.uuid}`)"

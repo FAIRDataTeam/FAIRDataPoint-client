@@ -86,12 +86,20 @@ export default {
     padding: $space-md 0;
     border-bottom: $border-width-line solid $color-separator;
 
+    &:first-child {
+      padding-top: 0;
+    }
+
     &:last-child {
       border-bottom: none;
     }
 
     &--sm {
       width: 50%;
+
+      &:nth-child(2) {
+        padding-top: 0;
+      }
     }
 
     ul {

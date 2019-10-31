@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
-import Vuelidate from 'vuelidate/src'
+import Vuelidate from 'vuelidate'
+import vSelect from 'vue-select'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -10,6 +11,8 @@ Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
 Vue.use(Vuelidate)
+
+Vue.component('v-select', vSelect)
 
 new Vue({
   router,

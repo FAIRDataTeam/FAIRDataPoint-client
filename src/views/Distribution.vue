@@ -11,29 +11,31 @@
       :title="distribution.title"
     >
       <template v-slot:column>
-        <Metadata :metadata="metadata" />
-      </template>
-      <template v-slot:content>
-        <p class="description">
-          {{ distribution.description }}
-        </p>
         <p class="distribution-links">
           <a
             v-if="distribution.downloadUrl"
-            class="btn btn--with-icon btn--rounded"
+            class="btn btn-primary btn-rounded"
             :href="distribution.downloadUrl"
+            target="_blank"
           >
             <fa :icon="['fa', 'download']" />
             Download
           </a>
           <a
             v-if="distribution.accessUrl"
-            class="btn btn--with-icon btn--rounded"
+            class="btn btn-primary btn-rounded"
             :href="distribution.accessUrl"
+            target="_blank"
           >
             <fa :icon="['fa', 'external-link-alt']" />
             Access Online
           </a>
+        </p>
+        <Metadata :metadata="metadata" />
+      </template>
+      <template v-slot:content>
+        <p class="description">
+          {{ distribution.description }}
         </p>
       </template>
     </Page>
@@ -115,7 +117,7 @@ export default {
 @import "../scss/variables";
 
 .distribution-links {
-  margin-top: $space-lg;
+  margin-bottom: $space-lg;
 
   .btn {
     margin-right: $space-md;
