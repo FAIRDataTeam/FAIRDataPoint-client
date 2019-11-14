@@ -7,28 +7,28 @@
 
 ## Deployment
 
-FAIR Data Point Client is distributed as a Docker image. The only configuration needed is to provide API url (without the trailing slash) of the FDP server as a `API_URL` ENV variable when running the Docker image.
+FAIR Data Point Client is distributed as a Docker image. It is meant to be run together with the FAIR Data Point. The configuration needed is API url (without the trailing slash) of the FDP server as a `API_URL` ENV variable and host name of FDP server for proxying requests when running the Docker image.
 
-The application in the image is served on port 80.
 
-```
-$ docker run -d -p 8080:80 -e API_URL=http://api.example.com fairdata/fairdatapoint-client
-```
+You can use [Docker Compose](https://docs.docker.com/compose/) to run FDP and FDP client together:
 
-Or if you use [Docker Compose](https://docs.docker.com/compose/):
-
-```
+```yaml
 version: '3'
 services:
+    server:
+        image: faridata/fairdatapoint
+        # ... server configuration
+
     client:
         image: fairdata/fairdatapoint-client
         ports:
-            - 8080:80
+            - 80:80
         environment:
             - API_URL=http://api.example.com
+            - FDP_HOST=server  # using hostname within the Docker network
 ```
 
-> Tip: You can use a single docker-compose file to deploy both, FAIR Data Point and this client.
+> Tip: It is a good idea to run FDP and FDP client behind a reverse proxy with SSL certificates.
 
 
 ## Development
