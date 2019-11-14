@@ -5,10 +5,15 @@ function hasPermission(entity, perm) {
   return memberships.filter(p => p.code === perm).length > 0
 }
 
-export function hasWrite(entity) {
+function hasWrite(entity) {
   return hasPermission(entity, 'W')
 }
 
-export function hasCreate(entity) {
+function hasCreate(entity) {
   return hasPermission(entity, 'C')
+}
+
+export default {
+  hasWrite,
+  hasCreate,
 }

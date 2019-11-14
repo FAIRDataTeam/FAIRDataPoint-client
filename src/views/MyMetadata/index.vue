@@ -81,7 +81,7 @@
 </template>
 <script>
 import _ from 'lodash'
-import * as api from '../../api'
+import api from '../../api'
 import Avatar from '../../components/Avatar'
 import Page from '../../components/Page'
 import StatusFlash from '../../components/StatusFlash'

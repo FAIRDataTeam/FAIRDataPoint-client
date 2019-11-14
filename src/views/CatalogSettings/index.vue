@@ -2,7 +2,7 @@
   <EntitySettings :config="config" />
 </template>
 <script>
-import * as api from '../../api'
+import api from '../../api'
 import EntitySettings from '../../components/EntitySettings'
 
 export default {

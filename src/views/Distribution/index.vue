@@ -42,7 +42,7 @@
   </div>
 </template>
 <script>
-import * as api from '../../api'
+import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import Metadata from '../../components/Metadata'
 import Page from '../../components/Page'

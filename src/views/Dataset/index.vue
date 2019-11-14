@@ -38,8 +38,8 @@
 </template>
 <script>
 import moment from 'moment'
-import * as api from '../../api'
-import * as permissions from '../../utils/permissions'
+import api from '../../api'
+import permissions from '../../utils/permissions'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import ItemList from '../../components/ItemList'
 import Metadata from '../../components/Metadata'

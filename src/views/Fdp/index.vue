@@ -22,7 +22,7 @@
 </template>
 <script>
 import moment from 'moment'
-import * as api from '../../api'
+import api from '../../api'
 import ItemList from '../../components/ItemList'
 import Metadata from '../../components/Metadata'
 import Page from '../../components/Page'

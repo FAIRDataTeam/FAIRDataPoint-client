@@ -63,7 +63,7 @@
 </template>
 <script>
 import _ from 'lodash'
-import * as api from '../../api'
+import api from '../../api'
 import Page from '../../components/Page'
 import StatusFlash from '../../components/StatusFlash'
 import UserItem from '../../components/UserItem'

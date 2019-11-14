@@ -17,7 +17,7 @@
         </div>
         <div class="header__menu">
           <router-link
-            v-if="!authenticated"
+            v-if="!user"
             to="/login"
           >
             Log in

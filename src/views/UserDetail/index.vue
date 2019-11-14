@@ -165,7 +165,7 @@
 <script>
 import { required, email } from 'vuelidate/lib/validators'
 import { mapGetters } from 'vuex'
-import * as api from '../../api'
+import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import Page from '../../components/Page'
 import StatusFlash from '../../components/StatusFlash'

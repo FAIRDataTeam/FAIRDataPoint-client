@@ -116,13 +116,12 @@
 import _ from 'lodash'
 import { required } from 'vuelidate/lib/validators'
 import axios from 'axios'
-import * as api from '../../api'
+import api from '../../api'
 import Breadcrumbs from '../Breadcrumbs'
 import Page from '../Page'
 import StatusFlash from '../StatusFlash'
 import UserItem from '../UserItem'
 import Status from '../../utils/Status'
-import { fullName, sortUsers } from '../../utils/users'
 
 export default {
   name: 'EntitySettings',
@@ -209,12 +208,12 @@ export default {
     },
 
     createUsers(users, members) {
-      return sortUsers(users
+      return _.orderBy(users
         .filter(u => members.filter(m => m.user.uuid === u.uuid).length === 0)
         .map(u => ({
           ...u,
-          fullName: fullName(u),
-        })))
+          fullName: `${u.firstName} ${u.lastName}`,
+        })), ['firstName', 'lastName'], ['asc'])
     },
 
     createMemberships(memberships) {
