@@ -1,0 +1,60 @@
+@import "../../scss/variables";
+@import "../../scss/mixins";
+@import "../../scss/typography";
+
+.item {
+  @include border-radius($border-radius-default);
+  background: $color-background-highlighted;
+  margin-bottom: $space-md;
+  padding: $space-md;
+
+  &__title {
+    @include typography-primary-18-bold;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-primary-lighter;
+    }
+  }
+
+  &__description {
+    @include typography-default-16;
+    margin: $space-sm 0;
+    text-align: justify;
+  }
+
+  &__tags {
+    margin: $space-sm 0 $space-xs 0;
+
+    &__tag {
+      @include typography-primary-14;
+      @include border-radius($border-radius-full);
+      display: inline-block;
+      background: $color-background-primary;
+      padding: $space-xs $space-sm;
+      margin-bottom: $space-xs;
+      margin-right: $space-sm;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__metadata {
+    margin: 0;
+
+    dt {
+      @include typography-default-14-bold;
+      display: inline-block;
+      margin: 0;
+    }
+
+    dd {
+      @include typography-default-14;
+      display: inline-block;
+      margin: 0 $space-md 0 $space-xs;
+    }
+  }
+}

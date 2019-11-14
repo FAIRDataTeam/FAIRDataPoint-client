@@ -1,0 +1,12 @@
+@import "../../scss/mixins";
+@import "../../scss/typography";
+@import "../../scss/variables";
+
+
+.membership-badge {
+  @include typography-light-14;
+  @include border-radius($border-radius-full);
+  border: 1px solid $color-text-light;
+  display: inline-block;
+  padding: $space-xs $space-sm;
+}

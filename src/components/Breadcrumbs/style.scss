@@ -1,0 +1,57 @@
+@import "../../scss/variables";
+@import "../../scss/typography";
+@import "../../scss/mixins";
+
+.breadcrumbs {
+  @include typography-default-14;
+  width: 100%;
+  background: $color-background-highlighted;
+  height: $breadcrumbs-height;
+
+  @media (max-width: $breakpoint-small - 1px) {
+    display: none;
+  }
+
+  &__container {
+    max-width: $container-max-width;
+    padding: 0 $container-padding;
+    margin: auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+
+    ul {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+
+      li {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        max-width: 24.5%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:not(:first-child)::before {
+          content: "/";
+          margin: 0 $space-sm;
+        }
+
+        a {
+          @include typography-default-14;
+          @include transition-default(color);
+          display: inline-block;
+          text-decoration: underline;
+
+          &:hover {
+            color: $color-primary;
+          }
+        }
+      }
+    }
+  }
+}

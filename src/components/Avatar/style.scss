@@ -1,0 +1,23 @@
+@import "../../scss/typography";
+
+.avatar {
+  @include typography-default-18-semibold;
+  text-decoration: none;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 3rem;
+  background: #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &--smaller {
+    @include typography-default-16-semibold;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}

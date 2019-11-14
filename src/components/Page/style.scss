@@ -1,0 +1,62 @@
+@import "../../scss/variables";
+@import "../../scss/typography";
+
+
+.page {
+  width: 100%;
+  max-width: $container-max-width;
+  padding: 0 $container-padding;
+  margin: auto;
+  box-sizing: border-box;
+
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+  }
+
+  &__content-wrapper {
+    @media (min-width: $breakpoint-small) {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: space-between;
+    }
+  }
+
+  &__column {
+    @media (min-width: $breakpoint-small) {
+      width: 32%;
+    }
+  }
+
+  &__content {
+    @media (min-width: $breakpoint-small) {
+      width: 63%;
+    }
+
+    .description {
+      @include typography-default-18;
+      margin: 0;
+      text-align: justify;
+
+      @media (max-width: $breakpoint-small - 1px) {
+        margin: $space-lg 0;
+      }
+    }
+  }
+
+  &--content-only {
+    .page__content {
+      width: 100%;
+    }
+  }
+
+  &--small {
+    max-width: $container-small-max-width;
+  }
+}

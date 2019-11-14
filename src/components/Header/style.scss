@@ -1,0 +1,113 @@
+@import "../../scss/variables";
+@import "../../scss/mixins";
+@import "../../scss/typography";
+
+.header {
+  width: 100%;
+  height: $header-height;
+
+  &__container {
+    max-width: $container-max-width;
+    padding: 0 $container-padding;
+    margin: auto;
+    height: $header-height - $separator-colorful-height;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__fdp-name {
+    @include typography-primary-32-bold;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: $header-logo-width + $header-logo-indent;
+    background: url($header-logo-url) left center no-repeat;
+    background-size: $header-logo-width $header-logo-height;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-primary;
+      text-decoration: none;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__menu {
+    margin-left: $space-md;
+
+    & > a {
+      @include typography-default-16-semibold;
+      white-space: nowrap;
+      text-decoration: none;
+
+      &:not(:last-child) {
+        margin-right: $space-md;
+      }
+
+      &:hover {
+        color: $color-primary !important;
+      }
+    }
+
+    .dropdown {
+      .btn-link {
+        text-decoration: none !important;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+          text-decoration: none !important;
+        }
+      }
+
+      .dropdown-menu {
+        min-width: 17rem;
+
+        svg {
+          min-width: 1.5rem;
+        }
+      }
+    }
+  }
+
+  &__search-field {
+    @include border-radius($border-radius-full);
+    background: $color-background-highlighted;
+    width: $header-search-width;
+    height: $header-search-height;
+    position: relative;
+
+    @media (max-width: $breakpoint-small - 1px) {
+      display: none;
+    }
+
+    .svg-inline--fa {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      margin-top: -8px;
+      color: $color-text-lighter;
+    }
+
+    input {
+      @include typography-default-16;
+      border: none;
+      width: 100%;
+      padding: 0 $header-search-input-padding-right 0 $header-search-input-padding-left;
+      height: 100%;
+      outline: none;
+      background: none;
+      box-sizing: border-box;
+
+      &::placeholder {
+        @include typography-light-16;
+      }
+    }
+  }
+}

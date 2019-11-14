@@ -1,0 +1,27 @@
+@import "../../scss/variables";
+@import "../../scss/mixins";
+@import "../../scss/typography";
+
+.login {
+  h1 {
+    @include typography-default-32-bold;
+  }
+
+  @include border-radius($border-radius-default);
+  width: 100%;
+  max-width: 20rem;
+  margin: 4rem auto;
+  padding: $space-md;
+
+  .status-flash + .form {
+    margin-top: $space-md;
+  }
+
+  .btn {
+    svg {
+      &.fa-spinner {
+        margin-right: 0 !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+@import "../../scss/variables";
+
+.footer {
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-end;
+
+  &__inner {
+    width: 100%;
+    margin-top: $footer-margin-top;
+    border-top: $border-width-line solid $color-separator;
+  }
+
+  &__container {
+    max-width: $container-max-width;
+    min-height: $footer-min-height;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin: auto;
+    padding: 0 $container-padding;
+  }
+}
