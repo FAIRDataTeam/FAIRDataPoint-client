@@ -30,6 +30,22 @@
       color: $color-primary;
       text-decoration: none;
     }
+
+    &__title {
+      &--full {
+        display: none;
+        @media (min-width: $breakpoint-small) {
+          display: inline;
+        }
+      }
+
+      &--short {
+        display: inline;
+        @media (min-width: $breakpoint-small) {
+          display: none;
+        }
+      }
+    }
   }
 
   &__nav {

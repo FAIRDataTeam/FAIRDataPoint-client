@@ -4,6 +4,24 @@
       title="My Metadata"
       content-only
     >
+      <template v-slot:actions>
+        <a
+          href="#"
+          class="btn btn-link"
+          @click.prevent="expandAll"
+        >
+          <fa :icon="['fas', 'angle-double-down']" />
+          Expand all
+        </a>
+        <a
+          href="#"
+          class="btn btn-link"
+          @click.prevent="collapseAll"
+        >
+          <fa :icon="['fas', 'angle-double-up']" />
+          Collapse all
+        </a>
+      </template>
       <template v-slot:content>
         <StatusFlash :status="status" />
         <div
@@ -51,6 +69,17 @@
                 :key="dataset.identifier"
                 class="item-list__item"
               >
+                <a
+                  v-if="dataset.distributions.length > 0"
+                  class="item-list__item__control"
+                  @click.prevent="toggleOpen(dataset)"
+                >
+                  <fa :icon="['fas', dataset.open ? 'chevron-down' : 'chevron-right']" />
+                </a>
+                <span
+                  v-else
+                  class="item-list__item__control"
+                />
                 <Avatar
                   :initials="dataset.title[0]"
                   :value="dataset.identifier"
@@ -65,6 +94,33 @@
                 </div>
                 <div class="item-list__item__actions">
                   <MembershipBadge :entity="dataset" />
+                </div>
+
+                <div
+                  v-if="dataset.open"
+                  class="item-list"
+                >
+                  <div
+                    v-for="distribution in sortByTitle(dataset.distributions)"
+                    :key="distribution.identifier"
+                    class="item-list__item"
+                  >
+                    <Avatar
+                      :initials="distribution.title[0]"
+                      :value="distribution.identifier"
+                      smaller
+                    />
+                    <div class="item-list__item__content">
+                      <div class="item-list__item__content__row">
+                        <router-link :to="`/fdp/distribution/${distribution.identifier}`">
+                          {{ distribution.title }}
+                        </router-link>
+                      </div>
+                    </div>
+                    <div class="item-list__item__actions">
+                      <MembershipBadge :entity="distribution" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -113,7 +169,7 @@ export default {
       try {
         this.status.setPending()
 
-        const response = await api.getDashboard()
+        const response = await api.fdp.getFdpDashboard()
         this.dashboard = response.data
         this.status.setDone()
       } catch (error) {
@@ -121,10 +177,28 @@ export default {
       }
     },
 
-    toggleOpen(catalog) {
+    toggleOpen(entity) {
+      this.changeOpen(current => (
+        current.identifier === entity.identifier ? !current.open : current.open
+      ))
+    },
+
+    expandAll() {
+      this.changeOpen(() => true)
+    },
+
+    collapseAll() {
+      this.changeOpen(() => false)
+    },
+
+    changeOpen(f) {
       this.dashboard = this.dashboard.map(c => ({
         ...c,
-        open: c.identifier === catalog.identifier ? !c.open : c.open,
+        open: f(c),
+        datasets: c.datasets.map(d => ({
+          ...d,
+          open: f(d),
+        })),
       }))
     },
 

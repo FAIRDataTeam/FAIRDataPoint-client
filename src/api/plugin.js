@@ -4,7 +4,6 @@ import request from './request'
 const createRequestInterceptor = (store) => {
   request.interceptors.request.use((oldConfig) => {
     const config = { ...oldConfig }
-    config.headers.common.Accept = 'application/json'
 
     const token = store.getters['auth/token']
     if (token) {
@@ -16,8 +15,19 @@ const createRequestInterceptor = (store) => {
 }
 
 
+const createResponseInterceptor = (store) => {
+  request.interceptors.response.use(null, async (error) => {
+    const { status } = error.response
+    if (status === 401) {
+      store.dispatch('auth/logout')
+    }
+  })
+}
+
+
 const plugin = (store) => {
   createRequestInterceptor(store)
+  createResponseInterceptor(store)
 }
 
 export default plugin

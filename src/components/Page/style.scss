@@ -10,14 +10,24 @@
   box-sizing: border-box;
 
   &__title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @media (min-width: $breakpoint-small) {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   }
 
   &__actions {
     display: flex;
     align-items: center;
+
+    @media (max-width: $breakpoint-small - 1) {
+      margin-bottom: $space-lg;
+    }
+
+    .membership-badge {
+      margin-right: 0.75rem;
+    }
   }
 
   &__content-wrapper {

@@ -33,12 +33,22 @@
     margin-bottom: $space-lg;
 
     label {
-      @include typography-default-14-semibold;
+      @include typography-default-14;
       display: block;
       margin-bottom: $space-xs;
+
+      &.required {
+        @include typography-default-14-bold;
+      }
     }
 
-    & > input, & > select {
+    &__input-item {
+      margin-bottom: $space-sm;
+    }
+
+    & > input, &__input-item input,
+    & > select,
+    & > textarea {
       @include typography-default-18;
       padding: $space-xs 0;
       width: 100%;
@@ -48,8 +58,23 @@
       outline: none;
     }
 
-    input::placeholder {
+    &__xor-options {
+      display: flex;
+
+      label {
+        @include typography-default-14;
+        cursor: pointer;
+        margin-right: $space-md;
+      }
+    }
+
+    input::placeholder, textarea::placeholder {
       color: $color-text-light;
+    }
+
+    textarea {
+      min-height: 4rem;
+      height: 6rem;
     }
 
     select {
@@ -72,12 +97,8 @@
       display: none;
     }
 
-    &--error {
-      label {
-        color: $color-danger;
-      }
-
-      & > input , .v-select {
+    &--error, &__input-item--error {
+      & > input, .v-select {
         border-bottom-color: $color-danger;
       }
 

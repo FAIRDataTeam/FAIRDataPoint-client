@@ -6,10 +6,13 @@ import * as fas from '@fortawesome/free-solid-svg-icons'
 
 library.add([
   far.faTrashAlt,
+  fas.faAngleDoubleDown,
+  fas.faAngleDoubleUp,
   fas.faChevronDown,
   fas.faChevronRight,
   fas.faCog,
   fas.faDownload,
+  fas.faEdit,
   fas.faEllipsisV,
   fas.faExternalLinkAlt,
   fas.faProjectDiagram,
@@ -17,6 +20,7 @@ library.add([
   fas.faSignInAlt,
   fas.faSignOutAlt,
   fas.faSpinner,
+  fas.faTimes,
   fas.faUserEdit,
   fas.faUserFriends,
   fas.faUserPlus,

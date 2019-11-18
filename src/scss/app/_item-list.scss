@@ -71,7 +71,7 @@
           border-bottom: none;
 
           &::after {
-            height: 50%;
+            height: 2.25rem;
             top: 0;
           }
         }
@@ -84,7 +84,7 @@
 
         &::before {
           border-top: 3px solid $color-text-light;
-          top: 50%;
+          top: 2.25rem;
           width: 1rem;
           height: 0;
         }

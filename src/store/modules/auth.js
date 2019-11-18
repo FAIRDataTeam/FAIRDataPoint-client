@@ -15,6 +15,7 @@ export default {
     authenticated: state => state.session !== null,
     user: state => _.get(state.session, 'user'),
     role: state => _.get(state.session, 'user.role'),
+    isAdmin: state => _.get(state.session, 'user.role') === 'ADMIN',
     token: state => _.get(state, 'session.token'),
   },
 
@@ -22,9 +23,9 @@ export default {
     async authenticate({ commit }, { email, password, successCallback }) {
       try {
         commit('setLoginStatus', { status: Status.PENDING })
-        const response = await api.fetchToken(email, password)
+        const response = await api.tokens.fetchToken(email, password)
         commit('setSession', { user: null, token: response.data.token })
-        const userResponse = await api.getUserCurrent()
+        const userResponse = await api.users.getUserCurrent()
         commit('setLoginStatus', { status: Status.DEFAULT })
 
         const session = { user: userResponse.data, token: response.data.token }

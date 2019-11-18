@@ -13,7 +13,15 @@
       <template v-slot:actions>
         <MembershipBadge :entity="catalog" />
         <router-link
-          v-if="permissions.hasWrite(catalog)"
+          v-if="isAdmin || permissions.hasWrite(catalog)"
+          class="btn btn-link"
+          :to="`/fdp/catalog/${catalog.identifier}/edit`"
+        >
+          <fa :icon="['fas', 'edit']" />
+          Edit
+        </router-link>
+        <router-link
+          v-if="isAdmin || permissions.hasWrite(catalog)"
           class="btn btn-link"
           :to="`/fdp/catalog/${catalog.identifier}/settings`"
         >
@@ -38,6 +46,7 @@
 </template>
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 import api from '../../api'
 import permissions from '../../utils/permissions'
 import Breadcrumbs from '../../components/Breadcrumbs'
@@ -48,7 +57,7 @@ import StatusFlash from '../../components/StatusFlash'
 import Status from '../../utils/Status'
 import metadata from '../../utils/metadata'
 import MembershipBadge from '../../components/MembershipBadge'
-
+import breadcrumbs from '../../utils/breadcrumbs'
 
 export default {
   name: 'Catalog',
@@ -73,6 +82,12 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters('auth', {
+      isAdmin: 'isAdmin',
+    }),
+  },
+
   watch: {
     $route: 'fetchData',
   },
@@ -86,11 +101,11 @@ export default {
       try {
         this.status.setPending()
 
-        const response = await api.getCatalog(this.$route.params.id)
+        const response = await api.catalog.getCatalog(this.$route.params.id)
         this.catalog = response.data
         this.metadata = this.createMetadata(this.catalog)
         this.datasets = this.createDatasets(this.catalog)
-        this.breadcrumbs = this.createBreadcrumbs(this.catalog)
+        this.breadcrumbs = breadcrumbs.fromLinks(this.catalog.links)
         this.status.setDone()
       } catch (error) {
         this.status.setError('Unable to get catalog data.')
@@ -117,13 +132,6 @@ export default {
           metadata.fromField('Modified:', moment(dataset.modified).format('DD-MM-Y')),
         ],
       }))
-    },
-
-    createBreadcrumbs(catalog) {
-      return [{
-        label: catalog.links.repository.label,
-        to: '/fdp',
-      }]
     },
   },
 }

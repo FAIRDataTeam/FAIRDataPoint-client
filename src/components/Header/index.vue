@@ -5,7 +5,12 @@
         to="/"
         class="header__fdp-name"
       >
-        FAIR Data Point
+        <span class="header__fdp-name__title--full">
+          FAIR Data Point
+        </span>
+        <span class="header__fdp-name__title--short">
+          FDP
+        </span>
       </router-link>
       <div class="header__nav">
         <div class="header__search-field">
