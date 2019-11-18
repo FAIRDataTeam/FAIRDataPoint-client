@@ -93,22 +93,26 @@ export default {
   },
 
   methods: {
-    fetchData() {
-      this.status.setPending()
+    async fetchData() {
+      try {
+        this.status.setPending()
 
-      api.getUsers()
-        .then((response) => {
-          this.users = _.orderBy(response.data, ['firstName', 'lastName'], ['asc'])
-          this.status.setDone()
-        })
-        .catch(() => this.status.setError('Unable to get users.'))
+        const response = await api.getUsers()
+        this.users = _.orderBy(response.data, ['firstName', 'lastName'], ['asc'])
+        this.status.setDone()
+      } catch (error) {
+        this.status.setError('Unable to get users.')
+      }
     },
 
-    deleteUser(user) {
+    async deleteUser(user) {
       if (window.confirm(`Are you sure you want to delete ${user.firstName} ${user.lastName}?`)) {
-        api.deleteUser(user)
-          .then(() => this.fetchData())
-          .catch(() => this.status.setError('Unable to delete users.'))
+        try {
+          await api.deleteUser(user)
+          this.fetchData()
+        } catch (error) {
+          this.status.setError('Unable to delete users.')
+        }
       }
     },
   },

@@ -80,18 +80,19 @@ export default {
   },
 
   methods: {
-    fetchData() {
-      this.status.setPending()
+    async fetchData() {
+      try {
+        this.status.setPending()
 
-      api.getDataset(this.$route.params.id)
-        .then((response) => {
-          this.dataset = response.data
-          this.metadata = this.createMetadata(this.dataset)
-          this.distributions = this.createDistributions(this.dataset)
-          this.breadcrumbs = this.createBreadcrumbs(this.dataset)
-          this.status.setDone()
-        })
-        .catch(() => this.status.setError('Unable to get dataset data.'))
+        const response = await api.getDataset(this.$route.params.id)
+        this.dataset = response.data
+        this.metadata = this.createMetadata(this.dataset)
+        this.distributions = this.createDistributions(this.dataset)
+        this.breadcrumbs = this.createBreadcrumbs(this.dataset)
+        this.status.setDone()
+      } catch (error) {
+        this.status.setError('Unable to get dataset data.')
+      }
     },
 
     createMetadata(dataset) {

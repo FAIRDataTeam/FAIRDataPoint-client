@@ -49,8 +49,10 @@ import Status from '../../utils/Status'
 import metadata from '../../utils/metadata'
 import MembershipBadge from '../../components/MembershipBadge'
 
+
 export default {
   name: 'Catalog',
+
   components: {
     MembershipBadge,
     StatusFlash,
@@ -80,18 +82,19 @@ export default {
   },
 
   methods: {
-    fetchData() {
-      this.status.setPending()
+    async fetchData() {
+      try {
+        this.status.setPending()
 
-      api.getCatalog(this.$route.params.id)
-        .then((response) => {
-          this.catalog = response.data
-          this.metadata = this.createMetadata(this.catalog)
-          this.datasets = this.createDatasets(this.catalog)
-          this.breadcrumbs = this.createBreadcrumbs(this.catalog)
-          this.status.setDone()
-        })
-        .catch(() => this.status.setError('Unable to get catalog data.'))
+        const response = await api.getCatalog(this.$route.params.id)
+        this.catalog = response.data
+        this.metadata = this.createMetadata(this.catalog)
+        this.datasets = this.createDatasets(this.catalog)
+        this.breadcrumbs = this.createBreadcrumbs(this.catalog)
+        this.status.setDone()
+      } catch (error) {
+        this.status.setError('Unable to get catalog data.')
+      }
     },
 
     createMetadata(catalog) {

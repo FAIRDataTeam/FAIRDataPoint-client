@@ -77,17 +77,18 @@ export default {
   },
 
   methods: {
-    fetchData() {
-      this.status.setPending()
+    async fetchData() {
+      try {
+        this.status.setPending()
 
-      api.getDistribution(this.$route.params.id)
-        .then((response) => {
-          this.distribution = response.data
-          this.metadata = this.createMetadata(this.distribution)
-          this.breadcrumbs = this.createBreadcrumbs(this.distribution)
-          this.status.setDone()
-        })
-        .catch(() => this.status.setError('Unable to get distribution data.'))
+        const response = await api.getDistribution(this.$route.params.id)
+        this.distribution = response.data
+        this.metadata = this.createMetadata(this.distribution)
+        this.breadcrumbs = this.createBreadcrumbs(this.distribution)
+        this.status.setDone()
+      } catch (error) {
+        this.status.setError('Unable to get distribution data.')
+      }
     },
 
     createMetadata(distribution) {

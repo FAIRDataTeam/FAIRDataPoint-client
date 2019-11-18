@@ -176,35 +176,35 @@ export default {
   },
 
   methods: {
-    fetchData() {
-      this.status.setPending()
+    async fetchData() {
+      try {
+        this.status.setPending()
 
-      const requests = [
-        this.config.getEntity(this.entityId),
-        this.config.getEntityMembers(this.entityId),
-        api.getUsers(),
-        api.getMemberships(),
-      ]
+        const requests = [
+          this.config.getEntity(this.entityId),
+          this.config.getEntityMembers(this.entityId),
+          api.getUsers(),
+          api.getMemberships(),
+        ]
 
-      axios.all(requests)
-        .then(([entity, members, users, memberships]) => {
-          this.entity = entity.data
-          this.members = _.orderBy(members.data, ['user.firstName', 'user.lastName'], ['asc'])
-          this.users = this.createUsers(users.data, this.members)
+        const [entity, members, users, memberships] = await axios.all(requests)
 
-          this.memberships = this.createMemberships(memberships.data)
-          this.inviteForm.membershipUuid = _.get(this.memberships, '0.uuid')
+        this.entity = entity.data
+        this.members = _.orderBy(members.data, ['user.firstName', 'user.lastName'], ['asc'])
+        this.users = this.createUsers(users.data, this.members)
 
-          this.breadcrumbs = this.config.createBreadcrumbs(this.entity)
-          this.status.setDone()
-        })
-        .catch((error) => {
-          if (_.get(error, 'response.status') === 403) {
-            this.$router.replace(`/fdp/${this.config.entityType.toLowerCase()}/${this.entityId}`)
-          } else {
-            this.status.setErrorFromResponse(error, 'Unable to get data.')
-          }
-        })
+        this.memberships = this.createMemberships(memberships.data)
+        this.inviteForm.membershipUuid = _.get(this.memberships, '0.uuid')
+
+        this.breadcrumbs = this.config.createBreadcrumbs(this.entity)
+        this.status.setDone()
+      } catch (error) {
+        if (_.get(error, 'response.status') === 403) {
+          this.$router.replace(`/fdp/${this.config.entityType.toLowerCase()}/${this.entityId}`)
+        } else {
+          this.status.setErrorFromResponse(error, 'Unable to get data.')
+        }
+      }
     },
 
     createUsers(users, members) {
@@ -220,40 +220,49 @@ export default {
       return memberships.filter(m => _.includes(m.allowedEntities, this.config.entityType))
     },
 
-    submitInvite() {
+    async submitInvite() {
       if (this.inviteForm.userUuid !== null && this.inviteForm.membershipUuid !== null) {
-        this.inviteStatus.setPending()
-        this.config.putEntityMember(
-          this.$route.params.id,
-          this.inviteForm.userUuid,
-          this.inviteForm.membershipUuid,
-        )
-          .then(() => {
-            this.inviteStatus.setStatus(Status.DEFAULT)
-            this.inviteForm = {
-              userUuid: null,
-              membershipUuid: null,
-            }
-            this.entity = null
-            this.fetchData()
-          })
-          .catch(error => this.inviteStatus.setErrorFromResponse(error, 'User could not be invited.'))
+        try {
+          this.inviteStatus.setPending()
+          await this.config.putEntityMember(
+            this.$route.params.id,
+            this.inviteForm.userUuid,
+            this.inviteForm.membershipUuid,
+          )
+
+          this.inviteStatus.setStatus(Status.DEFAULT)
+          this.inviteForm = {
+            userUuid: null,
+            membershipUuid: null,
+          }
+          this.entity = null
+          this.fetchData()
+        } catch (error) {
+          this.inviteStatus.setErrorFromResponse(error, 'User could not be invited.')
+        }
       }
     },
 
-    updateMember(userUuid, membershipUuid) {
-      this.config.putEntityMember(this.entityId, userUuid, membershipUuid)
-        .then(() => this.fetchData())
-        .catch(error => this.status.setErrorFromResponse(error, 'Unable to update user membership.'))
+    async updateMember(userUuid, membershipUuid) {
+      try {
+        await this.config.putEntityMember(this.entityId, userUuid, membershipUuid)
+        this.fetchData()
+      } catch (error) {
+        this.status.setErrorFromResponse(error, 'Unable to update user membership.')
+      }
     },
 
-    removeMember(user) {
+    async removeMember(user) {
       if (window.confirm(`Are you sure you want to remove ${user.firstName} ${user.lastName}?`)) {
-        this.config.deleteEntityMember(this.entityId, user.uuid)
-          .then(() => this.fetchData())
-          .catch(error => this.status.setErrorFromResponse(error, 'Unable to remove user.'))
+        try {
+          await this.config.deleteEntityMember(this.entityId, user.uuid)
+          this.fetchData()
+        } catch (error) {
+          this.status.setErrorFromResponse(error, 'Unable to remove user.')
+        }
       }
     },
-  },
+  }
+  ,
 }
 </script>
