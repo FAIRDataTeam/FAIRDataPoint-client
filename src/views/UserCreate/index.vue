@@ -187,16 +187,17 @@ export default {
   },
 
   methods: {
-    submit() {
+    async submit() {
       this.$v.user.$touch()
 
       if (!this.$v.user.$invalid) {
         this.profileSubmitStatus.setPending()
-        api.postUser(this.user)
-          .then(() => {
-            this.$router.replace('/users')
-          })
-          .catch(error => this.profileSubmitStatus.setErrorFromResponse(error, 'User profile could not be created.'))
+        try {
+          await api.postUser(this.user)
+          await this.$router.replace('/users')
+        } catch (error) {
+          this.profileSubmitStatus.setErrorFromResponse(error, 'User profile could not be created.')
+        }
       }
     },
   },

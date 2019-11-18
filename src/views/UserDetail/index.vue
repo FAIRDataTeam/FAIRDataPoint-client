@@ -226,44 +226,49 @@ export default {
   },
 
   methods: {
-    fetchData() {
-      this.status.setPending()
+    async fetchData() {
+      try {
+        this.status.setPending()
 
-      api.getUser(this.$route.params.id)
-        .then((response) => {
-          this.user = response.data
-          this.setTitle()
-          this.status.setDone()
-        })
-        .catch(() => this.status.setError('Unable to get user profile.'))
-    },
-
-    submitProfile() {
-      this.$v.user.$touch()
-
-      if (!this.$v.user.$invalid) {
-        this.profileSubmitStatus.setPending()
-        api.putUser(this.user)
-          .then(() => {
-            this.setTitle()
-            this.profileSubmitStatus.setDone('User profile was successfully updated!')
-
-            if (this.user.uuid === this.currentUser.uuid) {
-              this.$store.dispatch('auth/updateUser', { user: this.user })
-            }
-          })
-          .catch(() => this.profileSubmitStatus.setError('User profile could not be updated.'))
+        const response = await api.getUser(this.$route.params.id)
+        this.user = response.data
+        this.setTitle()
+        this.status.setDone()
+      } catch (error) {
+        this.status.setError('Unable to get user profile.')
       }
     },
 
-    submitPassword() {
+    async submitProfile() {
+      this.$v.user.$touch()
+
+      if (!this.$v.user.$invalid) {
+        try {
+          this.profileSubmitStatus.setPending()
+          await api.putUser(this.user)
+          this.setTitle()
+          this.profileSubmitStatus.setDone('User profile was successfully updated!')
+
+          if (this.user.uuid === this.currentUser.uuid) {
+            await this.$store.dispatch('auth/updateUser', { user: this.user })
+          }
+        } catch (error) {
+          this.profileSubmitStatus.setError('User profile could not be updated.')
+        }
+      }
+    },
+
+    async submitPassword() {
       this.$v.passwordForm.$touch()
 
       if (!this.$v.passwordForm.$invalid) {
-        this.passwordSubmitStatus.setPending()
-        api.putUserPassword(this.user, this.passwordForm.password)
-          .then(() => this.passwordSubmitStatus.setDone('Password was successfully updated!'))
-          .catch(() => this.passwordSubmitStatus.setError('Password could not be updated.'))
+        try {
+          this.passwordSubmitStatus.setPending()
+          await api.putUserPassword(this.user, this.passwordForm.password)
+          this.passwordSubmitStatus.setDone('Password was successfully updated!')
+        } catch (error) {
+          this.passwordSubmitStatus.setError('Password could not be updated.')
+        }
       }
     },
 

@@ -19,28 +19,22 @@ export default {
   },
 
   actions: {
-    authenticate({ commit }, { email, password, successCallback }) {
-      commit('setLoginStatus', { status: Status.PENDING })
-      api.fetchToken(email, password)
-        .then((response) => {
-          commit('setSession', { user: null, token: response.data.token })
+    async authenticate({ commit }, { email, password, successCallback }) {
+      try {
+        commit('setLoginStatus', { status: Status.PENDING })
+        const response = await api.fetchToken(email, password)
+        commit('setSession', { user: null, token: response.data.token })
+        const userResponse = await api.getUserCurrent()
+        commit('setLoginStatus', { status: Status.DEFAULT })
 
-          api.getUserCurrent()
-            .then((userResponse) => {
-              commit('setLoginStatus', { status: Status.DEFAULT })
-              const session = { user: userResponse.data, token: response.data.token }
-              commit('setSession', session)
-              localStorage.saveSession(session)
-              successCallback()
-            })
-            .catch(() => {
-              commit('setSession', null)
-              commit('setLoginStatus', { status: Status.ERROR, msg: 'Login failed' })
-            })
-        })
-        .catch(() => {
-          commit('setLoginStatus', { status: Status.ERROR, msg: 'Login failed' })
-        })
+        const session = { user: userResponse.data, token: response.data.token }
+        commit('setSession', session)
+        localStorage.saveSession(session)
+        successCallback()
+      } catch (error) {
+        commit('setSession', null)
+        commit('setLoginStatus', { status: Status.ERROR, msg: 'Login failed' })
+      }
     },
 
     updateUser({ commit, state }, { user }) {

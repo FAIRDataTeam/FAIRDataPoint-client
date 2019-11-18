@@ -58,17 +58,18 @@ export default {
   },
 
   methods: {
-    fetchData() {
-      this.status.setPending()
+    async fetchData() {
+      try {
+        this.status.setPending()
 
-      api.getFdp()
-        .then((response) => {
-          this.fdp = response.data
-          this.metadata = this.createMetadata(this.fdp)
-          this.catalogs = this.createCatalogs(this.fdp)
-          this.status.setDone()
-        })
-        .catch(() => this.status.setError('Unable to get FDP data.'))
+        const response = await api.getFdp()
+        this.fdp = response.data
+        this.metadata = this.createMetadata(this.fdp)
+        this.catalogs = this.createCatalogs(this.fdp)
+        this.status.setDone()
+      } catch (error) {
+        this.status.setError('Unable to get FDP data.')
+      }
     },
 
     createMetadata(fdp) {

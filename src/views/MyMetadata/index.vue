@@ -109,15 +109,16 @@ export default {
   },
 
   methods: {
-    fetchData() {
-      this.status.setPending()
+    async fetchData() {
+      try {
+        this.status.setPending()
 
-      api.getDashboard()
-        .then((response) => {
-          this.dashboard = response.data
-          this.status.setDone()
-        })
-        .catch(error => this.status.setErrorFromResponse(error, 'Unable to load dashboard.'))
+        const response = await api.getDashboard()
+        this.dashboard = response.data
+        this.status.setDone()
+      } catch (error) {
+        this.status.setErrorFromResponse(error, 'Unable to load dashboard.')
+      }
     },
 
     toggleOpen(catalog) {
