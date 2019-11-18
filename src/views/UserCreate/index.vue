@@ -139,7 +139,7 @@
   </div>
 </template>
 <script>
-import { required, email } from 'vuelidate/lib/validators'
+import { email, required } from 'vuelidate/lib/validators'
 import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import Page from '../../components/Page'
@@ -193,7 +193,7 @@ export default {
       if (!this.$v.user.$invalid) {
         this.profileSubmitStatus.setPending()
         try {
-          await api.postUser(this.user)
+          await api.users.postUser(this.user)
           await this.$router.replace('/users')
         } catch (error) {
           this.profileSubmitStatus.setErrorFromResponse(error, 'User profile could not be created.')

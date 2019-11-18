@@ -4,13 +4,14 @@
       {{ title }}
     </h2>
     <Item
-      v-for="(item, index) in items"
+      v-for="(item, index) in sortByTitle(items)"
       :key="index"
       :item="item"
     />
   </div>
 </template>
 <script>
+import _ from 'lodash'
 import Item from '../Item'
 
 export default {
@@ -24,6 +25,11 @@ export default {
     items: {
       type: Array,
       required: true,
+    },
+  },
+  methods: {
+    sortByTitle(list) {
+      return _.orderBy(list, ['title'], ['asc'])
     },
   },
 }

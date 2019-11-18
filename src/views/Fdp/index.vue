@@ -3,8 +3,18 @@
     <StatusFlash :status="status" />
     <Page
       v-if="fdp !== null"
-      class="mt-5"
+      :title="fdp.title"
     >
+      <template v-slot:actions>
+        <router-link
+          v-if="isAdmin"
+          class="btn btn-link"
+          :to="`/fdp/edit`"
+        >
+          <fa :icon="['fas', 'edit']" />
+          Edit
+        </router-link>
+      </template>
       <template v-slot:column>
         <Metadata :metadata="metadata" />
       </template>
@@ -22,6 +32,7 @@
 </template>
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 import api from '../../api'
 import ItemList from '../../components/ItemList'
 import Metadata from '../../components/Metadata'
@@ -49,6 +60,12 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters('auth', {
+      isAdmin: 'isAdmin',
+    }),
+  },
+
   watch: {
     $route: 'fetchData',
   },
@@ -62,7 +79,7 @@ export default {
       try {
         this.status.setPending()
 
-        const response = await api.getFdp()
+        const response = await api.fdp.getFdp()
         this.fdp = response.data
         this.metadata = this.createMetadata(this.fdp)
         this.catalogs = this.createCatalogs(this.fdp)

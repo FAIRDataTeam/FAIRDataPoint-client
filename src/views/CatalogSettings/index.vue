@@ -4,6 +4,7 @@
 <script>
 import api from '../../api'
 import EntitySettings from '../../components/EntitySettings'
+import breadcrumbs from '../../utils/breadcrumbs'
 
 export default {
   name: 'CatalogSettings',
@@ -11,20 +12,12 @@ export default {
   data() {
     return {
       config: {
-        getEntity: api.getCatalog,
-        getEntityMembers: api.getCatalogMembers,
-        putEntityMember: api.putCatalogMember,
-        deleteEntityMember: api.deleteCatalogMember,
+        getEntity: api.catalog.getCatalog,
+        getEntityMembers: api.catalog.getCatalogMembers,
+        putEntityMember: api.catalog.putCatalogMember,
+        deleteEntityMember: api.catalog.deleteCatalogMember,
         entityType: 'CATALOG',
-        createBreadcrumbs(catalog) {
-          return [{
-            label: catalog.links.repository.label,
-            to: '/fdp',
-          }, {
-            label: catalog.title,
-            to: `/fdp/catalog/${catalog.identifier}`,
-          }]
-        },
+        createBreadcrumbs: breadcrumbs.fromLinksWithCatalog,
       },
     }
   },

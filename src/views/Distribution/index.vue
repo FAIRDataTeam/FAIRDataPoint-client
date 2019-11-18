@@ -10,6 +10,25 @@
       v-if="distribution !== null"
       :title="distribution.title"
     >
+      <template v-slot:actions>
+        <MembershipBadge :entity="distribution" />
+        <router-link
+          v-if="isAdmin || permissions.hasWrite(distribution)"
+          class="btn btn-link"
+          :to="`/fdp/distribution/${distribution.identifier}/edit`"
+        >
+          <fa :icon="['fas', 'edit']" />
+          Edit
+        </router-link>
+        <router-link
+          v-if="isAdmin || permissions.hasWrite(distribution)"
+          class="btn btn-link"
+          :to="`/fdp/distribution/${distribution.identifier}/settings`"
+        >
+          <fa :icon="['fas', 'cog']" />
+          Settings
+        </router-link>
+      </template>
       <template v-slot:column>
         <p class="distribution-links">
           <a
@@ -42,17 +61,23 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs'
+import MembershipBadge from '../../components/MembershipBadge/index'
 import Metadata from '../../components/Metadata'
 import Page from '../../components/Page'
 import StatusFlash from '../../components/StatusFlash'
 import Status from '../../utils/Status'
 import metadata from '../../utils/metadata'
+import breadcrumbs from '../../utils/breadcrumbs'
+import permissions from '../../utils/permissions'
+
 
 export default {
   name: 'Distribution',
   components: {
+    MembershipBadge,
     StatusFlash,
     Breadcrumbs,
     Metadata,
@@ -65,7 +90,14 @@ export default {
       metadata: null,
       breadcrumbs: null,
       status: new Status(),
+      permissions,
     }
+  },
+
+  computed: {
+    ...mapGetters('auth', {
+      isAdmin: 'isAdmin',
+    }),
   },
 
   watch: {
@@ -81,10 +113,10 @@ export default {
       try {
         this.status.setPending()
 
-        const response = await api.getDistribution(this.$route.params.id)
+        const response = await api.distribution.getDistribution(this.$route.params.id)
         this.distribution = response.data
         this.metadata = this.createMetadata(this.distribution)
-        this.breadcrumbs = this.createBreadcrumbs(this.distribution)
+        this.breadcrumbs = breadcrumbs.fromLinks(this.distribution.links)
         this.status.setDone()
       } catch (error) {
         this.status.setError('Unable to get distribution data.')
@@ -97,19 +129,6 @@ export default {
         metadata.fromField('Media Type', distribution.mediaType),
         metadata.rdfLinks(distribution.uri),
       ]
-    },
-
-    createBreadcrumbs(distribution) {
-      return [{
-        label: distribution.links.repository.label,
-        to: '/fdp',
-      }, {
-        label: distribution.links.catalog.label,
-        to: `/fdp/catalog/${distribution.links.catalog.identifier}`,
-      }, {
-        label: distribution.links.dataset.label,
-        to: `/fdp/dataset/${distribution.links.dataset.identifier}`,
-      }]
     },
   },
 }

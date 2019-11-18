@@ -13,7 +13,15 @@
       <template v-slot:actions>
         <MembershipBadge :entity="dataset" />
         <router-link
-          v-if="permissions.hasWrite(dataset)"
+          v-if="isAdmin || permissions.hasWrite(dataset)"
+          class="btn btn-link"
+          :to="`/fdp/dataset/${dataset.identifier}/edit`"
+        >
+          <fa :icon="['fas', 'edit']" />
+          Edit
+        </router-link>
+        <router-link
+          v-if="isAdmin || permissions.hasWrite(dataset)"
           class="btn btn-link"
           :to="`/fdp/dataset/${dataset.identifier}/settings`"
         >
@@ -38,6 +46,7 @@
 </template>
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 import api from '../../api'
 import permissions from '../../utils/permissions'
 import Breadcrumbs from '../../components/Breadcrumbs'
@@ -48,6 +57,7 @@ import StatusFlash from '../../components/StatusFlash'
 import Status from '../../utils/Status'
 import metadata from '../../utils/metadata'
 import MembershipBadge from '../../components/MembershipBadge'
+import breadcrumbs from '../../utils/breadcrumbs'
 
 export default {
   name: 'Dataset',
@@ -71,6 +81,12 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters('auth', {
+      isAdmin: 'isAdmin',
+    }),
+  },
+
   watch: {
     $route: 'fetchData',
   },
@@ -84,11 +100,11 @@ export default {
       try {
         this.status.setPending()
 
-        const response = await api.getDataset(this.$route.params.id)
+        const response = await api.dataset.getDataset(this.$route.params.id)
         this.dataset = response.data
         this.metadata = this.createMetadata(this.dataset)
         this.distributions = this.createDistributions(this.dataset)
-        this.breadcrumbs = this.createBreadcrumbs(this.dataset)
+        this.breadcrumbs = breadcrumbs.fromLinks(this.dataset.links)
         this.status.setDone()
       } catch (error) {
         this.status.setError('Unable to get dataset data.')
@@ -115,16 +131,6 @@ export default {
           metadata.fromField('Modified:', moment(distribution.modified).format('DD-MM-Y')),
         ],
       }))
-    },
-
-    createBreadcrumbs(dataset) {
-      return [{
-        label: dataset.links.repository.label,
-        to: '/fdp',
-      }, {
-        label: dataset.links.catalog.label,
-        to: `/fdp/catalog/${dataset.links.catalog.identifier}`,
-      }]
     },
   },
 }

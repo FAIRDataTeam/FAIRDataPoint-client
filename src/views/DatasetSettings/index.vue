@@ -3,6 +3,7 @@
 </template>
 <script>
 import api from '../../api'
+import breadcrumbs from '../../utils/breadcrumbs'
 import EntitySettings from '../../components/EntitySettings'
 
 export default {
@@ -11,23 +12,12 @@ export default {
   data() {
     return {
       config: {
-        getEntity: api.getDataset,
-        getEntityMembers: api.getDatasetMembers,
-        putEntityMember: api.putDatasetMember,
-        deleteEntityMember: api.deleteDatasetMember,
+        getEntity: api.dataset.getDataset,
+        getEntityMembers: api.dataset.getDatasetMembers,
+        putEntityMember: api.dataset.putDatasetMember,
+        deleteEntityMember: api.dataset.deleteDatasetMember,
         entityType: 'DATASET',
-        createBreadcrumbs(dataset) {
-          return [{
-            label: dataset.links.repository.label,
-            to: '/fdp',
-          }, {
-            label: dataset.links.catalog.label,
-            to: `/fdp/catalog/${dataset.links.catalog.identifier}`,
-          }, {
-            label: dataset.title,
-            to: `/fdp/dataset/${dataset.identifier}`,
-          }]
-        },
+        createBreadcrumbs: breadcrumbs.fromLinksWithDataset,
       },
     }
   },

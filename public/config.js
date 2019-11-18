@@ -1,3 +1,3 @@
 window.config = {
-  apiUrl: 'https://fdp-staging.fair-dtls.surf-hosted.nl'
+  apiUrl: 'http://localhost:3000'
 }

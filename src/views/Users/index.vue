@@ -97,7 +97,7 @@ export default {
       try {
         this.status.setPending()
 
-        const response = await api.getUsers()
+        const response = await api.users.getUsers()
         this.users = _.orderBy(response.data, ['firstName', 'lastName'], ['asc'])
         this.status.setDone()
       } catch (error) {
@@ -108,7 +108,7 @@ export default {
     async deleteUser(user) {
       if (window.confirm(`Are you sure you want to delete ${user.firstName} ${user.lastName}?`)) {
         try {
-          await api.deleteUser(user)
+          await api.users.deleteUser(user)
           this.fetchData()
         } catch (error) {
           this.status.setError('Unable to delete users.')

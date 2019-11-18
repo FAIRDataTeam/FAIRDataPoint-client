@@ -163,13 +163,13 @@
   </div>
 </template>
 <script>
-import { required, email } from 'vuelidate/lib/validators'
+import { email, required } from 'vuelidate/lib/validators'
 import { mapGetters } from 'vuex'
 import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import Page from '../../components/Page'
-import StatusFlash from '../../components/StatusFlash'
 import Status from '../../utils/Status'
+import StatusFlash from '../../components/StatusFlash'
 
 export default {
   name: 'UserDetail',
@@ -230,7 +230,7 @@ export default {
       try {
         this.status.setPending()
 
-        const response = await api.getUser(this.$route.params.id)
+        const response = await api.users.getUser(this.$route.params.id)
         this.user = response.data
         this.setTitle()
         this.status.setDone()
@@ -245,7 +245,7 @@ export default {
       if (!this.$v.user.$invalid) {
         try {
           this.profileSubmitStatus.setPending()
-          await api.putUser(this.user)
+          await api.users.putUser(this.user)
           this.setTitle()
           this.profileSubmitStatus.setDone('User profile was successfully updated!')
 
@@ -264,7 +264,7 @@ export default {
       if (!this.$v.passwordForm.$invalid) {
         try {
           this.passwordSubmitStatus.setPending()
-          await api.putUserPassword(this.user, this.passwordForm.password)
+          await api.users.putUserPassword(this.user, this.passwordForm.password)
           this.passwordSubmitStatus.setDone('Password was successfully updated!')
         } catch (error) {
           this.passwordSubmitStatus.setError('Password could not be updated.')

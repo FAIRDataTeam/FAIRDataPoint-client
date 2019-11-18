@@ -183,8 +183,8 @@ export default {
         const requests = [
           this.config.getEntity(this.entityId),
           this.config.getEntityMembers(this.entityId),
-          api.getUsers(),
-          api.getMemberships(),
+          api.users.getUsers(),
+          api.memberships.getMemberships(),
         ]
 
         const [entity, members, users, memberships] = await axios.all(requests)
