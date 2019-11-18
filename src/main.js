@@ -5,6 +5,8 @@ import vSelect from 'vue-select'
 import App from './App'
 import router from './router'
 import store from './store'
+
+import './filters'
 import './font-awesome'
 
 Vue.config.productionTip = false

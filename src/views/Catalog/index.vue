@@ -47,7 +47,6 @@ import Page from '../../components/Page'
 import StatusFlash from '../../components/StatusFlash'
 import Status from '../../utils/Status'
 import metadata from '../../utils/metadata'
-import trim from '../../utils/trim'
 import MembershipBadge from '../../components/MembershipBadge'
 
 export default {
@@ -107,7 +106,7 @@ export default {
       return catalog.datasets.map(dataset => ({
         title: dataset.title,
         link: `/fdp/dataset/${dataset.identifier}`,
-        description: trim(dataset.description),
+        description: dataset.description,
         tags: dataset.themes,
         metadata: [
           metadata.fromField('Distributions:', dataset.distributionCount),
