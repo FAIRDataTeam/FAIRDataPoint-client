@@ -29,7 +29,6 @@ import Page from '../../components/Page'
 import StatusFlash from '../../components/StatusFlash'
 import Status from '../../utils/Status'
 import metadata from '../../utils/metadata'
-import trim from '../../utils/trim'
 
 
 export default {
@@ -83,7 +82,7 @@ export default {
       return fdp.catalogs.map(catalog => ({
         title: catalog.title,
         link: `/fdp/catalog/${catalog.identifier}`,
-        description: trim(catalog.description),
+        description: catalog.description,
         tags: catalog.themeTaxonomies,
         metadata: [
           metadata.fromField('Datasets:', catalog.distributionCount),

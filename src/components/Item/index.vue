@@ -10,7 +10,7 @@
       v-if="item.description"
       class="item__description"
     >
-      {{ item.description }}
+      {{ item.description | truncate }}
     </p>
     <div
       v-if="item.tags"

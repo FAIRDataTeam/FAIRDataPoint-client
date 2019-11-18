@@ -46,7 +46,6 @@ import Metadata from '../../components/Metadata'
 import Page from '../../components/Page'
 import StatusFlash from '../../components/StatusFlash'
 import Status from '../../utils/Status'
-import trim from '../../utils/trim'
 import metadata from '../../utils/metadata'
 import MembershipBadge from '../../components/MembershipBadge'
 
@@ -108,7 +107,7 @@ export default {
       return dataset.distributions.map(distribution => ({
         title: distribution.title,
         link: `/fdp/distribution/${distribution.identifier}`,
-        description: trim(distribution.description),
+        description: distribution.description,
         metadata: [
           metadata.fromField('Media Type:', distribution.mediaType),
           metadata.fromField('Issued:', moment(distribution.issued).format('DD-MM-Y')),
