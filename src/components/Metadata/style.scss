@@ -46,6 +46,7 @@
     h3 {
       @include typography-lighter-16-semibold;
       margin: 0;
+      white-space: nowrap;
     }
 
     a {
