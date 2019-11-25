@@ -44,8 +44,8 @@ function rdfLinks(uri) {
 
 function commonMetadata(entity) {
   return [
-    fromField('Issued', moment(entity.issued).format('DD-MM-Y'), { sm: true }),
-    fromField('Modified', moment(entity.modified).format('DD-MM-Y'), { sm: true }),
+    fromField('Metadata Issued', moment(entity.issued).format('DD-MM-Y'), { sm: true }),
+    fromField('Metadata Modified', moment(entity.modified).format('DD-MM-Y'), { sm: true }),
     fromField('Version', entity.version),
     fromField('License', entity.license),
     fromField('Specification', entity.specification),
