@@ -51,7 +51,7 @@
             />
             <div class="item-list__item__content">
               <div class="item-list__item__content__row">
-                <router-link :to="`/fdp/catalog/${catalog.identifier}`">
+                <router-link :to="`/catalog/${catalog.identifier}`">
                   {{ catalog.title }}
                 </router-link>
               </div>
@@ -87,7 +87,7 @@
                 />
                 <div class="item-list__item__content">
                   <div class="item-list__item__content__row">
-                    <router-link :to="`/fdp/dataset/${dataset.identifier}`">
+                    <router-link :to="`/dataset/${dataset.identifier}`">
                       {{ dataset.title }}
                     </router-link>
                   </div>
@@ -112,7 +112,7 @@
                     />
                     <div class="item-list__item__content">
                       <div class="item-list__item__content__row">
-                        <router-link :to="`/fdp/distribution/${distribution.identifier}`">
+                        <router-link :to="`/distribution/${distribution.identifier}`">
                           {{ distribution.title }}
                         </router-link>
                       </div>
@@ -169,7 +169,7 @@ export default {
       try {
         this.status.setPending()
 
-        const response = await api.fdp.getFdpDashboard()
+        const response = await api.repository.getRepositoryDashboard()
         this.dashboard = response.data
         this.status.setDone()
       } catch (error) {

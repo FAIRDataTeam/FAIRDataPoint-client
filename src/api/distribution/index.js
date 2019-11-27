@@ -2,28 +2,28 @@ import request from '../request'
 
 export default {
   getDistributionSpec() {
-    return request.get('/fdp/distribution/spec')
+    return request.get('/distribution/spec')
   },
 
   getDistribution(id) {
-    return request.get(`/fdp/distribution/${id}`)
+    return request.get(`/distribution/${id}`)
   },
 
   putDistribution(id, data) {
-    return request.put(`/fdp/distribution/${id}`, data)
+    return request.put(`/distribution/${id}`, data)
   },
 
   getDistributionMembers(id) {
-    return request.get(`/fdp/distribution/${id}/members`)
+    return request.get(`/distribution/${id}/members`)
   },
 
   putDistributionMember(distributionId, userUuid, membershipUuid) {
-    return request.put(`/fdp/distribution/${distributionId}/members/${userUuid}`, {
+    return request.put(`/distribution/${distributionId}/members/${userUuid}`, {
       membershipUuid,
     })
   },
 
   deleteDistributionMember(distributionId, userUuid) {
-    return request.delete(`/fdp/distribution/${distributionId}/members/${userUuid}`)
+    return request.delete(`/distribution/${distributionId}/members/${userUuid}`)
   },
 }

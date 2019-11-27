@@ -200,7 +200,7 @@ export default {
         this.status.setDone()
       } catch (error) {
         if (_.get(error, 'response.status') === 403) {
-          this.$router.replace(`/fdp/${this.config.entityType.toLowerCase()}/${this.entityId}`)
+          this.$router.replace(`/${this.config.entityType.toLowerCase()}/${this.entityId}`)
         } else {
           this.status.setErrorFromResponse(error, 'Unable to get data.')
         }

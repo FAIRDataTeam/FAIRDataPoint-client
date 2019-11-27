@@ -2,28 +2,28 @@ import request from '../request'
 
 export default {
   getDatasetSpec() {
-    return request.get('/fdp/dataset/spec')
+    return request.get('/dataset/spec')
   },
 
   getDataset(id) {
-    return request.get(`/fdp/dataset/${id}`)
+    return request.get(`/dataset/${id}`)
   },
 
   putDataset(id, data) {
-    return request.put(`/fdp/dataset/${id}`, data)
+    return request.put(`/dataset/${id}`, data)
   },
 
   getDatasetMembers(id) {
-    return request.get(`/fdp/dataset/${id}/members`)
+    return request.get(`/dataset/${id}/members`)
   },
 
   putDatasetMember(datasetId, userUuid, membershipUuid) {
-    return request.put(`/fdp/dataset/${datasetId}/members/${userUuid}`, {
+    return request.put(`/dataset/${datasetId}/members/${userUuid}`, {
       membershipUuid,
     })
   },
 
   deleteDatasetMember(datasetId, userUuid) {
-    return request.delete(`/fdp/dataset/${datasetId}/members/${userUuid}`)
+    return request.delete(`/dataset/${datasetId}/members/${userUuid}`)
   },
 }

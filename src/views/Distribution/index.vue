@@ -15,7 +15,7 @@
         <router-link
           v-if="isAdmin || permissions.hasWrite(distribution)"
           class="btn btn-link"
-          :to="`/fdp/distribution/${distribution.identifier}/edit`"
+          :to="`/distribution/${distribution.identifier}/edit`"
         >
           <fa :icon="['fas', 'edit']" />
           Edit
@@ -23,7 +23,7 @@
         <router-link
           v-if="isAdmin || permissions.hasWrite(distribution)"
           class="btn btn-link"
-          :to="`/fdp/distribution/${distribution.identifier}/settings`"
+          :to="`/distribution/${distribution.identifier}/settings`"
         >
           <fa :icon="['fas', 'cog']" />
           Settings
@@ -127,7 +127,7 @@ export default {
       return [
         ...metadata.commonMetadata(distribution),
         metadata.fromField('Media Type', distribution.mediaType),
-        metadata.rdfLinks(distribution.uri),
+        metadata.rdfLinks(),
       ]
     },
   },

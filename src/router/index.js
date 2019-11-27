@@ -10,8 +10,8 @@ import DatasetSettings from '../views/DatasetSettings'
 import Distribution from '../views/Distribution'
 import DistributionEdit from '../views/DistributionEdit'
 import DistributionSettings from '../views/DistributionSettings'
-import Fdp from '../views/Fdp'
-import FdpEdit from '../views/FdpEdit'
+import Repository from '../views/Repository'
+import RepositoryEdit from '../views/RepositoryEdit'
 import Login from '../views/Login'
 import NotAllowed from '../views/NotAllowed'
 import NotFound from '../views/NotFound'
@@ -23,19 +23,18 @@ import store from '../store'
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/', redirect: '/fdp' },
+  { path: '/', component: Repository },
   { path: '/my-metadata', component: Dashboard, meta: { requiresAuth: true } },
-  { path: '/fdp', component: Fdp },
-  { path: '/fdp/edit', component: FdpEdit, meta: { requiresAuth: true } },
-  { path: '/fdp/catalog/:id', component: Catalog },
-  { path: '/fdp/catalog/:id/edit', component: CatalogEdit, meta: { requiresAuth: true } },
-  { path: '/fdp/catalog/:id/settings', component: CatalogSettings, meta: { requiresAuth: true } },
-  { path: '/fdp/dataset/:id', component: Dataset },
-  { path: '/fdp/dataset/:id/edit', component: DatasetEdit, meta: { requiresAuth: true } },
-  { path: '/fdp/dataset/:id/settings', component: DatasetSettings, meta: { requiresAuth: true } },
-  { path: '/fdp/distribution/:id', component: Distribution },
-  { path: '/fdp/distribution/:id/edit', component: DistributionEdit, meta: { requiresAuth: true } },
-  { path: '/fdp/distribution/:id/settings', component: DistributionSettings, meta: { requiresAuth: true } },
+  { path: '/edit', component: RepositoryEdit, meta: { requiresAuth: true } },
+  { path: '/catalog/:id', component: Catalog },
+  { path: '/catalog/:id/edit', component: CatalogEdit, meta: { requiresAuth: true } },
+  { path: '/catalog/:id/settings', component: CatalogSettings, meta: { requiresAuth: true } },
+  { path: '/dataset/:id', component: Dataset },
+  { path: '/dataset/:id/edit', component: DatasetEdit, meta: { requiresAuth: true } },
+  { path: '/dataset/:id/settings', component: DatasetSettings, meta: { requiresAuth: true } },
+  { path: '/distribution/:id', component: Distribution },
+  { path: '/distribution/:id/edit', component: DistributionEdit, meta: { requiresAuth: true } },
+  { path: '/distribution/:id/settings', component: DistributionSettings, meta: { requiresAuth: true } },
   { path: '/login', component: Login },
   { path: '/users', component: Users, meta: { requiresAuth: true, roles: ['ADMIN'] } },
   { path: '/users/create', component: UserCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },

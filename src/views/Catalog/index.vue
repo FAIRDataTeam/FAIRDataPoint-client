@@ -15,7 +15,7 @@
         <router-link
           v-if="isAdmin || permissions.hasWrite(catalog)"
           class="btn btn-link"
-          :to="`/fdp/catalog/${catalog.identifier}/edit`"
+          :to="`/catalog/${catalog.identifier}/edit`"
         >
           <fa :icon="['fas', 'edit']" />
           Edit
@@ -23,7 +23,7 @@
         <router-link
           v-if="isAdmin || permissions.hasWrite(catalog)"
           class="btn btn-link"
-          :to="`/fdp/catalog/${catalog.identifier}/settings`"
+          :to="`/catalog/${catalog.identifier}/settings`"
         >
           <fa :icon="['fas', 'cog']" />
           Settings
@@ -116,14 +116,14 @@ export default {
       return [
         ...metadata.commonMetadata(catalog),
         metadata.fromField('Theme Taxonomies', catalog.themeTaxonomies),
-        metadata.rdfLinks(catalog.uri),
+        metadata.rdfLinks(),
       ]
     },
 
     createDatasets(catalog) {
       return catalog.datasets.map(dataset => ({
         title: dataset.title,
-        link: `/fdp/dataset/${dataset.identifier}`,
+        link: `/dataset/${dataset.identifier}`,
         description: dataset.description,
         tags: dataset.themes,
         metadata: [

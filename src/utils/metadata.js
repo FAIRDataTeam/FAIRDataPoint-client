@@ -26,18 +26,19 @@ function fromField(label, input, extra = {}) {
   }
 }
 
-function rdfLinks(uri) {
+function rdfLinks() {
+  const url = window.location.pathname
   return {
     label: 'Download RDF',
     links: [{
       label: 'ttl',
-      uri: `${uri}.ttl`,
+      uri: `${url}?format=ttl`,
     }, {
       label: 'rdf+xml',
-      uri: `${uri}.rdf`,
+      uri: `${url}?format=rdf`,
     }, {
       label: 'json-ld',
-      uri: `${uri}.jsonld`,
+      uri: `${url}?format=jsonld`,
     }],
   }
 }

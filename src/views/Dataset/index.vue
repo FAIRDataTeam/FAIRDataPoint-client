@@ -15,7 +15,7 @@
         <router-link
           v-if="isAdmin || permissions.hasWrite(dataset)"
           class="btn btn-link"
-          :to="`/fdp/dataset/${dataset.identifier}/edit`"
+          :to="`/dataset/${dataset.identifier}/edit`"
         >
           <fa :icon="['fas', 'edit']" />
           Edit
@@ -23,7 +23,7 @@
         <router-link
           v-if="isAdmin || permissions.hasWrite(dataset)"
           class="btn btn-link"
-          :to="`/fdp/dataset/${dataset.identifier}/settings`"
+          :to="`/dataset/${dataset.identifier}/settings`"
         >
           <fa :icon="['fas', 'cog']" />
           Settings
@@ -116,14 +116,14 @@ export default {
         ...metadata.commonMetadata(dataset),
         metadata.fromField('Themes', dataset.themes),
         metadata.fromField('Keywords', dataset.keywords.map(label => ({ label }))),
-        metadata.rdfLinks(dataset.uri),
+        metadata.rdfLinks(),
       ]
     },
 
     createDistributions(dataset) {
       return dataset.distributions.map(distribution => ({
         title: distribution.title,
-        link: `/fdp/distribution/${distribution.identifier}`,
+        link: `/distribution/${distribution.identifier}`,
         description: distribution.description,
         metadata: [
           metadata.fromField('Media Type:', distribution.mediaType),
