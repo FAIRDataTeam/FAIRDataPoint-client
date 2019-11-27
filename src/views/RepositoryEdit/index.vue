@@ -14,9 +14,9 @@ export default {
   data() {
     return {
       config: {
-        getEntity: api.fdp.getFdp,
-        getEntitySpec: api.fdp.getFdpSpec,
-        putEntity: (_, data) => api.fdp.putFdp(data),
+        getEntity: api.repository.getRepository,
+        getEntitySpec: api.repository.getRepositorySpec,
+        putEntity: (_, data) => api.repository.putRepository(data),
         toUrl: urls.repository,
         createBreadcrumbs: breadcrumbs.fromRepository,
       },

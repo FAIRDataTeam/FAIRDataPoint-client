@@ -1,4 +1,4 @@
-const sessionKey = 'session'
+const sessionKey = `${window.config.publicPath}/session`
 
 function saveSession(session) {
   localStorage.setItem(sessionKey, JSON.stringify(session))

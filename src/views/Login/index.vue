@@ -67,7 +67,7 @@ export default {
 
   created() {
     if (this.authenticated) {
-      this.$router.replace('/fdp')
+      this.$router.replace('/')
     }
   },
 
@@ -78,7 +78,7 @@ export default {
       this.$store.dispatch('auth/authenticate', {
         email: this.email,
         password: this.password,
-        successCallback: () => this.$router.push('/fdp'),
+        successCallback: () => this.$router.push('/'),
       })
     },
   },

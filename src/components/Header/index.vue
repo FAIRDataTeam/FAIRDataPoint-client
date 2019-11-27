@@ -3,12 +3,12 @@
     <div class="header__container">
       <router-link
         to="/"
-        class="header__fdp-name"
+        class="header__repository-name"
       >
-        <span class="header__fdp-name__title--full">
+        <span class="header__repository-name__title--full">
           FAIR Data Point
         </span>
-        <span class="header__fdp-name__title--short">
+        <span class="header__repository-name__title--short">
           FDP
         </span>
       </router-link>
@@ -93,8 +93,8 @@ export default {
   methods: {
     logout() {
       this.$store.dispatch('auth/logout')
-      if (this.$router.currentRoute.path !== '/fdp') {
-        this.$router.push('/fdp')
+      if (this.$router.currentRoute.path !== '/') {
+        this.$router.push('/')
       }
     },
   },

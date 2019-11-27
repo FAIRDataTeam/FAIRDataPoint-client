@@ -2,14 +2,14 @@
   <div>
     <StatusFlash :status="status" />
     <Page
-      v-if="fdp !== null"
-      :title="fdp.title"
+      v-if="repository !== null"
+      :title="repository.title"
     >
       <template v-slot:actions>
         <router-link
           v-if="isAdmin"
           class="btn btn-link"
-          :to="`/fdp/edit`"
+          :to="`/edit`"
         >
           <fa :icon="['fas', 'edit']" />
           Edit
@@ -20,7 +20,7 @@
       </template>
       <template v-slot:content>
         <p class="description">
-          {{ fdp.description }}
+          {{ repository.description }}
         </p>
         <ItemList
           title="Catalogs"
@@ -43,7 +43,7 @@ import metadata from '../../utils/metadata'
 
 
 export default {
-  name: 'Fdp',
+  name: 'Repository',
   components: {
     StatusFlash,
     ItemList,
@@ -53,7 +53,7 @@ export default {
 
   data() {
     return {
-      fdp: null,
+      repository: null,
       metadata: null,
       catalogs: null,
       status: new Status(),
@@ -79,27 +79,27 @@ export default {
       try {
         this.status.setPending()
 
-        const response = await api.fdp.getFdp()
-        this.fdp = response.data
-        this.metadata = this.createMetadata(this.fdp)
-        this.catalogs = this.createCatalogs(this.fdp)
+        const response = await api.repository.getRepository()
+        this.repository = response.data
+        this.metadata = this.createMetadata(this.repository)
+        this.catalogs = this.createCatalogs(this.repository)
         this.status.setDone()
       } catch (error) {
-        this.status.setError('Unable to get FDP data.')
+        this.status.setError('Unable to get repository data.')
       }
     },
 
-    createMetadata(fdp) {
+    createMetadata(repository) {
       return [
-        ...metadata.commonMetadata(fdp),
-        metadata.rdfLinks(fdp.uri),
+        ...metadata.commonMetadata(repository),
+        metadata.rdfLinks(),
       ]
     },
 
-    createCatalogs(fdp) {
-      return fdp.catalogs.map(catalog => ({
+    createCatalogs(repository) {
+      return repository.catalogs.map(catalog => ({
         title: catalog.title,
-        link: `/fdp/catalog/${catalog.identifier}`,
+        link: `/catalog/${catalog.identifier}`,
         description: catalog.description,
         tags: catalog.themeTaxonomies,
         metadata: [

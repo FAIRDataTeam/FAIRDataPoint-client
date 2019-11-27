@@ -1,17 +1,17 @@
 function repository() {
-  return '/fdp'
+  return '/'
 }
 
 function catalog(c) {
-  return `/fdp/catalog/${c.identifier}`
+  return `/catalog/${c.identifier}`
 }
 
 function dataset(d) {
-  return `/fdp/dataset/${d.identifier}`
+  return `/dataset/${d.identifier}`
 }
 
 function distribution(d) {
-  return `/fdp/distribution/${d.identifier}`
+  return `/distribution/${d.identifier}`
 }
 
 export default {
