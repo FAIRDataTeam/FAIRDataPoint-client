@@ -152,6 +152,7 @@ server {
     # Define the location FDP runs on
     location ~ /fairdatapoint(/.*)?$ {
         rewrite /fairdatapoint(/.*) $1 break;
+        rewrite /fairdatapoint / break;
         proxy_pass http://<client_host>;
         proxy_set_header Host $host;
         proxy_pass_request_headers on;
