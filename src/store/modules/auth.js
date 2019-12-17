@@ -1,13 +1,12 @@
 import _ from 'lodash'
 import api from '../../api'
-import localStorage from '../../utils/localStorage'
 import Status from '../../utils/Status'
 
 export default {
   namespaced: true,
 
   state: {
-    session: localStorage.getSession(),
+    session: null,
     loginStatus: new Status(),
   },
 
@@ -30,7 +29,6 @@ export default {
 
         const session = { user: userResponse.data, token: response.data.token }
         commit('setSession', session)
-        localStorage.saveSession(session)
         successCallback()
       } catch (error) {
         commit('setSession', null)
@@ -43,12 +41,10 @@ export default {
         user,
         token: state.session.token,
       }
-      localStorage.saveSession(session)
       commit('setSession', session)
     },
 
     logout({ commit }) {
-      localStorage.clearSession()
       commit('setSession', null)
     },
   },
