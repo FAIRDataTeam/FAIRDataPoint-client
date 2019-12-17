@@ -43,8 +43,9 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import StatusFlash from '../../components/StatusFlash'
+import Status from '../../utils/Status'
 
 export default {
   name: 'Login',
@@ -53,13 +54,11 @@ export default {
     return {
       email: '',
       password: '',
+      status: new Status(),
     }
   },
 
   computed: {
-    ...mapState('auth', {
-      status: 'loginStatus',
-    }),
     ...mapGetters('auth', {
       authenticated: 'authenticated',
     }),
@@ -75,10 +74,12 @@ export default {
     submit() {
       if (!this.email || !this.password) return
 
+      this.status.setPending()
       this.$store.dispatch('auth/authenticate', {
         email: this.email,
         password: this.password,
-        successCallback: () => this.$router.push('/'),
+        onSuccess: () => this.$router.push('/'),
+        onError: () => this.status.setError('Login failed'),
       })
     },
   },

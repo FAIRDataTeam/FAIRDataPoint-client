@@ -1,13 +1,11 @@
 import _ from 'lodash'
 import api from '../../api'
-import Status from '../../utils/Status'
 
 export default {
   namespaced: true,
 
   state: {
     session: null,
-    loginStatus: new Status(),
   },
 
   getters: {
@@ -19,20 +17,19 @@ export default {
   },
 
   actions: {
-    async authenticate({ commit }, { email, password, successCallback }) {
+    async authenticate({ commit }, {
+      email, password, onSuccess, onError,
+    }) {
       try {
-        commit('setLoginStatus', { status: Status.PENDING })
         const response = await api.tokens.fetchToken(email, password)
         commit('setSession', { user: null, token: response.data.token })
         const userResponse = await api.users.getUserCurrent()
-        commit('setLoginStatus', { status: Status.DEFAULT })
-
         const session = { user: userResponse.data, token: response.data.token }
         commit('setSession', session)
-        successCallback()
+        onSuccess()
       } catch (error) {
         commit('setSession', null)
-        commit('setLoginStatus', { status: Status.ERROR, msg: 'Login failed' })
+        onError()
       }
     },
 
@@ -52,9 +49,6 @@ export default {
   mutations: {
     setSession(state, session) {
       state.session = session
-    },
-    setLoginStatus(state, { status, msg }) {
-      state.loginStatus.setStatus(status, msg)
     },
   },
 }
