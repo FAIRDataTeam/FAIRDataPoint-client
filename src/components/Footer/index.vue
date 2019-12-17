@@ -2,7 +2,7 @@
   <div class="footer">
     <div class="footer__inner">
       <div class="footer__container">
-        Footer
+        FAIR Data Point
       </div>
       <Separator />
     </div>
