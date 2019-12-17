@@ -13,13 +13,7 @@
         </span>
       </router-link>
       <div class="header__nav">
-        <div class="header__search-field">
-          <fa :icon="['fas', 'search']" />
-          <input
-            type="text"
-            placeholder="Search FAIR Data Point..."
-          >
-        </div>
+        <!-- <SearchField /> -->
         <div class="header__menu">
           <router-link
             v-if="!user"
