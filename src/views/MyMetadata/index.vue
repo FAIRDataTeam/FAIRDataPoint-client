@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Page
+    <page
       title="My Metadata"
       content-only
     >
@@ -23,7 +23,7 @@
         </a>
       </template>
       <template v-slot:content>
-        <StatusFlash :status="status" />
+        <status-flash :status="status" />
         <div
           v-if="dashboard && dashboard.length > 0"
           class="item-list"
@@ -44,7 +44,7 @@
               v-else
               class="item-list__item__control"
             />
-            <Avatar
+            <avatar
               :initials="catalog.title[0]"
               :value="catalog.identifier"
               smaller
@@ -57,7 +57,7 @@
               </div>
             </div>
             <div class="item-list__item__actions">
-              <MembershipBadge :entity="catalog" />
+              <membership-badge :entity="catalog" />
             </div>
 
             <div
@@ -80,7 +80,7 @@
                   v-else
                   class="item-list__item__control"
                 />
-                <Avatar
+                <avatar
                   :initials="dataset.title[0]"
                   :value="dataset.identifier"
                   smaller
@@ -93,7 +93,7 @@
                   </div>
                 </div>
                 <div class="item-list__item__actions">
-                  <MembershipBadge :entity="dataset" />
+                  <membership-badge :entity="dataset" />
                 </div>
 
                 <div
@@ -105,7 +105,7 @@
                     :key="distribution.identifier"
                     class="item-list__item"
                   >
-                    <Avatar
+                    <avatar
                       :initials="distribution.title[0]"
                       :value="distribution.identifier"
                       smaller
@@ -118,7 +118,7 @@
                       </div>
                     </div>
                     <div class="item-list__item__actions">
-                      <MembershipBadge :entity="distribution" />
+                      <membership-badge :entity="distribution" />
                     </div>
                   </div>
                 </div>
@@ -132,7 +132,7 @@
           </p>
         </div>
       </template>
-    </Page>
+    </page>
   </div>
 </template>
 <script>

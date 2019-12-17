@@ -1,10 +1,10 @@
 <template>
   <div>
-    <Breadcrumbs
+    <breadcrumbs
       :links="breadcrumbs"
       current="Create user"
     />
-    <Page
+    <page
       title="Create user"
       content-only
       small
@@ -14,7 +14,7 @@
           class="form"
           @submit.prevent="submit"
         >
-          <StatusFlash
+          <status-flash
             :status="profileSubmitStatus"
             no-loading
           />
@@ -135,7 +135,7 @@
           </div>
         </form>
       </template>
-    </Page>
+    </page>
   </div>
 </template>
 <script>

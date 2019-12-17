@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <h1>Login</h1>
-    <StatusFlash
+    <status-flash
       :status="status"
       no-loading
     />

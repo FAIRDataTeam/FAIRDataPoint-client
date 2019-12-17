@@ -1,25 +1,25 @@
 <template>
   <div>
-    <Breadcrumbs
+    <breadcrumbs
       v-if="entity !== null"
       :links="breadcrumbs"
       current="Edit"
     />
-    <StatusFlash :status="status" />
-    <Page
+    <status-flash :status="status" />
+    <page
       v-if="entity !== null"
       :title="`Edit ${entity.title}`"
       content-only
       small
     >
       <template v-slot:content>
-        <FormGenerator
+        <form-generator
           :spec="spec"
           :entity="entity"
           :on-submit="submit"
         />
       </template>
-    </Page>
+    </page>
   </div>
 </template>
 <script>

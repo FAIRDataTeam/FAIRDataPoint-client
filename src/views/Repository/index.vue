@@ -1,7 +1,7 @@
 <template>
   <div>
-    <StatusFlash :status="status" />
-    <Page
+    <status-flash :status="status" />
+    <page
       v-if="repository !== null"
       :title="repository.title"
     >
@@ -16,18 +16,18 @@
         </router-link>
       </template>
       <template v-slot:column>
-        <Metadata :metadata="metadata" />
+        <entity-metadata :metadata="metadata" />
       </template>
       <template v-slot:content>
         <p class="description">
           {{ repository.description }}
         </p>
-        <ItemList
+        <item-list
           title="Catalogs"
           :items="catalogs"
         />
       </template>
-    </Page>
+    </page>
   </div>
 </template>
 <script>
@@ -35,7 +35,7 @@ import moment from 'moment'
 import { mapGetters } from 'vuex'
 import api from '../../api'
 import ItemList from '../../components/ItemList'
-import Metadata from '../../components/Metadata'
+import EntityMetadata from '../../components/EntityMetadata'
 import Page from '../../components/Page'
 import StatusFlash from '../../components/StatusFlash'
 import Status from '../../utils/Status'
@@ -47,7 +47,7 @@ export default {
   components: {
     StatusFlash,
     ItemList,
-    Metadata,
+    EntityMetadata,
     Page,
   },
 

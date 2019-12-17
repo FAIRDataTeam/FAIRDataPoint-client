@@ -3,7 +3,7 @@
     class="item-list__item"
     :class="{'item-list__item--frameless': frameless}"
   >
-    <UserAvatar :user="user" />
+    <user-avatar :user="user" />
     <div class="item-list__item__content">
       <div class="item-list__item__content__row">
         <slot name="name">

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <Page
+    <page
       title="Users"
       content-only
     >
       <template v-slot:content>
-        <StatusFlash :status="status" />
+        <status-flash :status="status" />
         <div class="item-list">
-          <UserItem
+          <user-item
             v-for="user in users"
             :key="user.uuid"
             :user="user"
@@ -49,7 +49,7 @@
                 </b-dropdown-item>
               </b-dropdown>
             </template>
-          </UserItem>
+          </user-item>
         </div>
         <router-link
           class="create-link"
@@ -58,7 +58,7 @@
           + Create user
         </router-link>
       </template>
-    </Page>
+    </page>
   </div>
 </template>
 <script>

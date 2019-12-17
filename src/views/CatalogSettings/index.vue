@@ -1,5 +1,5 @@
 <template>
-  <EntitySettings :config="config" />
+  <entity-settings :config="config" />
 </template>
 <script>
 import api from '../../api'

@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <Header />
+    <fdp-header />
     <router-view />
-    <Footer />
+    <fdp-footer />
   </div>
 </template>
 <script>
-import Footer from './components/Footer'
-import Header from './components/Header'
+import FdpFooter from './components/FdpFooter'
+import FdpHeader from './components/FdpHeader'
 
 export default {
   components: {
-    Footer,
-    Header,
+    FdpFooter,
+    FdpHeader,
   },
 }
 </script>

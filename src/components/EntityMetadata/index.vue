@@ -1,11 +1,11 @@
 <template>
-  <div class="metadata">
+  <div class="entity-metadata">
     <div
       v-for="(data, index) in metadata"
       :key="index"
-      class="metadata__item"
+      class="entity-metadata__item"
       :class="{
-        'metadata__item--sm': data.sm,
+        'entity-metadata__item--sm': data.sm,
       }"
     >
       <h3>{{ data.label }}</h3>
@@ -58,7 +58,7 @@
 </template>
 <script>
 export default {
-  name: 'Metadata',
+  name: 'EntityMetadata',
   props: {
     metadata: {
       type: Array,

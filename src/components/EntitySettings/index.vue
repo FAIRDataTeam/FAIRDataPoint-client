@@ -1,12 +1,12 @@
 <template>
   <div class="entity-settings">
-    <Breadcrumbs
+    <breadcrumbs
       v-if="entity !== null"
       :links="breadcrumbs"
       current="Settings"
     />
-    <StatusFlash :status="status" />
-    <Page
+    <status-flash :status="status" />
+    <page
       v-if="entity !== null"
       :title="`${entity.title} Settings`"
       content-only
@@ -16,7 +16,7 @@
 
         <div class="entity-settings__section">
           <h3>Invite user</h3>
-          <StatusFlash
+          <status-flash
             :status="inviteStatus"
             no-loading
           />
@@ -34,7 +34,7 @@
                 placeholder="Search for users"
               >
                 <template v-slot:option="option">
-                  <UserItem
+                  <user-item
                     :user="option"
                     frameless
                   />
@@ -79,7 +79,7 @@
         <div class="entity-settings__section">
           <h3>Users with access to {{ entity.title }}</h3>
           <div class="item-list">
-            <UserItem
+            <user-item
               v-for="member in members"
               :key="member.user.uuid"
               :user="member.user"
@@ -105,11 +105,11 @@
                   <fa :icon="['fas', 'user-slash']" />
                 </a>
               </template>
-            </UserItem>
+            </user-item>
           </div>
         </div>
       </template>
-    </Page>
+    </page>
   </div>
 </template>
 <script>

@@ -3,7 +3,7 @@
     <h2 v-if="items.length > 0">
       {{ title }}
     </h2>
-    <Item
+    <item
       v-for="(item, index) in sortByTitle(items)"
       :key="index"
       :item="item"

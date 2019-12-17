@@ -1,24 +1,24 @@
 <template>
   <div>
-    <Breadcrumbs
+    <breadcrumbs
       v-if="user"
       :links="breadcrumbs"
       :current="title"
     />
-    <Page
+    <page
       :title="title"
       content-only
       small
     >
       <template v-slot:content>
-        <StatusFlash :status="status" />
+        <status-flash :status="status" />
         <div v-if="user">
           <form
             class="form"
             @submit.prevent="submitProfile"
           >
             <h2>Profile</h2>
-            <StatusFlash
+            <status-flash
               :status="profileSubmitStatus"
               no-loading
             />
@@ -108,7 +108,7 @@
             @submit.prevent="submitPassword"
           >
             <h2>Password</h2>
-            <StatusFlash
+            <status-flash
               :status="passwordSubmitStatus"
               no-loading
             />
@@ -159,7 +159,7 @@
           </form>
         </div>
       </template>
-    </Page>
+    </page>
   </div>
 </template>
 <script>

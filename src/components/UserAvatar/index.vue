@@ -1,5 +1,5 @@
 <template>
-  <Avatar
+  <avatar
     :initials="initials"
     :value="user.email"
     :smaller="smaller"

@@ -1,17 +1,17 @@
 <template>
   <div>
-    <Breadcrumbs
+    <breadcrumbs
       v-if="catalog !== null"
       :links="breadcrumbs"
       :current="catalog.title"
     />
-    <StatusFlash :status="status" />
-    <Page
+    <status-flash :status="status" />
+    <page
       v-if="catalog !== null"
       :title="catalog.title"
     >
       <template v-slot:actions>
-        <MembershipBadge :entity="catalog" />
+        <membership-badge :entity="catalog" />
         <router-link
           v-if="isAdmin || permissions.hasWrite(catalog)"
           class="btn btn-link"
@@ -30,18 +30,18 @@
         </router-link>
       </template>
       <template v-slot:column>
-        <Metadata :metadata="metadata" />
+        <entity-metadata :metadata="metadata" />
       </template>
       <template v-slot:content>
         <p class="description">
           {{ catalog.description }}
         </p>
-        <ItemList
+        <item-list
           title="Datasets"
           :items="datasets"
         />
       </template>
-    </Page>
+    </page>
   </div>
 </template>
 <script>
@@ -51,7 +51,7 @@ import api from '../../api'
 import permissions from '../../utils/permissions'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import ItemList from '../../components/ItemList'
-import Metadata from '../../components/Metadata'
+import EntityMetadata from '../../components/EntityMetadata'
 import Page from '../../components/Page'
 import StatusFlash from '../../components/StatusFlash'
 import Status from '../../utils/Status'
@@ -67,7 +67,7 @@ export default {
     StatusFlash,
     Breadcrumbs,
     ItemList,
-    Metadata,
+    EntityMetadata,
     Page,
   },
 

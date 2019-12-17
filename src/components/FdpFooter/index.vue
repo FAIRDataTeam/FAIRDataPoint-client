@@ -4,7 +4,7 @@
       <div class="footer__container">
         FAIR Data Point
       </div>
-      <Separator />
+      <separator />
     </div>
   </div>
 </template>
@@ -12,7 +12,7 @@
 import Separator from '../Separator'
 
 export default {
-  name: 'Footer',
+  name: 'FdpFooter',
   components: { Separator },
 }
 </script>

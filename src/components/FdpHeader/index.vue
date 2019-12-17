@@ -27,7 +27,7 @@
             variant="link"
           >
             <template v-slot:button-content>
-              <UserAvatar
+              <user-avatar
                 :user="user"
                 smaller
               />
@@ -64,7 +64,7 @@
         </div>
       </div>
     </div>
-    <Separator />
+    <separator />
   </div>
 </template>
 <script>
@@ -73,7 +73,7 @@ import Separator from '../Separator'
 import UserAvatar from '../UserAvatar'
 
 export default {
-  name: 'Header',
+  name: 'FdpHeader',
   components: {
     UserAvatar,
     Separator,

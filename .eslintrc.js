@@ -20,6 +20,10 @@ module.exports = {
       tsx: 'never',
       vue: 'never',
     }],
+    'vue/component-name-in-template-casing': ['error', 'kebab-case', {
+      registeredComponentsOnly: false,
+      ignores: [],
+    }],
   },
   parserOptions: {
     parser: 'babel-eslint',

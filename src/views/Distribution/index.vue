@@ -1,17 +1,17 @@
 <template>
   <div>
-    <Breadcrumbs
+    <breadcrumbs
       v-if="distribution !== null"
       :links="breadcrumbs"
       :current="distribution.title"
     />
-    <StatusFlash :status="status" />
-    <Page
+    <status-flash :status="status" />
+    <page
       v-if="distribution !== null"
       :title="distribution.title"
     >
       <template v-slot:actions>
-        <MembershipBadge :entity="distribution" />
+        <membership-badge :entity="distribution" />
         <router-link
           v-if="isAdmin || permissions.hasWrite(distribution)"
           class="btn btn-link"
@@ -50,14 +50,14 @@
             Access Online
           </a>
         </p>
-        <Metadata :metadata="metadata" />
+        <entity-metadata :metadata="metadata" />
       </template>
       <template v-slot:content>
         <p class="description">
           {{ distribution.description }}
         </p>
       </template>
-    </Page>
+    </page>
   </div>
 </template>
 <script>
@@ -65,7 +65,7 @@ import { mapGetters } from 'vuex'
 import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import MembershipBadge from '../../components/MembershipBadge/index'
-import Metadata from '../../components/Metadata'
+import EntityMetadata from '../../components/EntityMetadata'
 import Page from '../../components/Page'
 import StatusFlash from '../../components/StatusFlash'
 import Status from '../../utils/Status'
@@ -80,7 +80,7 @@ export default {
     MembershipBadge,
     StatusFlash,
     Breadcrumbs,
-    Metadata,
+    EntityMetadata,
     Page,
   },
 

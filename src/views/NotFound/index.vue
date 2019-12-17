@@ -1,5 +1,5 @@
 <template>
-  <Page title="Not Found" />
+  <page title="Not Found" />
 </template>
 <script>
 import Page from '../../components/Page'
