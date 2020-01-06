@@ -54,7 +54,7 @@ jobs:
         - docker push $IMAGE_TAG_LATEST
 
     - stage: tag
-      if: (type = push)
+      if: (type = push) AND (NOT ((branch =~ ^release) OR (branch =~ ^v\d+\.\d+\.\d+)))
       install: false
       script:
         - docker pull $IMAGE_TAG
