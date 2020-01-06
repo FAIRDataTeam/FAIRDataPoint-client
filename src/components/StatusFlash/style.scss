@@ -1,0 +1,32 @@
+@import "../../scss/variables";
+
+
+.status-flash {
+  margin: $space-sm 0;
+
+  & > div {
+    width: 100%;
+    max-width: $container-max-width;
+    margin: auto;
+    box-sizing: border-box;
+  }
+
+  &__alert {
+    border-left: 5px solid $color-text-default;
+    color: $color-text-default;
+    background: $color-background-highlighted;
+    padding: $space-sm $space-md $space-sm $space-sm;
+
+    &--success {
+      color: $color-success;
+      background: $color-success-light;
+      border-left-color: $color-success;
+    }
+
+    &--danger {
+      color: $color-danger;
+      background: $color-danger-light;
+      border-left-color: $color-danger;
+    }
+  }
+}

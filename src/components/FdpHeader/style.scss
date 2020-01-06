@@ -1,0 +1,94 @@
+@import "../../scss/variables";
+@import "../../scss/mixins";
+@import "../../scss/typography";
+
+.header {
+  width: 100%;
+  height: $header-height;
+
+  &__container {
+    max-width: $container-max-width;
+    padding: 0 $container-padding;
+    margin: auto;
+    height: $header-height - $separator-colorful-height;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__repository-name {
+    @include typography-primary-32-bold;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: $header-logo-width + $header-logo-indent;
+    background: url($header-logo-url) left center no-repeat;
+    background-size: $header-logo-width $header-logo-height;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-primary;
+      text-decoration: none;
+    }
+
+    &__title {
+      &--full {
+        display: none;
+        @media (min-width: $breakpoint-small) {
+          display: inline;
+        }
+      }
+
+      &--short {
+        display: inline;
+        @media (min-width: $breakpoint-small) {
+          display: none;
+        }
+      }
+    }
+  }
+
+  &__nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__menu {
+    margin-left: $space-md;
+
+    & > a {
+      @include typography-default-16-semibold;
+      white-space: nowrap;
+      text-decoration: none;
+
+      &:not(:last-child) {
+        margin-right: $space-md;
+      }
+
+      &:hover {
+        color: $color-primary !important;
+      }
+    }
+
+    .dropdown {
+      .btn-link {
+        text-decoration: none !important;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+          text-decoration: none !important;
+        }
+      }
+
+      .dropdown-menu {
+        min-width: 17rem;
+
+        svg {
+          min-width: 1.5rem;
+        }
+      }
+    }
+  }
+}

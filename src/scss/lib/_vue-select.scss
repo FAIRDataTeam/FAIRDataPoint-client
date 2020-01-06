@@ -1,0 +1,11 @@
+@import "../variables";
+
+$vs-state-active-bg: $color-primary;
+$vs-border-radius: .25rem;
+$vs-border-width: 0;
+@import "~vue-select/src/scss/vue-select";
+
+.vs__dropdown-menu {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-top: 2px solid $color-text-light;
+}

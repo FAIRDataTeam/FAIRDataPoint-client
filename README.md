@@ -1,24 +1,41 @@
-# fdp-client
+# FAIR Data Point Client
 
-## Project setup
+> Client application for the [FAIR Data Point](https://github.com/FAIRDataTeam/FAIRDataPoint) providing a user interface for browsing the metadata and administration.
+
+[![Build Status](https://travis-ci.org/FAIRDataTeam/FAIRDataPoint-client.svg?branch=master)](https://travis-ci.org/FAIRDataTeam/FAIRDataPoint-client.svg?branch=master)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+
+
+[Documentation](https://fairdatapoint.readthedocs.io/) explains how to install, configure and use the FAIR Data Point.
+
+
+## Development
+
+Install dependencies using:
+
 ```
-npm install
+$ npm install
 ```
 
-### Compiles and hot-reloads for development
+Compile and hot-reload for development:
+
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+Compile and minify for production:
+
 ```
-npm run build
+$ npm run build
 ```
 
-### Lints and fixes files
+Run tests or linter:
+
 ```
-npm run lint
+$ npm run test
+$ npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for more details.

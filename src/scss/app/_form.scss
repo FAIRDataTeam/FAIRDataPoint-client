@@ -1,0 +1,116 @@
+@import "../variables";
+@import "../typography";
+
+
+.form {
+  margin-bottom: 6rem;
+
+  &--inline {
+    @media (min-width: $breakpoint-small) {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 3rem;
+
+      .form__group {
+        margin: 0 $space-lg;
+
+        &:first-child {
+          margin-left: 0;
+        }
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        .btn {
+          margin-top: 1.5rem;
+        }
+      }
+    }
+  }
+
+  &__group {
+    margin-bottom: $space-lg;
+
+    label {
+      @include typography-default-14;
+      display: block;
+      margin-bottom: $space-xs;
+
+      &.required {
+        @include typography-default-14-bold;
+      }
+    }
+
+    &__input-item {
+      margin-bottom: $space-sm;
+    }
+
+    & > input, &__input-item input,
+    & > select,
+    & > textarea {
+      @include typography-default-18;
+      padding: $space-xs 0;
+      width: 100%;
+      box-sizing: border-box;
+      border: none;
+      border-bottom: 2px solid $color-text-light;
+      outline: none;
+    }
+
+    &__xor-options {
+      display: flex;
+
+      label {
+        @include typography-default-14;
+        cursor: pointer;
+        margin-right: $space-md;
+      }
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: $color-text-light;
+    }
+
+    textarea {
+      min-height: 4rem;
+      height: 6rem;
+    }
+
+    select {
+      background: none;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+
+    .v-select {
+      border-bottom: 2px solid $color-text-light;
+
+      .vs__selected, .vs__search {
+        @include typography-default-18;
+        padding: 0;
+        margin: 0;
+      }
+    }
+
+    .invalid-feedback {
+      display: none;
+    }
+
+    &--error, &__input-item--error {
+      & > input, .v-select {
+        border-bottom-color: $color-danger;
+      }
+
+      .invalid-feedback {
+        @include typography-danger-14;
+        display: block;
+        margin: $space-xs 0;
+      }
+    }
+
+    &--fill {
+      flex-grow: 1;
+    }
+  }
+}

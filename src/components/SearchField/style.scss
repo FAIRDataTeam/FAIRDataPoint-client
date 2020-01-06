@@ -1,0 +1,39 @@
+@import "../../scss/variables";
+@import "../../scss/mixins";
+@import "../../scss/typography";
+
+
+.search-field {
+  @include border-radius($border-radius-full);
+  background: $color-background-highlighted;
+  width: $header-search-width;
+  height: $header-search-height;
+  position: relative;
+
+  @media (max-width: $breakpoint-small - 1px) {
+    display: none;
+  }
+
+  .svg-inline--fa {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    margin-top: -8px;
+    color: $color-text-lighter;
+  }
+
+  input {
+    @include typography-default-16;
+    border: none;
+    width: 100%;
+    padding: 0 $header-search-input-padding-right 0 $header-search-input-padding-left;
+    height: 100%;
+    outline: none;
+    background: none;
+    box-sizing: border-box;
+
+    &::placeholder {
+      @include typography-light-16;
+    }
+  }
+}
