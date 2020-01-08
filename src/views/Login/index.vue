@@ -42,9 +42,9 @@
     </form>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { mapGetters } from 'vuex'
-import StatusFlash from '../../components/StatusFlash'
+import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
 
 export default {

@@ -44,19 +44,19 @@
     </page>
   </div>
 </template>
-<script>
+<script lang="ts">
 import moment from 'moment'
 import { mapGetters } from 'vuex'
 import api from '../../api'
 import permissions from '../../utils/permissions'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import ItemList from '../../components/ItemList'
-import EntityMetadata from '../../components/EntityMetadata'
-import Page from '../../components/Page'
-import StatusFlash from '../../components/StatusFlash'
+import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
+import ItemList from '../../components/ItemList/index.vue'
+import EntityMetadata from '../../components/EntityMetadata/index.vue'
+import Page from '../../components/Page/index.vue'
+import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
 import metadata from '../../utils/metadata'
-import MembershipBadge from '../../components/MembershipBadge'
+import MembershipBadge from '../../components/MembershipBadge/index.vue'
 import breadcrumbs from '../../utils/breadcrumbs'
 
 export default {

@@ -1,8 +1,8 @@
 <template>
   <page title="Not Allowed" />
 </template>
-<script>
-import Page from '../../components/Page'
+<script lang="ts">
+import Page from '../../components/Page/index.vue'
 
 export default {
   name: 'NotAllowed',

@@ -61,12 +61,12 @@
     </page>
   </div>
 </template>
-<script>
+<script lang="ts">
 import _ from 'lodash'
 import api from '../../api'
-import Page from '../../components/Page'
-import StatusFlash from '../../components/StatusFlash'
-import UserItem from '../../components/UserItem'
+import Page from '../../components/Page/index.vue'
+import StatusFlash from '../../components/StatusFlash/index.vue'
+import UserItem from '../../components/UserItem/index.vue'
 import Status from '../../utils/Status'
 
 export default {

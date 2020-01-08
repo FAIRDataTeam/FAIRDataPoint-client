@@ -1,16 +1,16 @@
-function repository() {
+function repository(): string {
   return '/'
 }
 
-function catalog(c) {
+function catalog(c): string {
   return `/catalog/${c.identifier}`
 }
 
-function dataset(d) {
+function dataset(d): string {
   return `/dataset/${d.identifier}`
 }
 
-function distribution(d) {
+function distribution(d): string {
   return `/distribution/${d.identifier}`
 }
 

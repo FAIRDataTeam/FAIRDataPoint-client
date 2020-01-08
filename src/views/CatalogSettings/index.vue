@@ -1,9 +1,9 @@
 <template>
   <entity-settings :config="config" />
 </template>
-<script>
+<script lang="ts">
 import api from '../../api'
-import EntitySettings from '../../components/EntitySettings'
+import EntitySettings from '../../components/EntitySettings/index.vue'
 import breadcrumbs from '../../utils/breadcrumbs'
 
 export default {

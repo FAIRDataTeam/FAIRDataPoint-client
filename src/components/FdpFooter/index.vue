@@ -8,11 +8,11 @@
     </div>
   </div>
 </template>
-<script>
-import Separator from '../Separator'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import Separator from '../Separator/index.vue'
 
-export default {
-  name: 'FdpFooter',
-  components: { Separator },
+@Component({ components: { Separator } })
+export default class FdpFooter extends Vue {
 }
 </script>

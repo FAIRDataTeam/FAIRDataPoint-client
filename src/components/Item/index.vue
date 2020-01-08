@@ -41,14 +41,12 @@
     </dl>
   </div>
 </template>
-<script>
-export default {
-  name: 'Item',
-  props: {
-    item: {
-      validator: value => value !== null,
-      required: true,
-    },
-  },
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator'
+
+@Component
+export default class Item extends Vue {
+  @Prop({ required: true })
+  readonly item: any
 }
 </script>
