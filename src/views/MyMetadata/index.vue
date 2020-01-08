@@ -135,14 +135,14 @@
     </page>
   </div>
 </template>
-<script>
+<script lang="ts">
 import _ from 'lodash'
 import api from '../../api'
-import Avatar from '../../components/Avatar'
-import Page from '../../components/Page'
-import StatusFlash from '../../components/StatusFlash'
+import Avatar from '../../components/Avatar/index.vue'
+import Page from '../../components/Page/index.vue'
+import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
-import MembershipBadge from '../../components/MembershipBadge'
+import MembershipBadge from '../../components/MembershipBadge/index.vue'
 
 export default {
   name: 'Dashboard',

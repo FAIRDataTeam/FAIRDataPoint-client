@@ -67,30 +67,32 @@
     <separator />
   </div>
 </template>
-<script>
-import { mapGetters } from 'vuex'
-import Separator from '../Separator'
-import UserAvatar from '../UserAvatar'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import Separator from '../Separator/index.vue'
+import UserAvatar from '../UserAvatar/index.vue'
 
-export default {
-  name: 'FdpHeader',
+
+@Component({
   components: {
     UserAvatar,
     Separator,
   },
-  computed: {
-    ...mapGetters('auth', {
-      authenticated: 'authenticated',
-      user: 'user',
-    }),
-  },
-  methods: {
-    logout() {
-      this.$store.dispatch('auth/logout')
-      if (this.$router.currentRoute.path !== '/') {
-        this.$router.push('/')
-      }
-    },
-  },
+})
+export default class FdpHeader extends Vue {
+  get authenticated() {
+    return this.$store.getters['auth/authenticated']
+  }
+
+  get user() {
+    return this.$store.getters['auth/user']
+  }
+
+  logout() {
+    this.$store.dispatch('auth/logout')
+    if (this.$router.currentRoute.path !== '/') {
+      this.$router.push('/')
+    }
+  }
 }
 </script>

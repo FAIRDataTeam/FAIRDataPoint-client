@@ -19,6 +19,8 @@
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "vue": "^2.6.10",
+    "vue-class-component": "^7.1.0",
+    "vue-property-decorator": "^8.3.0",
     "vue-router": "^3.0.6",
     "vue-select": "^3.2.0",
     "vuelidate": "^0.7.4",
@@ -26,16 +28,25 @@
     "vuex-persist": "^2.2.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.149",
+    "@types/vue-select": "^2.5.0",
+    "@types/vuelidate": "^0.7.10",
+    "@typescript-eslint/eslint-plugin": "^2.14.0",
+    "@typescript-eslint/parser": "^2.14.0",
     "@vue/cli-plugin-babel": "^4.0.0",
     "@vue/cli-plugin-eslint": "^4.0.0",
     "@vue/cli-plugin-router": "^4.0.0",
+    "@vue/cli-plugin-typescript": "^4.1.0",
+    "@vue/cli-plugin-vuex": "^4.1.0",
     "@vue/cli-service": "^4.0.0",
     "@vue/eslint-config-airbnb": "^4.0.0",
+    "@vue/eslint-config-typescript": "^5.0.1",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "node-sass": "^4.12.0",
     "sass-loader": "^8.0.0",
+    "typescript": "~3.5.3",
     "vue-template-compiler": "^2.6.10"
   }
 }

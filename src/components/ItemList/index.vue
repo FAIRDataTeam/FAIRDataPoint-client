@@ -10,27 +10,24 @@
     />
   </div>
 </template>
-<script>
+<script lang="ts">
 import _ from 'lodash'
-import Item from '../Item'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import Item from '../Item/index.vue'
 
-export default {
-  name: 'ItemList',
+
+@Component({
   components: { Item },
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    items: {
-      type: Array,
-      required: true,
-    },
-  },
-  methods: {
-    sortByTitle(list) {
-      return _.orderBy(list, ['title'], ['asc'])
-    },
-  },
+})
+export default class ItemList extends Vue {
+  @Prop({ type: String, required: true })
+  readonly title: string
+
+  @Prop({ type: Array, required: true })
+  readonly items: Array<any>
+
+  sortByTitle(list) {
+    return _.orderBy(list, ['title'], ['asc'])
+  }
 }
 </script>

@@ -5,9 +5,9 @@
     <fdp-footer />
   </div>
 </template>
-<script>
-import FdpFooter from './components/FdpFooter'
-import FdpHeader from './components/FdpHeader'
+<script lang="ts">
+import FdpFooter from './components/FdpFooter/index.vue'
+import FdpHeader from './components/FdpHeader/index.vue'
 
 export default {
   components: {

@@ -126,7 +126,7 @@
     </div>
   </form>
 </template>
-<script>
+<script lang="ts">
 import * as validation from 'vuelidate/lib/validators'
 
 

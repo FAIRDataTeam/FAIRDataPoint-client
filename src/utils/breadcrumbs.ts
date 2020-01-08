@@ -1,11 +1,16 @@
 import urls from './urls'
 
-function createItem(label, to) {
+export type BreadcrumbItem = {
+  label: string,
+  to: string
+}
+
+function createItem(label: string, to: string): BreadcrumbItem {
   return { label, to }
 }
 
-function fromLinks(links) {
-  const breadcrumbs = []
+function fromLinks(links: any): Array<BreadcrumbItem> {
+  const breadcrumbs: Array<BreadcrumbItem> = []
 
   const r = links.repository
   if (r) {
@@ -25,25 +30,25 @@ function fromLinks(links) {
   return breadcrumbs
 }
 
-function fromLinksWith(entity, toUrl) {
-  const breadcrumbs = fromLinks(entity.links)
+function fromLinksWith(entity, toUrl): Array<BreadcrumbItem> {
+  const breadcrumbs: Array<BreadcrumbItem> = fromLinks(entity.links)
   breadcrumbs.push(createItem(entity.title, toUrl(entity)))
   return breadcrumbs
 }
 
-function fromRepository(repository) {
+function fromRepository(repository): Array<BreadcrumbItem> {
   return [createItem(repository.title, urls.repository())]
 }
 
-function fromLinksWithCatalog(catalog) {
+function fromLinksWithCatalog(catalog): Array<BreadcrumbItem> {
   return fromLinksWith(catalog, urls.catalog)
 }
 
-function fromLinksWithDataset(dataset) {
+function fromLinksWithDataset(dataset): Array<BreadcrumbItem> {
   return fromLinksWith(dataset, urls.dataset)
 }
 
-function fromLinksWithDistribution(distribution) {
+function fromLinksWithDistribution(distribution): Array<BreadcrumbItem> {
   return fromLinksWith(distribution, urls.distribution)
 }
 

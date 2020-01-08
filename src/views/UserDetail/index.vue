@@ -162,14 +162,14 @@
     </page>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { email, required } from 'vuelidate/lib/validators'
 import { mapGetters } from 'vuex'
 import api from '../../api'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import Page from '../../components/Page'
+import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
+import Page from '../../components/Page/index.vue'
 import Status from '../../utils/Status'
-import StatusFlash from '../../components/StatusFlash'
+import StatusFlash from '../../components/StatusFlash/index.vue'
 
 export default {
   name: 'UserDetail',

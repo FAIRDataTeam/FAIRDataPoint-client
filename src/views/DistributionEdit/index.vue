@@ -1,10 +1,10 @@
 <template>
   <entity-edit :config="config" />
 </template>
-<script>
+<script lang="ts">
 import api from '../../api'
 import breadcrumbs from '../../utils/breadcrumbs'
-import EntityEdit from '../../components/EntityEdit'
+import EntityEdit from '../../components/EntityEdit/index.vue'
 import urls from '../../utils/urls'
 
 export default {
