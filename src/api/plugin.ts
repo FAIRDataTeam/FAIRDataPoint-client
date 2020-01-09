@@ -21,6 +21,7 @@ const createResponseInterceptor = (store) => {
     if (status === 401) {
       store.dispatch('auth/logout')
     }
+    throw error
   })
 }
 
