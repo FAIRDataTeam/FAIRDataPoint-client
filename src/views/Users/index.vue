@@ -13,7 +13,10 @@
             :user="user"
           >
             <template v-slot:name>
-              <router-link :to="`/users/${user.uuid}`">
+              <router-link
+                :to="`/users/${user.uuid}`"
+                data-cy="user-link"
+              >
                 {{ user.firstName }} {{ user.lastName }}
               </router-link>
               <b-badge
@@ -54,6 +57,7 @@
         <router-link
           class="create-link"
           to="/users/create"
+          data-cy="create-user"
         >
           + Create user
         </router-link>

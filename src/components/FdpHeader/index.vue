@@ -25,6 +25,7 @@
             v-else
             right
             variant="link"
+            data-cy="user-menu"
           >
             <template v-slot:button-content>
               <user-avatar
@@ -33,7 +34,7 @@
               />
             </template>
             <template v-if="user.role === 'ADMIN'">
-              <b-dropdown-header>
+              <b-dropdown-header data-cy="user-menu-admin">
                 FAIR Data Point
               </b-dropdown-header>
               <b-dropdown-item @click="$router.push('/users')">
@@ -42,7 +43,7 @@
               </b-dropdown-item>
               <b-dropdown-divider />
             </template>
-            <b-dropdown-header>
+            <b-dropdown-header data-cy="user-menu-user">
               {{ user.firstName }} {{ user.lastName }}
             </b-dropdown-header>
             <b-dropdown-item @click="$router.push(`/my-metadata`)">

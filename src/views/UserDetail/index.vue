@@ -31,6 +31,7 @@
                 id="user-first-name"
                 v-model.trim="$v.user.firstName.$model"
                 placeholder="First name"
+                name="firstName"
               >
               <p
                 v-if="!$v.user.firstName.required"
@@ -48,6 +49,7 @@
                 id="user-last-name"
                 v-model.trim="$v.user.lastName.$model"
                 placeholder="Last name"
+                name="lastName"
               >
               <p
                 v-if="!$v.user.lastName.required"
@@ -65,6 +67,7 @@
                 id="user-email"
                 v-model.trim="$v.user.email.$model"
                 placeholder="Email"
+                name="email"
               >
               <p
                 v-if="!$v.user.email.required"
@@ -84,6 +87,7 @@
               <select
                 id="user-role"
                 v-model="user.role"
+                name="role"
               >
                 <option value="USER">
                   USER
@@ -97,6 +101,7 @@
               <button
                 class="btn btn-primary btn-rounded"
                 :disabled="profileSubmitStatus.isPending()"
+                data-cy="save-profile"
               >
                 Save profile
               </button>
@@ -122,6 +127,7 @@
                 v-model.trim="$v.passwordForm.password.$model"
                 placeholder="New password"
                 type="password"
+                name="password"
               >
               <p
                 v-if="!$v.passwordForm.password.required"
@@ -140,6 +146,7 @@
                 v-model.trim="$v.passwordForm.passwordCheck.$model"
                 placeholder="New password again"
                 type="password"
+                name="passwordConfirmation"
               >
               <p
                 v-if="!$v.passwordForm.passwordCheck.passwordMatch"
@@ -152,6 +159,7 @@
               <button
                 class="btn btn-primary btn-rounded"
                 :disabled="passwordSubmitStatus.isPending()"
+                data-cy="update-password"
               >
                 Update password
               </button>

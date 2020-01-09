@@ -14,6 +14,7 @@
           v-model="email"
           type="text"
           placeholder="Email"
+          name="email"
         >
       </div>
       <div class="form__group">
@@ -21,12 +22,14 @@
           v-model="password"
           type="password"
           placeholder="Password"
+          name="password"
         >
       </div>
       <div>
         <button
           class="btn btn-primary btn-full btn-rounded"
           :disabled="status.isPending()"
+          data-cy="login"
         >
           <fa
             v-if="status.isPending()"

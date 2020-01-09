@@ -2,6 +2,7 @@
   <div
     class="item-list__item"
     :class="{'item-list__item--frameless': frameless}"
+    data-cy="user-item"
   >
     <user-avatar :user="user" />
     <div class="item-list__item__content">
