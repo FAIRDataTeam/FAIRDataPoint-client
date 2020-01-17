@@ -2,6 +2,7 @@
   <span
     v-if="role"
     class="membership-badge"
+    data-cy="membership-badge"
   >
     {{ role }}
   </span>

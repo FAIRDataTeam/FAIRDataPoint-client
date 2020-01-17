@@ -10,6 +10,7 @@
           v-if="isAdmin"
           class="btn btn-link"
           :to="`/edit`"
+          data-cy="edit"
         >
           <fa :icon="['fas', 'edit']" />
           Edit
@@ -25,6 +26,7 @@
         <item-list
           title="Catalogs"
           :items="catalogs"
+          data-cy="catalogs"
         />
       </template>
     </page>

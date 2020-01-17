@@ -5,12 +5,15 @@
         <li
           v-for="(link, index) in links"
           :key="index"
+          data-cy="breadcrumbs-link"
         >
           <router-link :to="link.to">
             {{ link.label }}
           </router-link>
         </li>
-        <li>{{ current }}</li>
+        <li data-cy="breadcrumbs-current">
+          {{ current }}
+        </li>
       </ul>
     </div>
   </div>
