@@ -16,6 +16,7 @@
           v-if="isAdmin || permissions.hasWrite(dataset)"
           class="btn btn-link"
           :to="`/dataset/${dataset.identifier}/edit`"
+          data-cy="edit"
         >
           <fa :icon="['fas', 'edit']" />
           Edit
@@ -24,6 +25,7 @@
           v-if="isAdmin || permissions.hasWrite(dataset)"
           class="btn btn-link"
           :to="`/dataset/${dataset.identifier}/settings`"
+          data-cy="settings"
         >
           <fa :icon="['fas', 'cog']" />
           Settings
@@ -39,6 +41,7 @@
         <item-list
           title="Distributions"
           :items="distributions"
+          data-cy="distributions"
         />
       </template>
     </page>

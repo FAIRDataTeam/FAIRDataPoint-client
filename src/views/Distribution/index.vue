@@ -16,6 +16,7 @@
           v-if="isAdmin || permissions.hasWrite(distribution)"
           class="btn btn-link"
           :to="`/distribution/${distribution.identifier}/edit`"
+          data-cy="edit"
         >
           <fa :icon="['fas', 'edit']" />
           Edit
@@ -24,6 +25,7 @@
           v-if="isAdmin || permissions.hasWrite(distribution)"
           class="btn btn-link"
           :to="`/distribution/${distribution.identifier}/settings`"
+          data-cy="settings"
         >
           <fa :icon="['fas', 'cog']" />
           Settings

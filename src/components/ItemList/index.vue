@@ -7,6 +7,7 @@
       v-for="(item, index) in sortByTitle(items)"
       :key="index"
       :item="item"
+      data-cy="item"
     />
   </div>
 </template>

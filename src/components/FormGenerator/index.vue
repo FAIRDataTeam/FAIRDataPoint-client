@@ -75,6 +75,7 @@
             :id="option.id"
             :key="`input-${option.id}`"
             v-model.trim="$v.model[option.id].$model"
+            :name="option.id"
             :placeholder="option.label"
           >
           <p
@@ -96,13 +97,16 @@
       <template v-else>
         <textarea
           v-if="field.type === 'text'"
+          :id="field.id"
           v-model.trim="$v.model[field.id].$model"
+          :name="field.id"
           :placeholder="field.label"
         />
         <input
           v-else
           :id="field.id"
           v-model.trim="$v.model[field.id].$model"
+          :name="field.id"
           :placeholder="field.label"
         >
         <p
@@ -120,7 +124,10 @@
       </template>
     </div>
     <div>
-      <button class="btn btn-primary btn-rounded">
+      <button
+        class="btn btn-primary btn-rounded"
+        data-cy="save"
+      >
         Save
       </button>
     </div>

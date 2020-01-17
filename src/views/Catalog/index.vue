@@ -16,6 +16,7 @@
           v-if="isAdmin || permissions.hasWrite(catalog)"
           class="btn btn-link"
           :to="`/catalog/${catalog.identifier}/edit`"
+          data-cy="edit"
         >
           <fa :icon="['fas', 'edit']" />
           Edit
@@ -24,6 +25,7 @@
           v-if="isAdmin || permissions.hasWrite(catalog)"
           class="btn btn-link"
           :to="`/catalog/${catalog.identifier}/settings`"
+          data-cy="settings"
         >
           <fa :icon="['fas', 'cog']" />
           Settings
@@ -39,6 +41,7 @@
         <item-list
           title="Datasets"
           :items="datasets"
+          data-cy="datasets"
         />
       </template>
     </page>

@@ -39,7 +39,7 @@ jobs:
 
     - stage: tag
       if: (branch = develop) AND (NOT (type IN (pull_request)))
-      install: false
+      install: skip
       script:
         - docker pull $IMAGE_TAG
         - docker image tag $IMAGE_TAG $IMAGE_TAG_DEVELOP
@@ -47,7 +47,7 @@ jobs:
 
     - stage: tag
       if: (branch = master) AND (NOT (type IN (pull_request)))
-      install: false
+      install: skip
       script:
         - docker pull $IMAGE_TAG
         - docker image tag $IMAGE_TAG $IMAGE_TAG_LATEST
@@ -55,7 +55,7 @@ jobs:
 
     - stage: tag
       if: (type = push) AND (NOT ((branch =~ ^release) OR (branch =~ ^v\d+\.\d+\.\d+)))
-      install: false
+      install: skip
       script:
         - docker pull $IMAGE_TAG
         - docker image tag $IMAGE_TAG $IMAGE_TAG_BRANCH
@@ -63,7 +63,7 @@ jobs:
 
     - stage: tag
       if: (tag =~ ^v\d+\.\d+\.\d+$)
-      install: false
+      install: skip
       env:
         - IMAGE="fairdata/fairdatapoint-client"
         - IMAGE_TAG="$IMAGE:$TRAVIS_COMMIT"
@@ -81,7 +81,7 @@ jobs:
 
     - stage: tag
       if: (tag =~ ^v\d+\.\d+\.\d+-rc\.\d+$)
-      install: false
+      install: skip
       env:
         - IMAGE="fairdata/fairdatapoint-client"
         - IMAGE_TAG="$IMAGE:$TRAVIS_COMMIT"

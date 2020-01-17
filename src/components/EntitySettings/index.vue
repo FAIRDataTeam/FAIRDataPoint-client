@@ -60,6 +60,7 @@
               <button
                 class="btn btn-primary btn-rounded"
                 :disabled="inviteForm.userUuid === null || inviteStatus.isPending()"
+                data-cy="invite"
               >
                 <fa
                   v-if="inviteStatus.isPending()"
