@@ -1,0 +1,26 @@
+@import "../../scss/variables";
+
+.version-info-table {
+  max-width: 100%;
+  overflow-x: hidden;
+
+  &:not(:last-child) {
+    margin-bottom: $space-md;
+  }
+
+  table {
+    thead {
+      th {
+        background: $color-background-primary;
+      }
+    }
+
+    tbody {
+      tr {
+        th:first-child {
+          width: 25%;
+        }
+      }
+    }
+  }
+}
