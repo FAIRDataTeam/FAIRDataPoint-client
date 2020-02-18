@@ -21,21 +21,16 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import Status from '../../utils/Status'
 
-export default {
-  name: 'StatusFlash',
+@Component
+export default class StatusFlash extends Vue {
+  @Prop({ type: Status, required: true })
+  readonly status: Status
 
-  props: {
-    status: {
-      type: Status,
-      required: true,
-    },
-    noLoading: {
-      type: Boolean,
-      default: false,
-    },
-  },
+  @Prop({ type: Boolean, default: false })
+  readonly noLoading: boolean
 }
 </script>

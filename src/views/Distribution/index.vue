@@ -16,6 +16,7 @@
           v-if="isAdmin || permissions.hasWrite(distribution)"
           class="btn btn-link"
           :to="`/distribution/${distribution.identifier}/edit`"
+          data-cy="edit"
         >
           <fa :icon="['fas', 'edit']" />
           Edit
@@ -24,6 +25,7 @@
           v-if="isAdmin || permissions.hasWrite(distribution)"
           class="btn btn-link"
           :to="`/distribution/${distribution.identifier}/settings`"
+          data-cy="settings"
         >
           <fa :icon="['fas', 'cog']" />
           Settings
@@ -60,14 +62,14 @@
     </page>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { mapGetters } from 'vuex'
 import api from '../../api'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import MembershipBadge from '../../components/MembershipBadge/index'
-import EntityMetadata from '../../components/EntityMetadata'
-import Page from '../../components/Page'
-import StatusFlash from '../../components/StatusFlash'
+import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
+import MembershipBadge from '../../components/MembershipBadge/index.vue'
+import EntityMetadata from '../../components/EntityMetadata/index.vue'
+import Page from '../../components/Page/index.vue'
+import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
 import metadata from '../../utils/metadata'
 import breadcrumbs from '../../utils/breadcrumbs'

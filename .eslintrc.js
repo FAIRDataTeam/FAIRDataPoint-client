@@ -6,11 +6,13 @@ module.exports = {
   extends: [
     'plugin:vue/recommended',
     '@vue/airbnb',
+    '@vue/typescript',
   ],
   rules: {
+    'class-methods-use-this': 'off',
+    'no-alert': 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-alert': 'off',
     semi: ['error', 'never'],
     'import/extensions': ['error', 'always', {
       js: 'never',
@@ -18,7 +20,7 @@ module.exports = {
       jsx: 'never',
       ts: 'never',
       tsx: 'never',
-      vue: 'never',
+      vue: 'always',
     }],
     'vue/component-name-in-template-casing': ['error', 'kebab-case', {
       registeredComponentsOnly: false,
@@ -26,6 +28,6 @@ module.exports = {
     }],
   },
   parserOptions: {
-    parser: 'babel-eslint',
+    parser: '@typescript-eslint/parser',
   },
 }

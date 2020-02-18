@@ -1,10 +1,10 @@
 <template>
   <entity-settings :config="config" />
 </template>
-<script>
+<script lang="ts">
 import api from '../../api'
 import breadcrumbs from '../../utils/breadcrumbs'
-import EntitySettings from '../../components/EntitySettings'
+import EntitySettings from '../../components/EntitySettings/index.vue'
 
 export default {
   name: 'DatasetSettings',

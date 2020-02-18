@@ -22,129 +22,124 @@
     </page>
   </div>
 </template>
-<script>
+<script lang="ts">
 import axios from 'axios'
 import _ from 'lodash'
-import { mapGetters } from 'vuex'
+import {
+  Component, Prop, Vue, Watch,
+} from 'vue-property-decorator'
 import permissions from '../../utils/permissions'
 import Status from '../../utils/Status'
-import Breadcrumbs from '../Breadcrumbs'
-import FormGenerator from '../FormGenerator'
-import Page from '../Page'
-import StatusFlash from '../StatusFlash'
+import Breadcrumbs from '../Breadcrumbs/index.vue'
+import FormGenerator from '../FormGenerator/index.vue'
+import Page from '../Page/index.vue'
+import StatusFlash from '../StatusFlash/index.vue'
 
-export default {
-  name: 'EntityEdit',
+@Component({
   components: {
-    StatusFlash, Breadcrumbs, FormGenerator, Page,
+    Breadcrumbs,
+    FormGenerator,
+    Page,
+    StatusFlash,
   },
+})
+export default class EntityEdit extends Vue {
+  @Prop({ required: true })
+  readonly config: any
 
-  props: {
-    config: {
-      type: Object,
-      required: true,
-    },
-  },
+  entity: any = null
 
-  data() {
-    return {
-      entity: null,
-      breadcrumbs: null,
-      status: new Status(),
-      spec: null,
-    }
-  },
+  breadcrumbs: any = null
 
-  computed: {
-    entityId() {
-      return this.$route.params.id
-    },
-    ...mapGetters('auth', {
-      isAdmin: 'isAdmin',
-    }),
-  },
+  status: Status = new Status()
 
-  watch: {
-    $route: 'fetchData',
-  },
+  spec: any = null
 
-  created() {
+
+  get entityId(): string {
+    return this.$route.params.id
+  }
+
+  get isAdmin(): boolean {
+    return this.$store.getters['auth/isAdmin']
+  }
+
+  created(): void {
     this.fetchData()
-  },
+  }
 
-  methods: {
-    async fetchData() {
-      try {
-        this.status.setPending()
+  @Watch('$route')
+  async fetchData(): Promise<void> {
+    try {
+      this.status.setPending()
 
-        const requests = [
-          this.config.getEntity(this.entityId),
-          this.config.getEntitySpec(),
-        ]
+      const requests = [
+        this.config.getEntity(this.entityId),
+        this.config.getEntitySpec(),
+      ]
 
-        const [entity, spec] = await axios.all(requests)
+      const [entity, spec] = await axios.all(requests)
 
-        if (this.isAdmin || permissions.hasWrite(entity.data)) {
-          this.entity = this.entityToFormData(entity.data)
-          this.breadcrumbs = this.config.createBreadcrumbs(entity.data)
-          this.spec = spec.data
-          this.status.setDone()
-        } else {
-          await this.$router.replace(this.config.toUrl(entity.data))
-        }
-      } catch (error) {
-        this.status.setErrorFromResponse(error, 'Unable to get data.')
+      if (this.isAdmin || permissions.hasWrite(entity.data)) {
+        this.entity = this.entityToFormData(entity.data)
+        this.breadcrumbs = this.config.createBreadcrumbs(entity.data)
+        this.spec = spec.data
+        this.status.setDone()
+      } else {
+        await this.$router.replace(this.config.toUrl(entity.data))
       }
-    },
+    } catch (error) {
+      this.status.setErrorFromResponse(error, 'Unable to get data.')
+    }
+  }
 
-    entityToFormData(entity) {
-      const formData = {}
+  entityToFormData(entity: any): any {
+    const formData = {}
 
-      const toValue = (value, inArray) => (inArray ? { value } : value)
+    const toValue = (value, inArray) => (inArray ? { value } : value)
 
-      const toFormValue = (value, inArray = false) => {
-        if (_.has(value, 'uri')) {
-          return toValue(value.uri, inArray)
-        }
-        if (_.isArray(value)) {
-          return value.map(v => toFormValue(v, true))
-        }
-        return toValue(value, inArray)
+    const toFormValue = (value, inArray = false) => {
+      if (_.has(value, 'uri')) {
+        return toValue(value.uri, inArray)
       }
-
-      Object.entries(entity).forEach(([key, value]) => {
-        formData[key] = toFormValue(value)
-      })
-
-      return formData
-    },
-
-    formDataToEntity(formData) {
-      const entity = {}
-
-      const toEntityValue = (value) => {
-        if (_.isArray(value)) {
-          return value.map(v => v.value)
-        }
-        return value
+      if (_.isArray(value)) {
+        return value.map(v => toFormValue(v, true))
       }
+      return toValue(value, inArray)
+    }
 
-      Object.entries(formData).forEach(([key, value]) => {
-        entity[key] = toEntityValue(value)
-      })
+    Object.entries(entity).forEach(([key, value]) => {
+      formData[key] = toFormValue(value)
+    })
 
-      return entity
-    },
+    return formData
+  }
 
-    async submit(formData) {
-      try {
-        const entity = this.formDataToEntity(formData)
-        await this.config.putEntity(this.entityId, entity)
-        await this.$router.push(this.config.toUrl(this.entity))
-      } catch (error) {
-        this.status.setError('Unable to update entity data.')
+  formDataToEntity(formData: any): any {
+    const entity = {}
+
+    const toEntityValue = (value) => {
+      if (_.isArray(value)) {
+        return value.map(v => v.value)
       }
-    },
-  },
+      return value
+    }
+
+    Object.entries(formData).forEach(([key, value]) => {
+      entity[key] = toEntityValue(value)
+    })
+
+    return entity
+  }
+
+  async submit(formData: any): Promise<void> {
+    try {
+      const entity = this.formDataToEntity(formData)
+      await this.config.putEntity(this.entityId, entity)
+      await this.$router.push(this.config.toUrl(this.entity))
+    } catch (error) {
+      this.status.setError('Unable to update entity data.')
+    }
+  }
 }
 </script>

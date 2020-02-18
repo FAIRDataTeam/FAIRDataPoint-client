@@ -27,6 +27,7 @@
               id="user-first-name"
               v-model.trim="$v.user.firstName.$model"
               placeholder="First name"
+              name="firstName"
             >
             <p
               v-if="!$v.user.firstName.required"
@@ -44,6 +45,7 @@
               id="user-last-name"
               v-model.trim="$v.user.lastName.$model"
               placeholder="Last name"
+              name="lastName"
             >
             <p
               v-if="!$v.user.lastName.required"
@@ -61,6 +63,7 @@
               id="user-email"
               v-model.trim="$v.user.email.$model"
               placeholder="Email"
+              name="email"
             >
             <p
               v-if="!$v.user.email.required"
@@ -80,6 +83,7 @@
             <select
               id="user-role"
               v-model="user.role"
+              name="role"
             >
               <option value="USER">
                 USER
@@ -99,6 +103,7 @@
               v-model.trim="$v.user.password.$model"
               placeholder="New password"
               type="password"
+              name="password"
             >
             <p
               v-if="!$v.user.password.required"
@@ -117,6 +122,7 @@
               v-model.trim="$v.user.passwordCheck.$model"
               placeholder="New password again"
               type="password"
+              name="passwordConfirmation"
             >
             <p
               v-if="!$v.user.passwordCheck.passwordMatch"
@@ -129,6 +135,7 @@
             <button
               class="btn btn-primary btn-rounded"
               :disabled="passwordSubmitStatus.isPending()"
+              data-cy="create-user"
             >
               Create user
             </button>
@@ -138,12 +145,12 @@
     </page>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { email, required } from 'vuelidate/lib/validators'
 import api from '../../api'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import Page from '../../components/Page'
-import StatusFlash from '../../components/StatusFlash'
+import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
+import Page from '../../components/Page/index.vue'
+import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
 
 export default {
