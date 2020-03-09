@@ -1,4 +1,6 @@
 import urls from './urls'
+import { DCT } from '@/rdf/namespaces'
+import rdfUtils from '@/rdf/utils'
 
 export type BreadcrumbItem = {
   label: string,
@@ -9,54 +11,86 @@ function createItem(label: string, to: string): BreadcrumbItem {
   return { label, to }
 }
 
-function fromLinks(links: any): Array<BreadcrumbItem> {
-  const breadcrumbs: Array<BreadcrumbItem> = []
+function fromRepository(graph): Array<BreadcrumbItem> {
+  const repositoryTitle = graph.findOne(DCT('title'))
+  return [createItem(repositoryTitle, urls.repository())]
+}
 
-  const r = links.repository
-  if (r) {
-    breadcrumbs.push(createItem(r.label, urls.repository()))
-  }
 
-  const c = links.catalog
-  if (c) {
-    breadcrumbs.push(createItem(c.label, urls.catalog(c)))
-  }
+function fromCatalog(graph): Array<BreadcrumbItem> {
+  const repository = graph.findOne(DCT('isPartOf'), { value: false })
+  const repositoryTitle = graph.findOne(DCT('title'), { subject: repository })
+  return [createItem(repositoryTitle, urls.repository())]
+}
 
-  const d = links.dataset
-  if (d) {
-    breadcrumbs.push(createItem(d.label, urls.dataset(d)))
-  }
+function fromWithCatalog(graph) {
+  const breadcrumbs = fromCatalog(graph)
 
+  const catalogTitle = graph.findOne(DCT('title'))
+  const item = createItem(catalogTitle, urls.catalog(graph.subjectTerm))
+
+  breadcrumbs.push(item)
   return breadcrumbs
 }
 
-function fromLinksWith(entity, toUrl): Array<BreadcrumbItem> {
-  const breadcrumbs: Array<BreadcrumbItem> = fromLinks(entity.links)
-  breadcrumbs.push(createItem(entity.title, toUrl(entity)))
+function fromDataset(graph): Array<BreadcrumbItem> {
+  const catalog = graph.findOne(DCT('isPartOf'), { value: false })
+  const catalogTitle = graph.findOne(DCT('title'), { subject: catalog })
+  const catalogId = rdfUtils.pathTerm(catalog.value)
+
+  const repository = graph.findOne(DCT('isPartOf'), { subject: catalog, value: false })
+  const repositoryTitle = graph.findOne(DCT('title'), { subject: repository })
+  return [
+    createItem(repositoryTitle, urls.repository()),
+    createItem(catalogTitle, urls.catalog(catalogId)),
+  ]
+}
+
+function fromWithDataset(graph) {
+  const breadcrumbs = fromDataset(graph)
+
+  const datasetTitle = graph.findOne(DCT('title'))
+  const item = createItem(datasetTitle, urls.dataset(graph.subjectTerm))
+
+  breadcrumbs.push(item)
   return breadcrumbs
 }
 
-function fromRepository(repository): Array<BreadcrumbItem> {
-  return [createItem(repository.title, urls.repository())]
+function fromDistribution(graph) {
+  const dataset = graph.findOne(DCT('isPartOf'), { value: false })
+  const datasetTitle = graph.findOne(DCT('title'), { subject: dataset })
+  const datasetId = rdfUtils.pathTerm(dataset.value)
+
+  const catalog = graph.findOne(DCT('isPartOf'), { subject: dataset, value: false })
+  const catalogTitle = graph.findOne(DCT('title'), { subject: catalog })
+  const catalogId = rdfUtils.pathTerm(catalog.value)
+
+  const repository = graph.findOne(DCT('isPartOf'), { subject: catalog, value: false })
+  const repositoryTitle = graph.findOne(DCT('title'), { subject: repository })
+
+  return [
+    createItem(repositoryTitle, urls.repository()),
+    createItem(catalogTitle, urls.catalog(catalogId)),
+    createItem(datasetTitle, urls.dataset(datasetId)),
+  ]
 }
 
-function fromLinksWithCatalog(catalog): Array<BreadcrumbItem> {
-  return fromLinksWith(catalog, urls.catalog)
-}
+function fromWithDistribution(graph) {
+  const breadcrumbs = fromDistribution(graph)
 
-function fromLinksWithDataset(dataset): Array<BreadcrumbItem> {
-  return fromLinksWith(dataset, urls.dataset)
-}
+  const distributionTitle = graph.findOne(DCT('title'))
+  const item = createItem(distributionTitle, urls.distribution(graph.subjectTerm))
 
-function fromLinksWithDistribution(distribution): Array<BreadcrumbItem> {
-  return fromLinksWith(distribution, urls.distribution)
+  breadcrumbs.push(item)
+  return breadcrumbs
 }
-
 
 export default {
-  fromLinks,
   fromRepository,
-  fromLinksWithCatalog,
-  fromLinksWithDataset,
-  fromLinksWithDistribution,
+  fromCatalog,
+  fromWithCatalog,
+  fromDataset,
+  fromWithDataset,
+  fromDistribution,
+  fromWithDistribution,
 }

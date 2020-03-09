@@ -6,6 +6,8 @@ import api from '../../api'
 import breadcrumbs from '../../utils/breadcrumbs'
 import EntityEdit from '../../components/EntityEdit/index.vue'
 import urls from '../../utils/urls'
+import rdfUtils from '@/rdf/utils'
+import { SHACLParser } from '@/components/ShaclForm/SHACLParser'
 
 export default {
   name: 'CatalogEdit',
@@ -14,11 +16,48 @@ export default {
   data() {
     return {
       config: {
+        shape: 'CatalogShape',
+        getSubject: rdfUtils.catalogSubject,
         getEntity: api.catalog.getCatalog,
         getEntitySpec: api.catalog.getCatalogSpec,
+        getMembership: api.catalog.getCatalogMembership,
         putEntity: api.catalog.putCatalog,
         toUrl: urls.catalog,
-        createBreadcrumbs: breadcrumbs.fromLinksWithCatalog,
+        createBreadcrumbs: breadcrumbs.fromWithCatalog,
+        filter: SHACLParser.filterBlacklist([
+          'http://purl.org/dc/terms/accessRights',
+          'http://purl.org/dc/terms/conformsTo',
+          'http://www.w3.org/ns/dcat#contactPoint',
+          'http://purl.org/dc/terms/creator',
+          'http://purl.org/dc/terms/issued',
+          'http://purl.org/dc/terms/modified',
+          'http://purl.org/dc/terms/publisher',
+          'http://purl.org/dc/terms/identifier',
+          'http://www.w3.org/ns/dcat#theme',
+          'http://purl.org/dc/terms/type',
+          'http://purl.org/dc/terms/relation',
+          'http://www.w3.org/ns/dcat#qualifiedRelation',
+          'http://www.w3.org/ns/dcat#keyword',
+          'http://www.w3.org/ns/dcat#landingPage',
+          'http://www.w3.org/ns/prov#qualifiedAttribution',
+          'http://purl.org/dc/terms/rights',
+          'http://www.w3.org/ns/odrl/2/hasPolicy',
+          'http://purl.org/dc/terms/isReferencedBy',
+          'http://www.w3.org/ns/dcat#distribution',
+          'http://www.w3.org/ns/dcat#spatialResolutionInMeters',
+          'http://www.w3.org/ns/dcat#temporalResolution',
+          'http://purl.org/dc/terms/accrualPeriodicity',
+          'http://purl.org/dc/terms/spatial',
+          'http://purl.org/dc/terms/temporal',
+          'http://www.w3.org/ns/prov#wasGeneratedBy',
+          'http://xmlns.com/foaf/0.1/homePage',
+          'http://purl.org/dc/terms/hasPart',
+          'http://www.w3.org/ns/dcat#dataset',
+          'http://www.w3.org/ns/dcat#service',
+          'http://www.w3.org/ns/dcat#catalog',
+          'http://www.w3.org/ns/dcat#record',
+          'http://purl.org/dc/terms/isPartOf',
+        ]),
       },
     }
   },

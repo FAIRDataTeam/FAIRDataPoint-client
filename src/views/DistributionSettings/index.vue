@@ -5,6 +5,7 @@
 import api from '../../api'
 import breadcrumbs from '../../utils/breadcrumbs'
 import EntitySettings from '../../components/EntitySettings/index.vue'
+import rdfUtils from '@/rdf/utils'
 
 export default {
   name: 'DistributionSettings',
@@ -12,12 +13,13 @@ export default {
   data() {
     return {
       config: {
+        getSubject: rdfUtils.distributionSubject,
         getEntity: api.distribution.getDistribution,
         getEntityMembers: api.distribution.getDistributionMembers,
         putEntityMember: api.distribution.putDistributionMember,
         deleteEntityMember: api.distribution.deleteDistributionMember,
         entityType: 'DISTRIBUTION',
-        createBreadcrumbs: breadcrumbs.fromLinksWithDistribution,
+        createBreadcrumbs: breadcrumbs.fromWithDistribution,
       },
     }
   },

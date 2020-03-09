@@ -1,16 +1,29 @@
 import request from '../request'
 
 export default {
-  getRepositorySpec() {
-    return request.get('/spec')
+  getRepository() {
+    return request.get('/', {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
   },
 
-  getRepository() {
-    return request.get('/')
+  getRepositorySpec() {
+    return request.get('/spec', {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
   },
 
   putRepository(data) {
-    return request.put('/', data)
+    return request.put('/', data, {
+      headers: {
+        Accept: 'text/turtle',
+        'Content-Type': 'text/turtle',
+      },
+    })
   },
 
   getRepositoryDashboard() {

@@ -1,16 +1,33 @@
 import request from '../request'
 
 export default {
-  getCatalogSpec() {
-    return request.get('/catalog/spec')
+  getCatalog(id) {
+    return request.get(`/catalog/${id}`, {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
   },
 
-  getCatalog(id) {
-    return request.get(`/catalog/${id}`)
+  getCatalogSpec() {
+    return request.get('/catalog/spec', {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
+  },
+
+  getCatalogMembership(id) {
+    return request.get(`/catalog/${id}/member`)
   },
 
   putCatalog(id, data) {
-    return request.put(`/catalog/${id}`, data)
+    return request.put(`/catalog/${id}`, data, {
+      headers: {
+        Accept: 'text/turtle',
+        'Content-Type': 'text/turtle',
+      },
+    })
   },
 
   getCatalogMembers(id) {

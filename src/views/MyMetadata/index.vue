@@ -34,7 +34,7 @@
             class="item-list__item"
           >
             <a
-              v-if="catalog.datasets.length > 0"
+              v-if="catalog.children.length > 0"
               class="item-list__item__control"
               @click.prevent="toggleOpen(catalog)"
             >
@@ -65,12 +65,12 @@
               class="item-list"
             >
               <div
-                v-for="dataset in sortByTitle(catalog.datasets)"
+                v-for="dataset in sortByTitle(catalog.children)"
                 :key="dataset.identifier"
                 class="item-list__item"
               >
                 <a
-                  v-if="dataset.distributions.length > 0"
+                  v-if="dataset.children.length > 0"
                   class="item-list__item__control"
                   @click.prevent="toggleOpen(dataset)"
                 >
@@ -101,7 +101,7 @@
                   class="item-list"
                 >
                   <div
-                    v-for="distribution in sortByTitle(dataset.distributions)"
+                    v-for="distribution in sortByTitle(dataset.children)"
                     :key="distribution.identifier"
                     class="item-list__item"
                   >
@@ -195,7 +195,7 @@ export default {
       this.dashboard = this.dashboard.map(c => ({
         ...c,
         open: f(c),
-        datasets: c.datasets.map(d => ({
+        children: c.children.map(d => ({
           ...d,
           open: f(d),
         })),

@@ -1,7 +1,7 @@
 <template>
   <div class="entity-metadata">
     <div
-      v-for="(data, index) in metadata"
+      v-for="(data, index) in filteredMetadata"
       :key="index"
       class="entity-metadata__item"
       :class="{
@@ -64,5 +64,9 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 export default class EntityMetadata extends Vue {
   @Prop({ type: Array, default: [] })
   readonly metadata: Array<any>
+
+  get filteredMetadata() {
+    return this.metadata.filter(data => !data.items || data.items.length > 0)
+  }
 }
 </script>
