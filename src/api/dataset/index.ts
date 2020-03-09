@@ -1,16 +1,33 @@
 import request from '../request'
 
 export default {
-  getDatasetSpec() {
-    return request.get('/dataset/spec')
+  getDataset(id) {
+    return request.get(`/dataset/${id}`, {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
   },
 
-  getDataset(id) {
-    return request.get(`/dataset/${id}`)
+  getDatasetSpec() {
+    return request.get('/dataset/spec', {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
+  },
+
+  getDatasetMembership(id) {
+    return request.get(`/dataset/${id}/member`)
   },
 
   putDataset(id, data) {
-    return request.put(`/dataset/${id}`, data)
+    return request.put(`/dataset/${id}`, data, {
+      headers: {
+        Accept: 'text/turtle',
+        'Content-Type': 'text/turtle',
+      },
+    })
   },
 
   getDatasetMembers(id) {

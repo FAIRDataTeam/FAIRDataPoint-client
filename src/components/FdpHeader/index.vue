@@ -122,7 +122,7 @@ export default class FdpHeader extends Vue {
   }
 
   created() {
-    this.fetchData()
+    // this.fetchData()
   }
 
   async fetchData(): Promise<void> {

@@ -1,140 +1,63 @@
 <template>
-  <div>
-    <breadcrumbs
-      v-if="dataset !== null"
-      :links="breadcrumbs"
-      :current="dataset.title"
-    />
-    <status-flash :status="status" />
-    <page
-      v-if="dataset !== null"
-      :title="dataset.title"
-    >
-      <template v-slot:actions>
-        <membership-badge :entity="dataset" />
-        <router-link
-          v-if="isAdmin || permissions.hasWrite(dataset)"
-          class="btn btn-link"
-          :to="`/dataset/${dataset.identifier}/edit`"
-          data-cy="edit"
-        >
-          <fa :icon="['fas', 'edit']" />
-          Edit
-        </router-link>
-        <router-link
-          v-if="isAdmin || permissions.hasWrite(dataset)"
-          class="btn btn-link"
-          :to="`/dataset/${dataset.identifier}/settings`"
-          data-cy="settings"
-        >
-          <fa :icon="['fas', 'cog']" />
-          Settings
-        </router-link>
-      </template>
-      <template v-slot:column>
-        <entity-metadata :metadata="metadata" />
-      </template>
-      <template v-slot:content>
-        <p class="description">
-          {{ dataset.description }}
-        </p>
-        <item-list
-          title="Distributions"
-          :items="distributions"
-          data-cy="distributions"
-        />
-      </template>
-    </page>
-  </div>
+  <entity-view :config="config" />
 </template>
 <script lang="ts">
-import moment from 'moment'
-import { mapGetters } from 'vuex'
+import { Component, Vue } from 'vue-property-decorator'
+import _ from 'lodash'
 import api from '../../api'
-import permissions from '../../utils/permissions'
-import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
-import ItemList from '../../components/ItemList/index.vue'
-import EntityMetadata from '../../components/EntityMetadata/index.vue'
-import Page from '../../components/Page/index.vue'
-import StatusFlash from '../../components/StatusFlash/index.vue'
-import Status from '../../utils/Status'
-import metadata from '../../utils/metadata'
-import MembershipBadge from '../../components/MembershipBadge/index.vue'
+import EntityView from '@/components/EntityView/index.vue'
 import breadcrumbs from '../../utils/breadcrumbs'
+import rdfUtils from '@/rdf/utils'
+import { DCAT, DCT, FDPO } from '@/rdf/namespaces'
+import urls from '@/utils/urls'
+import metadata from '@/utils/metadata'
 
-export default {
-  name: 'Dataset',
-  components: {
-    MembershipBadge,
-    StatusFlash,
-    Breadcrumbs,
-    ItemList,
-    EntityMetadata,
-    Page,
-  },
 
-  data() {
+@Component({ components: { EntityView } })
+export default class Dataset extends Vue {
+  get config() {
     return {
-      dataset: null,
-      metadata: null,
-      distributions: null,
-      breadcrumbs: null,
-      status: new Status(),
-      permissions,
+      getSubject: rdfUtils.datasetSubject,
+      getEntity: api.dataset.getDataset,
+      getMembership: api.dataset.getDatasetMembership,
+      createItemList: this.createDistributions,
+      createBreadcrumbs: breadcrumbs.fromDataset,
+      actions: ['edit', 'settings'],
+      getEntityMetadata: this.getEntityMetadata,
     }
-  },
+  }
 
-  computed: {
-    ...mapGetters('auth', {
-      isAdmin: 'isAdmin',
-    }),
-  },
+  createDistributions(graph) {
+    const items = graph.findAll(DCAT('distribution'), { value: false }).map((distribution) => {
+      const distributionId = rdfUtils.pathTerm(_.get(distribution, 'value'))
+      const options = { subject: distribution }
 
-  watch: {
-    $route: 'fetchData',
-  },
-
-  created() {
-    this.fetchData()
-  },
-
-  methods: {
-    async fetchData() {
-      try {
-        this.status.setPending()
-
-        const response = await api.dataset.getDataset(this.$route.params.id)
-        this.dataset = response.data
-        this.metadata = this.createMetadata(this.dataset)
-        this.distributions = this.createDistributions(this.dataset)
-        this.breadcrumbs = breadcrumbs.fromLinks(this.dataset.links)
-        this.status.setDone()
-      } catch (error) {
-        this.status.setError('Unable to get dataset data.')
-      }
-    },
-
-    createMetadata(dataset) {
-      return [
-        ...metadata.commonMetadata(dataset),
-        metadata.fromField('Themes', dataset.themes),
-        metadata.fromField('Keywords', dataset.keywords.map(label => ({ label }))),
-        metadata.rdfLinks(),
-      ]
-    },
-
-    createDistributions(dataset) {
-      return dataset.distributions.map(distribution => ({
-        title: distribution.title,
-        link: `/distribution/${distribution.identifier}`,
-        description: distribution.description,
+      return {
+        title: graph.findOne(DCT('title'), options),
+        link: urls.distribution(distributionId),
+        description: graph.findOne(DCT('description'), options),
         metadata: [
-          metadata.fromField('Media Type:', distribution.mediaType),
-          metadata.fromField('Issued:', moment(distribution.issued).format('DD-MM-Y')),
-          metadata.fromField('Modified:', moment(distribution.modified).format('DD-MM-Y')),
+          metadata.field('Media Type', graph.findOne(DCAT('mediaType'), options)),
+          metadata.dateField('Issued', graph.findOne(FDPO('metadataIssued'), options)),
+          metadata.dateField('Modified', graph.findOne(FDPO('metadataModified'), options)),
         ],
-      }))
-    },
-  },
+      }
+    })
+
+    return {
+      title: 'Distributions',
+      dataCy: 'distributions',
+      items,
+    }
+  }
+
+  getEntityMetadata(graph) {
+    const keywords = graph.findAll(DCAT('keyword')).map(label => ({ label }))
+    const themes = graph.findAll(DCAT('theme')).map(metadata.itemFromPath)
+    return [
+      metadata.field('Themes', themes),
+      metadata.field('Keyword', keywords),
+    ]
+  }
 }
 </script>

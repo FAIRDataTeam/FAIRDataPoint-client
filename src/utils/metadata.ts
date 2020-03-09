@@ -1,7 +1,11 @@
 import moment from 'moment'
+import Graph from '@/rdf/Graph'
+import { DCT, FDPO } from '@/rdf/namespaces'
+import rdfUtils from '@/rdf/utils'
+import config from '@/config'
 
 
-function fromField(label, input, extra = {}) {
+function field(label, input, extra = {}) {
   if (typeof input !== 'object') {
     return {
       label,
@@ -26,8 +30,12 @@ function fromField(label, input, extra = {}) {
   }
 }
 
+function dateField(label, input, extra = {}) {
+  return field(label, moment(input).format(config.dateFormat), extra)
+}
+
 function rdfLinks() {
-  const url = window.location.pathname
+  const url = config.baseURL
   return {
     label: 'Download RDF',
     links: [{
@@ -43,20 +51,32 @@ function rdfLinks() {
   }
 }
 
-function commonMetadata(entity) {
+function itemFromPath(path) {
+  if (!path) return null
+
+  return {
+    label: rdfUtils.pathTerm(path),
+    uri: path,
+  }
+}
+
+function commonMetadata(graph: Graph) {
   return [
-    fromField('Metadata Issued', moment(entity.issued).format('DD-MM-Y'), { sm: true }),
-    fromField('Metadata Modified', moment(entity.modified).format('DD-MM-Y'), { sm: true }),
-    fromField('Version', entity.version),
-    fromField('License', entity.license),
-    fromField('Specification', entity.specification),
-    fromField('Language', entity.language),
-    fromField('Publisher', entity.publisher),
+    dateField('Metadata Issued', graph.findOne(FDPO('metadataIssued')), { sm: true }),
+    dateField('Metadata Modified', graph.findOne(FDPO('metadataModified')), { sm: true }),
+    field('Version', graph.findOne(DCT('hasVersion'))),
+    field('License', itemFromPath(graph.findOne(DCT('license')))),
+    field('Specification', itemFromPath(graph.findOne(DCT('conformsTo')))),
+    field('Language', itemFromPath(graph.findOne(DCT('language')))),
+    field('Publisher', itemFromPath(graph.findOne(DCT('publisher')))),
   ]
 }
 
+
 export default {
-  fromField,
+  field,
+  dateField,
   rdfLinks,
   commonMetadata,
+  itemFromPath,
 }

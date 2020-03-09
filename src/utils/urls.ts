@@ -2,16 +2,16 @@ function repository(): string {
   return '/'
 }
 
-function catalog(c): string {
-  return `/catalog/${c.identifier}`
+function catalog(id): string {
+  return `/catalog/${id}`
 }
 
-function dataset(d): string {
-  return `/dataset/${d.identifier}`
+function dataset(id): string {
+  return `/dataset/${id}`
 }
 
-function distribution(d): string {
-  return `/distribution/${d.identifier}`
+function distribution(id): string {
+  return `/distribution/${id}`
 }
 
 export default {

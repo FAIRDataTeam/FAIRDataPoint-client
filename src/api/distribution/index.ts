@@ -1,16 +1,33 @@
 import request from '../request'
 
 export default {
-  getDistributionSpec() {
-    return request.get('/distribution/spec')
+  getDistribution(id) {
+    return request.get(`/distribution/${id}`, {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
   },
 
-  getDistribution(id) {
-    return request.get(`/distribution/${id}`)
+  getDistributionSpec() {
+    return request.get('/distribution/spec', {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
+  },
+
+  getDistributionMembership(id) {
+    return request.get(`/distribution/${id}/member`)
   },
 
   putDistribution(id, data) {
-    return request.put(`/distribution/${id}`, data)
+    return request.put(`/distribution/${id}`, data, {
+      headers: {
+        Accept: 'text/turtle',
+        'Content-Type': 'text/turtle',
+      },
+    })
   },
 
   getDistributionMembers(id) {

@@ -1,116 +1,55 @@
 <template>
-  <div>
-    <status-flash :status="status" />
-    <page
-      v-if="repository !== null"
-      :title="repository.title"
-    >
-      <template v-slot:actions>
-        <router-link
-          v-if="isAdmin"
-          class="btn btn-link"
-          :to="`/edit`"
-          data-cy="edit"
-        >
-          <fa :icon="['fas', 'edit']" />
-          Edit
-        </router-link>
-      </template>
-      <template v-slot:column>
-        <entity-metadata :metadata="metadata" />
-      </template>
-      <template v-slot:content>
-        <p class="description">
-          {{ repository.description }}
-        </p>
-        <item-list
-          title="Catalogs"
-          :items="catalogs"
-          data-cy="catalogs"
-        />
-      </template>
-    </page>
-  </div>
+  <entity-view :config="config" />
 </template>
 <script lang="ts">
-import moment from 'moment'
-import { mapGetters } from 'vuex'
-import api from '../../api'
-import ItemList from '../../components/ItemList/index.vue'
-import EntityMetadata from '../../components/EntityMetadata/index.vue'
-import Page from '../../components/Page/index.vue'
-import StatusFlash from '../../components/StatusFlash/index.vue'
-import Status from '../../utils/Status'
-import metadata from '../../utils/metadata'
+import { Component, Vue } from 'vue-property-decorator'
+import _ from 'lodash'
+import api from '@/api'
+import metadata from '@/utils/metadata'
+import rdfUtils from '@/rdf/utils'
+import EntityView from '@/components/EntityView/index.vue'
+import {
+  DCAT, DCT, FDPO, R3D,
+} from '@/rdf/namespaces'
 
 
-export default {
-  name: 'Repository',
-  components: {
-    StatusFlash,
-    ItemList,
-    EntityMetadata,
-    Page,
-  },
-
-  data() {
+@Component({
+  components: { EntityView },
+})
+export default class Repository extends Vue {
+  get config() {
     return {
-      repository: null,
-      metadata: null,
-      catalogs: null,
-      status: new Status(),
+      getSubject: rdfUtils.repositorySubject,
+      getEntity: api.repository.getRepository,
+      getMembership: () => Promise.resolve({ data: {} }),
+      createItemList: this.createCatalogs,
+      actions: ['edit'],
+      getEntityMetadata: () => [],
     }
-  },
+  }
 
-  computed: {
-    ...mapGetters('auth', {
-      isAdmin: 'isAdmin',
-    }),
-  },
+  createCatalogs(graph) {
+    const items = graph.findAll(R3D('dataCatalog'), { value: false }).map((catalog) => {
+      const catalogId = rdfUtils.pathTerm(_.get(catalog, 'value'))
+      const options = { subject: catalog }
 
-  watch: {
-    $route: 'fetchData',
-  },
-
-  created() {
-    this.fetchData()
-  },
-
-  methods: {
-    async fetchData() {
-      try {
-        this.status.setPending()
-
-        const response = await api.repository.getRepository()
-        this.repository = response.data
-        this.metadata = this.createMetadata(this.repository)
-        this.catalogs = this.createCatalogs(this.repository)
-        this.status.setDone()
-      } catch (error) {
-        this.status.setError('Unable to get repository data.')
-      }
-    },
-
-    createMetadata(repository) {
-      return [
-        ...metadata.commonMetadata(repository),
-        metadata.rdfLinks(),
-      ]
-    },
-
-    createCatalogs(repository) {
-      return repository.catalogs.map(catalog => ({
-        title: catalog.title,
-        link: `/catalog/${catalog.identifier}`,
-        description: catalog.description,
-        tags: catalog.themeTaxonomies,
+      return {
+        title: graph.findOne(DCT('title'), options),
+        link: `/catalog/${catalogId}`,
+        description: graph.findOne(DCT('description'), options),
+        tags: graph.findAll(DCAT('themeTaxonomy'), options).map(metadata.itemFromPath),
         metadata: [
-          metadata.fromField('Datasets:', catalog.distributionCount),
-          metadata.fromField('Issued:', moment(catalog.issued).format('DD-MM-Y')),
-          metadata.fromField('Modified:', moment(catalog.modified).format('DD-MM-Y')),
+          metadata.dateField('Issued:', graph.findOne(FDPO('metadataIssued'), options)),
+          metadata.dateField('Modified:', graph.findOne(FDPO('metadataModified'), options)),
         ],
-      }))
-    },
-  },
+      }
+    })
+
+    return {
+      title: 'Catalog',
+      dataCy: 'catalogs',
+      items,
+    }
+  }
 }
 </script>

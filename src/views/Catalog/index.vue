@@ -1,141 +1,62 @@
 <template>
-  <div>
-    <breadcrumbs
-      v-if="catalog !== null"
-      :links="breadcrumbs"
-      :current="catalog.title"
-    />
-    <status-flash :status="status" />
-    <page
-      v-if="catalog !== null"
-      :title="catalog.title"
-    >
-      <template v-slot:actions>
-        <membership-badge :entity="catalog" />
-        <router-link
-          v-if="isAdmin || permissions.hasWrite(catalog)"
-          class="btn btn-link"
-          :to="`/catalog/${catalog.identifier}/edit`"
-          data-cy="edit"
-        >
-          <fa :icon="['fas', 'edit']" />
-          Edit
-        </router-link>
-        <router-link
-          v-if="isAdmin || permissions.hasWrite(catalog)"
-          class="btn btn-link"
-          :to="`/catalog/${catalog.identifier}/settings`"
-          data-cy="settings"
-        >
-          <fa :icon="['fas', 'cog']" />
-          Settings
-        </router-link>
-      </template>
-      <template v-slot:column>
-        <entity-metadata :metadata="metadata" />
-      </template>
-      <template v-slot:content>
-        <p class="description">
-          {{ catalog.description }}
-        </p>
-        <item-list
-          title="Datasets"
-          :items="datasets"
-          data-cy="datasets"
-        />
-      </template>
-    </page>
-  </div>
+  <entity-view :config="config" />
 </template>
 <script lang="ts">
-import moment from 'moment'
-import { mapGetters } from 'vuex'
+import { Component, Vue } from 'vue-property-decorator'
+import _ from 'lodash'
 import api from '../../api'
-import permissions from '../../utils/permissions'
-import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
-import ItemList from '../../components/ItemList/index.vue'
-import EntityMetadata from '../../components/EntityMetadata/index.vue'
-import Page from '../../components/Page/index.vue'
-import StatusFlash from '../../components/StatusFlash/index.vue'
-import Status from '../../utils/Status'
-import metadata from '../../utils/metadata'
-import MembershipBadge from '../../components/MembershipBadge/index.vue'
-import breadcrumbs from '../../utils/breadcrumbs'
+import EntityView from '@/components/EntityView/index.vue'
+import rdfUtils from '@/rdf/utils'
+import { DCAT, DCT, FDPO } from '@/rdf/namespaces'
+import metadata from '@/utils/metadata'
+import breadcrumbs from '@/utils/breadcrumbs'
+import urls from '@/utils/urls'
 
-export default {
-  name: 'Catalog',
-
+@Component({
   components: {
-    MembershipBadge,
-    StatusFlash,
-    Breadcrumbs,
-    ItemList,
-    EntityMetadata,
-    Page,
+    EntityView,
   },
-
-  data() {
+})
+export default class Catalog extends Vue {
+  get config() {
     return {
-      catalog: null,
-      metadata: null,
-      datasets: null,
-      breadcrumbs: null,
-      status: new Status(),
-      permissions,
+      getSubject: rdfUtils.catalogSubject,
+      getEntity: api.catalog.getCatalog,
+      getMembership: api.catalog.getCatalogMembership,
+      createItemList: this.createDatasets,
+      createBreadcrumbs: breadcrumbs.fromCatalog,
+      actions: ['edit', 'settings'],
+      getEntityMetadata: this.getEntityMetadata,
     }
-  },
+  }
 
-  computed: {
-    ...mapGetters('auth', {
-      isAdmin: 'isAdmin',
-    }),
-  },
+  createDatasets(graph) {
+    const items = graph.findAll(DCAT('dataset'), { value: false }).map((dataset) => {
+      const datasetId = rdfUtils.pathTerm(_.get(dataset, 'value'))
+      const options = { subject: dataset }
 
-  watch: {
-    $route: 'fetchData',
-  },
-
-  created() {
-    this.fetchData()
-  },
-
-  methods: {
-    async fetchData() {
-      try {
-        this.status.setPending()
-
-        const response = await api.catalog.getCatalog(this.$route.params.id)
-        this.catalog = response.data
-        this.metadata = this.createMetadata(this.catalog)
-        this.datasets = this.createDatasets(this.catalog)
-        this.breadcrumbs = breadcrumbs.fromLinks(this.catalog.links)
-        this.status.setDone()
-      } catch (error) {
-        this.status.setError('Unable to get catalog data.')
-      }
-    },
-
-    createMetadata(catalog) {
-      return [
-        ...metadata.commonMetadata(catalog),
-        metadata.fromField('Theme Taxonomies', catalog.themeTaxonomies),
-        metadata.rdfLinks(),
-      ]
-    },
-
-    createDatasets(catalog) {
-      return catalog.datasets.map(dataset => ({
-        title: dataset.title,
-        link: `/dataset/${dataset.identifier}`,
-        description: dataset.description,
-        tags: dataset.themes,
+      return {
+        title: graph.findOne(DCT('title'), options),
+        link: urls.dataset(datasetId),
+        description: graph.findOne(DCT('description'), options),
+        tags: graph.findAll(DCAT('theme'), options).map(metadata.itemFromPath),
         metadata: [
-          metadata.fromField('Distributions:', dataset.distributionCount),
-          metadata.fromField('Issued:', moment(dataset.issued).format('DD-MM-Y')),
-          metadata.fromField('Modified:', moment(dataset.modified).format('DD-MM-Y')),
+          metadata.dateField('Issued:', graph.findOne(FDPO('metadataIssued'), options)),
+          metadata.dateField('Modified:', graph.findOne(FDPO('metadataModified'), options)),
         ],
-      }))
-    },
-  },
+      }
+    })
+
+    return {
+      title: 'Datasets',
+      dataCy: 'datasets',
+      items,
+    }
+  }
+
+  getEntityMetadata(graph) {
+    const themeTaxonomies = graph.findAll(DCAT('themeTaxonomy')).map(metadata.itemFromPath)
+    return [metadata.field('Theme taxonomies', themeTaxonomies)]
+  }
 }
 </script>

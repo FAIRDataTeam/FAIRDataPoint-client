@@ -1,39 +1,46 @@
 <template>
   <div>
     <breadcrumbs
-      v-if="entity !== null"
+      v-if="breadcrumbs !== null"
       :links="breadcrumbs"
       current="Edit"
     />
-    <status-flash :status="status" />
     <page
-      v-if="entity !== null"
-      :title="`Edit ${entity.title}`"
+      v-if="graph !== null"
+      :title="`Edit ${entityTitle}`"
       content-only
       small
     >
       <template v-slot:content>
-        <form-generator
-          :spec="spec"
-          :entity="entity"
-          :on-submit="submit"
+        <status-flash :status="status" />
+        <shacl-form
+          :rdf="graph.store"
+          :shacl="shacl"
+          :shape="config.shape"
+          :subject="subject"
+          :filter="config.filter"
+          :validation-report="validationReport"
+          @submit="onSubmit"
         />
       </template>
     </page>
   </div>
 </template>
 <script lang="ts">
-import axios from 'axios'
-import _ from 'lodash'
 import {
   Component, Prop, Vue, Watch,
 } from 'vue-property-decorator'
-import permissions from '../../utils/permissions'
-import Status from '../../utils/Status'
-import Breadcrumbs from '../Breadcrumbs/index.vue'
-import FormGenerator from '../FormGenerator/index.vue'
-import Page from '../Page/index.vue'
-import StatusFlash from '../StatusFlash/index.vue'
+import axios from 'axios'
+import ShaclForm from '@/components/ShaclForm/index.vue'
+import Status from '@/utils/Status'
+import Breadcrumbs from '@/components/Breadcrumbs/index.vue'
+import FormGenerator from '@/components/FormGenerator/index.vue'
+import Page from '@/components/Page/index.vue'
+import StatusFlash from '@/components/StatusFlash/index.vue'
+import Graph from '@/rdf/Graph'
+import { DCT } from '@/rdf/namespaces'
+import permissions from '@/utils/permissions'
+import { parseValidationReport, ValidationReport } from '@/components/ShaclForm/ValidationReport'
 
 @Component({
   components: {
@@ -41,19 +48,24 @@ import StatusFlash from '../StatusFlash/index.vue'
     FormGenerator,
     Page,
     StatusFlash,
+    ShaclForm,
   },
 })
 export default class EntityEdit extends Vue {
   @Prop({ required: true })
   readonly config: any
 
-  entity: any = null
-
   breadcrumbs: any = null
 
   status: Status = new Status()
 
-  spec: any = null
+  graph: any = null
+
+  entityTitle: any = null
+
+  shacl: any = null
+
+  validationReport : ValidationReport = {}
 
 
   get entityId(): string {
@@ -62,6 +74,10 @@ export default class EntityEdit extends Vue {
 
   get isAdmin(): boolean {
     return this.$store.getters['auth/isAdmin']
+  }
+
+  get subject() {
+    return this.config.getSubject(this.entityId)
   }
 
   created(): void {
@@ -76,68 +92,31 @@ export default class EntityEdit extends Vue {
       const requests = [
         this.config.getEntity(this.entityId),
         this.config.getEntitySpec(),
+        this.config.getMembership(this.entityId),
       ]
 
-      const [entity, spec] = await axios.all(requests)
+      const [entity, spec, membership] = await axios.all(requests)
 
-      if (this.isAdmin || permissions.hasWrite(entity.data)) {
-        this.entity = this.entityToFormData(entity.data)
-        this.breadcrumbs = this.config.createBreadcrumbs(entity.data)
-        this.spec = spec.data
+      if (this.isAdmin || permissions.hasWrite(membership.data)) {
+        this.shacl = spec.data
+        this.graph = new Graph(entity.data, this.subject)
+        this.entityTitle = this.graph.findOne(DCT('title'))
+        this.breadcrumbs = this.config.createBreadcrumbs(this.graph)
         this.status.setDone()
       } else {
-        await this.$router.replace(this.config.toUrl(entity.data))
+        await this.$router.replace(this.config.toUrl(this.entityId))
       }
     } catch (error) {
-      this.status.setErrorFromResponse(error, 'Unable to get data.')
+      this.status.setErrorFromResponse(error, 'Unable to get entity data.')
     }
   }
 
-  entityToFormData(entity: any): any {
-    const formData = {}
-
-    const toValue = (value, inArray) => (inArray ? { value } : value)
-
-    const toFormValue = (value, inArray = false) => {
-      if (_.has(value, 'uri')) {
-        return toValue(value.uri, inArray)
-      }
-      if (_.isArray(value)) {
-        return value.map(v => toFormValue(v, true))
-      }
-      return toValue(value, inArray)
-    }
-
-    Object.entries(entity).forEach(([key, value]) => {
-      formData[key] = toFormValue(value)
-    })
-
-    return formData
-  }
-
-  formDataToEntity(formData: any): any {
-    const entity = {}
-
-    const toEntityValue = (value) => {
-      if (_.isArray(value)) {
-        return value.map(v => v.value)
-      }
-      return value
-    }
-
-    Object.entries(formData).forEach(([key, value]) => {
-      entity[key] = toEntityValue(value)
-    })
-
-    return entity
-  }
-
-  async submit(formData: any): Promise<void> {
+  async onSubmit(turtle: string): Promise<void> {
     try {
-      const entity = this.formDataToEntity(formData)
-      await this.config.putEntity(this.entityId, entity)
-      await this.$router.push(this.config.toUrl(this.entity))
+      await this.config.putEntity(this.entityId, turtle)
+      await this.$router.push(this.config.toUrl(this.entityId))
     } catch (error) {
+      this.validationReport = parseValidationReport(error.response.data)
       this.status.setError('Unable to update entity data.')
     }
   }

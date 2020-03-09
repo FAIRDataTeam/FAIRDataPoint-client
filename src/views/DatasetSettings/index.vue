@@ -5,6 +5,7 @@
 import api from '../../api'
 import breadcrumbs from '../../utils/breadcrumbs'
 import EntitySettings from '../../components/EntitySettings/index.vue'
+import rdfUtils from '@/rdf/utils'
 
 export default {
   name: 'DatasetSettings',
@@ -12,12 +13,13 @@ export default {
   data() {
     return {
       config: {
+        getSubject: rdfUtils.datasetSubject,
         getEntity: api.dataset.getDataset,
         getEntityMembers: api.dataset.getDatasetMembers,
         putEntityMember: api.dataset.putDatasetMember,
         deleteEntityMember: api.dataset.deleteDatasetMember,
         entityType: 'DATASET',
-        createBreadcrumbs: breadcrumbs.fromLinksWithDataset,
+        createBreadcrumbs: breadcrumbs.fromWithDataset,
       },
     }
   },
