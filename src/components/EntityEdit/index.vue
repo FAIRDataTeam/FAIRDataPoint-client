@@ -5,6 +5,7 @@
       :links="breadcrumbs"
       current="Edit"
     />
+    <status-flash :status="status" />
     <page
       v-if="graph !== null"
       :title="`Edit ${entityTitle}`"
@@ -12,7 +13,6 @@
       small
     >
       <template v-slot:content>
-        <status-flash :status="status" />
         <shacl-form
           :rdf="graph.store"
           :shacl="shacl"
