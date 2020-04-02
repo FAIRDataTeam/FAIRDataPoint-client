@@ -1,9 +1,10 @@
 import _ from 'lodash'
 
-const baseURL = _.get(window, 'config.publicPath', 'http://localhost:3000')
+const publicPath = _.get(window, 'config.publicPath', '')
+const apiURL = _.get(window, 'config.apiURL', `${window.location.protocol}//${window.location.host}${publicPath}`)
 const dateFormat = 'DD-MM-Y'
 
 export default {
-  baseURL,
+  apiURL,
   dateFormat,
 }

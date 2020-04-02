@@ -118,6 +118,7 @@ export default class EntityEdit extends Vue {
     } catch (error) {
       this.validationReport = parseValidationReport(error.response.data)
       this.status.setError('Unable to update entity data.')
+      window.scrollTo(0, 0)
     }
   }
 }

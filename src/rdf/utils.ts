@@ -7,22 +7,22 @@ function pathTerm(path: string): string {
 
 
 function repositorySubject(): string {
-  return config.baseURL
+  return config.apiURL
 }
 
 
 function catalogSubject(catalogId: string): string {
-  return `${config.baseURL}/catalog/${catalogId}`
+  return `${config.apiURL}/catalog/${catalogId}`
 }
 
 
 function datasetSubject(datasetId: string): string {
-  return `${config.baseURL}/dataset/${datasetId}`
+  return `${config.apiURL}/dataset/${datasetId}`
 }
 
 
 function distributionSubject(distributionId: string): string {
-  return `${config.baseURL}/distribution/${distributionId}`
+  return `${config.apiURL}/distribution/${distributionId}`
 }
 
 

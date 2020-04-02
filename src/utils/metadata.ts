@@ -35,7 +35,7 @@ function dateField(label, input, extra = {}) {
 }
 
 function rdfLinks() {
-  const url = config.baseURL
+  const url = config.apiURL
   return {
     label: 'Download RDF',
     links: [{
