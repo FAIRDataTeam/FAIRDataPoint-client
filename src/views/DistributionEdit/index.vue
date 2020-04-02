@@ -51,6 +51,9 @@ export default {
           'http://www.w3.org/ns/dcat#compressFormat',
           'http://www.w3.org/ns/dcat#packageFormat',
         ]),
+        skippedFields: [
+          'http://purl.org/dc/terms/accessRights',
+        ],
       },
     }
   },

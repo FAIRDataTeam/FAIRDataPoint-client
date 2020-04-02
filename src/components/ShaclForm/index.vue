@@ -55,6 +55,9 @@ export default class ShaclForm extends Vue {
   @Prop({ required: true })
   readonly validationReport : ValidationReport
 
+  @Prop({ required: false, default: [] })
+  readonly skippedFields : string[]
+
   form: any
 
   data: any = {
@@ -80,7 +83,7 @@ export default class ShaclForm extends Vue {
   }
 
   onInput() {
-    this.turtle = formData.toRdf(this.rdf, this.data, this.subject)
+    this.turtle = formData.toRdf(this.rdf, this.data, this.subject, this.skippedFields)
   }
 
   onSubmit() {

@@ -72,13 +72,22 @@ function createQuads(data: FormData): $rdf.Statement[] {
 }
 
 
-export function toRdf(rdf: $rdf.IndexedFormula, data: FormData, subject: string): string {
+export function toRdf(
+  rdf: $rdf.IndexedFormula,
+  data: FormData,
+  subject: string,
+  skippedFields: string[] = [],
+): string {
   const graph = $rdf.graph()
 
   const subjectNode = $rdf.namedNode(subject)
   graph.addAll(rdf.match(subjectNode, null, null, null))
 
   Object.entries(data.data).forEach(([key, value]) => {
+    graph.removeMany(subjectNode, $rdf.namedNode(key))
+  })
+
+  skippedFields.forEach((key) => {
     graph.removeMany(subjectNode, $rdf.namedNode(key))
   })
 

@@ -46,7 +46,12 @@
       >
         Add
       </button>
-      <p v-if="getError(field)" class="invalid-feedback">{{ getError(field) }}</p>
+      <p
+        v-if="getError(field)"
+        class="invalid-feedback"
+      >
+        {{ getError(field) }}
+      </p>
     </div>
   </div>
 </template>

@@ -20,6 +20,7 @@
           :subject="subject"
           :filter="config.filter"
           :validation-report="validationReport"
+          :skipped-fields="skippedFields"
           @submit="onSubmit"
         />
       </template>
@@ -31,6 +32,7 @@ import {
   Component, Prop, Vue, Watch,
 } from 'vue-property-decorator'
 import axios from 'axios'
+import _ from 'lodash'
 import ShaclForm from '@/components/ShaclForm/index.vue'
 import Status from '@/utils/Status'
 import Breadcrumbs from '@/components/Breadcrumbs/index.vue'
@@ -78,6 +80,10 @@ export default class EntityEdit extends Vue {
 
   get subject() {
     return this.config.getSubject(this.entityId)
+  }
+
+  get skippedFields() {
+    return _.get(this.config, 'skippedFields', [])
   }
 
   created(): void {
