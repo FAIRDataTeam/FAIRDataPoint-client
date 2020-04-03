@@ -5,6 +5,7 @@
     class="input-field"
     :placeholder="placeholder"
     @input="onInput"
+    :name="name"
   />
 </template>
 <script lang="ts">
@@ -12,7 +13,7 @@ import * as $rdf from 'rdflib'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import _ from 'lodash'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
-
+import rdfUtils from '@/rdf/utils'
 
 @Component
 export default class FormInput extends Vue {
@@ -25,7 +26,6 @@ export default class FormInput extends Vue {
   get isIRI() {
     return fieldUtils.isIRI(this.field)
   }
-
 
   get isLiteral() {
     return fieldUtils.isLiteral(this.field)
@@ -49,6 +49,10 @@ export default class FormInput extends Vue {
     }
 
     return ''
+  }
+
+  get name() {
+    return rdfUtils.pathTerm(this.field.path)
   }
 
   textValue(value) {
