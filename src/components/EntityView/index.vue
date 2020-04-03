@@ -123,6 +123,10 @@ export default class EntityView extends Vue {
     return this.$store.getters['auth/isAdmin']
   }
 
+  get isAuthenticated(): boolean {
+    return this.$store.getters['auth/authenticated']
+  }
+
   get permissions() {
     return permissions
   }
@@ -147,7 +151,7 @@ export default class EntityView extends Vue {
 
       const requests = [
         this.config.getEntity(this.entityId),
-        this.config.getMembership(this.entityId),
+        this.getMembership(),
       ]
 
       const [entity, membership] = await axios.all(requests)
@@ -174,6 +178,12 @@ export default class EntityView extends Vue {
     } catch (error) {
       this.status.setError('Unable to get data.')
     }
+  }
+
+  getMembership() {
+    return this.isAuthenticated
+      ? this.config.getMembership(this.entityId)
+      : Promise.resolve({ data: {} })
   }
 
   createEntityData(graph) {
