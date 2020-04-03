@@ -16,8 +16,9 @@
       <button
         class="btn btn-primary btn-rounded"
         type="submit"
+        data-cy="save"
       >
-        Submit
+        Save
       </button>
     </form>
   </div>
