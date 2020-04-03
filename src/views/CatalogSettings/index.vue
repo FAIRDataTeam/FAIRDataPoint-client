@@ -13,11 +13,8 @@ export default {
   data() {
     return {
       config: {
+        api: api.builder.build('catalog'),
         getSubject: rdfUtils.catalogSubject,
-        getEntity: api.catalog.getCatalog,
-        getEntityMembers: api.catalog.getCatalogMembers,
-        putEntityMember: api.catalog.putCatalogMember,
-        deleteEntityMember: api.catalog.deleteCatalogMember,
         entityType: 'CATALOG',
         createBreadcrumbs: breadcrumbs.fromWithCatalog,
       },

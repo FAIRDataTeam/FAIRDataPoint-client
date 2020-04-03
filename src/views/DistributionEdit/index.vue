@@ -16,12 +16,9 @@ export default {
   data() {
     return {
       config: {
+        api: api.builder.build('distribution'),
         shape: 'DistributionShape',
         getSubject: rdfUtils.distributionSubject,
-        getEntity: api.distribution.getDistribution,
-        getEntitySpec: api.distribution.getDistributionSpec,
-        getMembership: api.distribution.getDistributionMembership,
-        putEntity: api.distribution.putDistribution,
         toUrl: urls.distribution,
         createBreadcrumbs: breadcrumbs.fromWithDistribution,
         filter: SHACLParser.filterBlacklist([

@@ -1,6 +1,4 @@
-import catalog from './catalog'
-import dataset from './dataset'
-import distribution from './distribution'
+import builder from '@/api/builder'
 import info from './info'
 import repository from './repository'
 import memberships from './memberships'
@@ -8,9 +6,7 @@ import tokens from './tokens'
 import users from './users'
 
 export default {
-  catalog,
-  dataset,
-  distribution,
+  builder,
   info,
   memberships,
   repository,

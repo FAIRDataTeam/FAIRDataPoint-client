@@ -96,9 +96,9 @@ export default class EntityEdit extends Vue {
       this.status.setPending()
 
       const requests = [
-        this.config.getEntity(this.entityId),
-        this.config.getEntitySpec(),
-        this.config.getMembership(this.entityId),
+        this.config.api.get(this.entityId),
+        this.config.api.getSpec(),
+        this.config.api.getMembership(this.entityId),
       ]
 
       const [entity, spec, membership] = await axios.all(requests)
@@ -119,7 +119,7 @@ export default class EntityEdit extends Vue {
 
   async onSubmit(turtle: string): Promise<void> {
     try {
-      await this.config.putEntity(this.entityId, turtle)
+      await this.config.api.put(this.entityId, turtle)
       await this.$router.push(this.config.toUrl(this.entityId))
     } catch (error) {
       this.validationReport = parseValidationReport(error.response.data)

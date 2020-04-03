@@ -190,8 +190,8 @@ export default class EntitySettings extends Vue {
       this.status.setPending()
 
       const requests = [
-        this.config.getEntity(this.entityId),
-        this.config.getEntityMembers(this.entityId),
+        this.config.api.get(this.entityId),
+        this.config.api.getMembers(this.entityId),
         api.users.getUsers(),
         api.memberships.getMemberships(),
       ]
@@ -235,7 +235,7 @@ export default class EntitySettings extends Vue {
     if (this.inviteForm.userUuid !== null && this.inviteForm.membershipUuid !== null) {
       try {
         this.inviteStatus.setPending()
-        await this.config.putEntityMember(
+        await this.config.api.putMember(
           this.$route.params.id,
           this.inviteForm.userUuid,
           this.inviteForm.membershipUuid,
@@ -256,7 +256,7 @@ export default class EntitySettings extends Vue {
 
   async updateMember(userUuid: string, membershipUuid: string): Promise<void> {
     try {
-      await this.config.putEntityMember(this.entityId, userUuid, membershipUuid)
+      await this.config.api.putMember(this.entityId, userUuid, membershipUuid)
       this.fetchData()
     } catch (error) {
       this.status.setErrorFromResponse(error, 'Unable to update user membership.')
@@ -266,7 +266,7 @@ export default class EntitySettings extends Vue {
   async removeMember(user: any): Promise<void> {
     if (window.confirm(`Are you sure you want to remove ${user.firstName} ${user.lastName}?`)) {
       try {
-        await this.config.deleteEntityMember(this.entityId, user.uuid)
+        await this.config.api.deleteMember(this.entityId, user.uuid)
         this.fetchData()
       } catch (error) {
         this.status.setErrorFromResponse(error, 'Unable to remove user.')

@@ -15,14 +15,12 @@ import metadata from '@/utils/metadata'
 export default class Distribution extends Vue {
   get config() {
     return {
+      api: api.builder.build('distribution'),
       getSubject: rdfUtils.distributionSubject,
-      getEntity: api.distribution.getDistribution,
-      getMembership: api.distribution.getDistributionMembership,
       createBreadcrumbs: breadcrumbs.fromDistribution,
       actions: ['edit', 'settings', 'delete'],
       getEntityMetadata: this.getEntityMetadata,
       getExtraActions: this.getExtraActions,
-      deleteEntity: api.distribution.deleteDistribution,
     }
   }
 

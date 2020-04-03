@@ -16,12 +16,9 @@ export default {
   data() {
     return {
       config: {
+        api: api.builder.build('catalog'),
         shape: 'CatalogShape',
         getSubject: rdfUtils.catalogSubject,
-        getEntity: api.catalog.getCatalog,
-        getEntitySpec: api.catalog.getCatalogSpec,
-        getMembership: api.catalog.getCatalogMembership,
-        putEntity: api.catalog.putCatalog,
         toUrl: urls.catalog,
         createBreadcrumbs: breadcrumbs.fromWithCatalog,
         filter: SHACLParser.filterBlacklist([

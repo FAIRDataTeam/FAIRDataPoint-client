@@ -4,8 +4,8 @@
     :value="textValue(value)"
     class="input-field"
     :placeholder="placeholder"
-    @input="onInput"
     :name="name"
+    @input="onInput"
   />
 </template>
 <script lang="ts">

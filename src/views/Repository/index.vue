@@ -19,13 +19,11 @@ import {
 export default class Repository extends Vue {
   get config() {
     return {
+      api: api.repository,
       getSubject: rdfUtils.repositorySubject,
-      getEntity: api.repository.getRepository,
-      getMembership: () => Promise.resolve({ data: {} }),
       createItemList: this.createCatalogs,
-      actions: ['edit', 'delete'],
+      actions: ['edit'],
       getEntityMetadata: () => [],
-      deleteEntity: api.repository.deleteRepository,
     }
   }
 

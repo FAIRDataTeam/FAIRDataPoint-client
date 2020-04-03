@@ -150,7 +150,7 @@ export default class EntityView extends Vue {
       this.status.setPending()
 
       const requests = [
-        this.config.getEntity(this.entityId),
+        this.config.api.get(this.entityId),
         this.getMembership(),
       ]
 
@@ -182,7 +182,7 @@ export default class EntityView extends Vue {
 
   getMembership() {
     return this.isAuthenticated
-      ? this.config.getMembership(this.entityId)
+      ? this.config.api.getMembership(this.entityId)
       : Promise.resolve({ data: {} })
   }
 
@@ -204,7 +204,7 @@ export default class EntityView extends Vue {
   async deleteEntity() {
     if (window.confirm(`Are you sure you want to delete ${this.entity.title}?`)) {
       try {
-        await this.config.deleteEntity(this.entityId)
+        await this.config.api.delete(this.entityId)
         const parent = _.get(_.last(this.breadcrumbs), 'to', '/asdjkfa')
         await this.$router.push(parent)
       } catch (err) {

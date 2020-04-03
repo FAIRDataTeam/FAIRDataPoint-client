@@ -1,7 +1,7 @@
 import request from '../request'
 
 export default {
-  getRepository() {
+  get() {
     return request.get('/', {
       headers: {
         Accept: 'text/turtle',
@@ -9,7 +9,7 @@ export default {
     })
   },
 
-  getRepositorySpec() {
+  getSpec() {
     return request.get('/spec', {
       headers: {
         Accept: 'text/turtle',
@@ -17,7 +17,7 @@ export default {
     })
   },
 
-  putRepository(data) {
+  put(_id, data) {
     return request.put('/', data, {
       headers: {
         Accept: 'text/turtle',
@@ -26,11 +26,15 @@ export default {
     })
   },
 
-  deleteRepository() {
+  delete() {
     return request.delete('/')
   },
 
-  getRepositoryDashboard() {
+  getMembership() {
+    return Promise.resolve({ data: {} })
+  },
+
+  getDashboard() {
     return request.get('/dashboard')
   },
 }

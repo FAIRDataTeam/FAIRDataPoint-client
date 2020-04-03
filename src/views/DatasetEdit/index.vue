@@ -15,12 +15,9 @@ export default {
   data() {
     return {
       config: {
+        api: api.builder.build('dataset'),
         shape: 'DatasetShape',
         getSubject: rdfUtils.datasetSubject,
-        getEntity: api.dataset.getDataset,
-        getEntitySpec: api.dataset.getDatasetSpec,
-        getMembership: api.dataset.getDatasetMembership,
-        putEntity: api.dataset.putDataset,
         toUrl: urls.dataset,
         createBreadcrumbs: breadcrumbs.fromWithDataset,
         filter: SHACLParser.filterBlacklist([

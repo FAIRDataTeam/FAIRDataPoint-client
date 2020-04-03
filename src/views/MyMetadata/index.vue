@@ -169,7 +169,7 @@ export default {
       try {
         this.status.setPending()
 
-        const response = await api.repository.getRepositoryDashboard()
+        const response = await api.repository.getDashboard()
         this.dashboard = response.data
         this.status.setDone()
       } catch (error) {

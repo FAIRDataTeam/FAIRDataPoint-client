@@ -13,11 +13,8 @@ export default {
   data() {
     return {
       config: {
+        api: api.builder.build('distribution'),
         getSubject: rdfUtils.distributionSubject,
-        getEntity: api.distribution.getDistribution,
-        getEntityMembers: api.distribution.getDistributionMembers,
-        putEntityMember: api.distribution.putDistributionMember,
-        deleteEntityMember: api.distribution.deleteDistributionMember,
         entityType: 'DISTRIBUTION',
         createBreadcrumbs: breadcrumbs.fromWithDistribution,
       },

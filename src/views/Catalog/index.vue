@@ -20,14 +20,12 @@ import urls from '@/utils/urls'
 export default class Catalog extends Vue {
   get config() {
     return {
+      api: api.builder.build('catalog'),
       getSubject: rdfUtils.catalogSubject,
-      getEntity: api.catalog.getCatalog,
-      getMembership: api.catalog.getCatalogMembership,
       createItemList: this.createDatasets,
       createBreadcrumbs: breadcrumbs.fromCatalog,
       actions: ['edit', 'settings', 'delete'],
       getEntityMetadata: this.getEntityMetadata,
-      deleteEntity: api.catalog.deleteCatalog,
     }
   }
 

@@ -17,14 +17,12 @@ import metadata from '@/utils/metadata'
 export default class Dataset extends Vue {
   get config() {
     return {
+      api: api.builder.build('dataset'),
       getSubject: rdfUtils.datasetSubject,
-      getEntity: api.dataset.getDataset,
-      getMembership: api.dataset.getDatasetMembership,
       createItemList: this.createDistributions,
       createBreadcrumbs: breadcrumbs.fromDataset,
       actions: ['edit', 'settings', 'delete'],
       getEntityMetadata: this.getEntityMetadata,
-      deleteEntity: api.dataset.deleteDataset,
     }
   }
 

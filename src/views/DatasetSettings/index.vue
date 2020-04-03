@@ -13,11 +13,8 @@ export default {
   data() {
     return {
       config: {
+        api: api.builder.build('dataset'),
         getSubject: rdfUtils.datasetSubject,
-        getEntity: api.dataset.getDataset,
-        getEntityMembers: api.dataset.getDatasetMembers,
-        putEntityMember: api.dataset.putDatasetMember,
-        deleteEntityMember: api.dataset.deleteDatasetMember,
         entityType: 'DATASET',
         createBreadcrumbs: breadcrumbs.fromWithDataset,
       },

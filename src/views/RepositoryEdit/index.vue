@@ -16,13 +16,10 @@ export default {
   data() {
     return {
       config: {
+        api: api.repository,
         shape: 'RepositoryShape',
         subject: rdfUtils.repositorySubject(),
         getSubject: rdfUtils.repositorySubject,
-        getEntity: api.repository.getRepository,
-        getEntitySpec: api.repository.getRepositorySpec,
-        getMembership: () => Promise.resolve({ data: {} }),
-        putEntity: (_, data) => api.repository.putRepository(data),
         toUrl: urls.repository,
         createBreadcrumbs: breadcrumbs.fromRepository,
         filter: SHACLParser.filterBlacklist([
