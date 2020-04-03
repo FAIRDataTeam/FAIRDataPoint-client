@@ -30,6 +30,14 @@
           <fa :icon="['fas', 'cog']" />
           Settings
         </router-link>
+        <a
+          v-if="actionEnabled('delete') && isAdmin"
+          class="btn btn-link text-danger"
+          @click="deleteEntity"
+        >
+          <fa :icon="['far', 'trash-alt']" />
+          Delete
+        </a>
       </template>
       <template v-slot:column>
         <p>
@@ -181,6 +189,18 @@ export default class EntityView extends Vue {
       ...this.config.getEntityMetadata(graph),
       metadata.rdfLinks(),
     ]
+  }
+
+  async deleteEntity() {
+    if (window.confirm(`Are you sure you want to delete ${this.entity.title}?`)) {
+      try {
+        await this.config.deleteEntity(this.entityId)
+        const parent = _.get(_.last(this.breadcrumbs), 'to', '/asdjkfa')
+        await this.$router.push(parent)
+      } catch (err) {
+        this.status.setError('Unable to delete data.')
+      }
+    }
   }
 }
 </script>

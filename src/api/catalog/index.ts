@@ -30,6 +30,10 @@ export default {
     })
   },
 
+  deleteCatalog(id) {
+    return request.delete(`/catalog/${id}`)
+  },
+
   getCatalogMembers(id) {
     return request.get(`/catalog/${id}/members`)
   },

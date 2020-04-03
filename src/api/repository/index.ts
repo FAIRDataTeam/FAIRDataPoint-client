@@ -26,6 +26,10 @@ export default {
     })
   },
 
+  deleteRepository() {
+    return request.delete('/')
+  },
+
   getRepositoryDashboard() {
     return request.get('/dashboard')
   },

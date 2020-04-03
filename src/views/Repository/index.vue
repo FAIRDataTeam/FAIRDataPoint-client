@@ -23,8 +23,9 @@ export default class Repository extends Vue {
       getEntity: api.repository.getRepository,
       getMembership: () => Promise.resolve({ data: {} }),
       createItemList: this.createCatalogs,
-      actions: ['edit'],
+      actions: ['edit', 'delete'],
       getEntityMetadata: () => [],
+      deleteEntity: api.repository.deleteRepository,
     }
   }
 

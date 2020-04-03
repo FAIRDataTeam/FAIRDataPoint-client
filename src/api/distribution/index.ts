@@ -30,6 +30,10 @@ export default {
     })
   },
 
+  deleteDistribution(id) {
+    return request.delete(`/distribution/${id}`)
+  },
+
   getDistributionMembers(id) {
     return request.get(`/distribution/${id}/members`)
   },

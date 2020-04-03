@@ -25,8 +25,9 @@ export default class Catalog extends Vue {
       getMembership: api.catalog.getCatalogMembership,
       createItemList: this.createDatasets,
       createBreadcrumbs: breadcrumbs.fromCatalog,
-      actions: ['edit', 'settings'],
+      actions: ['edit', 'settings', 'delete'],
       getEntityMetadata: this.getEntityMetadata,
+      deleteEntity: api.catalog.deleteCatalog,
     }
   }
 

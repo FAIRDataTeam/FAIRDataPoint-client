@@ -30,6 +30,10 @@ export default {
     })
   },
 
+  deleteDataset(id) {
+    return request.delete(`/dataset/${id}`)
+  },
+
   getDatasetMembers(id) {
     return request.get(`/dataset/${id}/members`)
   },

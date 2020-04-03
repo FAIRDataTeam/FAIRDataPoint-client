@@ -22,8 +22,9 @@ export default class Dataset extends Vue {
       getMembership: api.dataset.getDatasetMembership,
       createItemList: this.createDistributions,
       createBreadcrumbs: breadcrumbs.fromDataset,
-      actions: ['edit', 'settings'],
+      actions: ['edit', 'settings', 'delete'],
       getEntityMetadata: this.getEntityMetadata,
+      deleteEntity: api.dataset.deleteDataset,
     }
   }
 
