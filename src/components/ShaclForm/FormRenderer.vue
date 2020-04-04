@@ -62,6 +62,7 @@ import _ from 'lodash'
 import FormInput from '@/components/ShaclForm/FormInput.vue'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import { ValidationReport } from '@/components/ShaclForm/ValidationReport'
+import { SHACL } from '@/rdf/namespaces'
 
 @Component({
   components: { FormInput },
@@ -142,9 +143,22 @@ export default class FormRenderer extends Vue {
   getError(field) {
     const subject = `${this.subject}`
     if (_.has(this.validationReport, subject)) {
-      return this.validationReport[subject][field.path]
+      return this.humanReadableError(field, this.validationReport[subject][field.path])
     }
     return null
+  }
+
+  humanReadableError(field, originalError) {
+    switch (originalError) {
+      case SHACL('MinCountConstraintComponent').value:
+        return `${this.getName(field)} is required.`
+
+      case SHACL('NodeKindConstraintComponent').value:
+        return `${this.getName(field)} requires a valid IRI.`
+
+      default:
+        return originalError
+    }
   }
 
   onInput() {
