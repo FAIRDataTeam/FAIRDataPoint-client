@@ -42,7 +42,7 @@
                 Manage users
               </b-dropdown-item>
               <b-dropdown-item v-b-modal.info-modal>
-                <fa :icon="['fas', 'user-friends']" />
+                <fa :icon="['fas', 'info-circle']" />
                 About
               </b-dropdown-item>
               <b-dropdown-divider />
