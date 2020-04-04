@@ -206,7 +206,7 @@ export default class EntityView extends Vue {
     return [
       ...metadata.commonMetadata(graph),
       ...this.config.getEntityMetadata(graph),
-      metadata.rdfLinks(),
+      metadata.rdfLinks(this.config.getSubject(this.entityId)),
     ]
   }
 
