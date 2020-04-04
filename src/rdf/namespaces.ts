@@ -1,5 +1,8 @@
 import * as $rdf from 'rdflib'
 
+export const DEFAULT_URI = 'http://fairdatapoint.org/'
+export const DEFAULT_NS = $rdf.Namespace(DEFAULT_URI)
+
 export const DASH = $rdf.Namespace('http://datashapes.org/dash#')
 export const DCAT = $rdf.Namespace('http://www.w3.org/ns/dcat#')
 export const DCT = $rdf.Namespace('http://purl.org/dc/terms/')

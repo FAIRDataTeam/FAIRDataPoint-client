@@ -56,7 +56,7 @@ export default class ShaclForm extends Vue {
   @Prop({ required: true })
   readonly validationReport : ValidationReport
 
-  @Prop({ required: false, default: [] })
+  @Prop({ required: false, default: () => [] })
   readonly skippedFields : string[]
 
   form: any

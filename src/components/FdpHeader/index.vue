@@ -119,6 +119,7 @@ export default class FdpHeader extends Vue {
     if (this.$router.currentRoute.path !== '/') {
       this.$router.push('/')
     }
+    window.location.reload()
   }
 
   created() {

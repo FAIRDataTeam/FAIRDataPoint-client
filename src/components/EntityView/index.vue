@@ -34,6 +34,7 @@
           v-if="actionEnabled('delete') && isAdmin"
           class="btn btn-link text-danger"
           @click="deleteEntity"
+          data-cy="delete"
         >
           <fa :icon="['far', 'trash-alt']" />
           Delete
@@ -62,6 +63,7 @@
           v-if="itemList !== null"
           :title="itemList.title"
           :items="itemList.items"
+          :create-link="createLink"
           :data-cy="itemList.dataCy"
         />
       </template>
@@ -114,6 +116,8 @@ export default class EntityView extends Vue {
   membership: any = null
 
   extraActions: any[] = []
+
+  createLink: string = null
 
   get entityId(): string {
     return this.$route.params.id
@@ -174,6 +178,11 @@ export default class EntityView extends Vue {
         this.breadcrumbs = this.config.createBreadcrumbs(graph)
       }
 
+      if (this.config.createItemList
+        && (this.isAdmin || this.config.canCreateItem(this.membership))) {
+        this.createLink = this.config.getCreateItemUrl(this.entityId)
+      }
+
       this.status.setDone()
     } catch (error) {
       this.status.setError('Unable to get data.')
@@ -205,7 +214,7 @@ export default class EntityView extends Vue {
     if (window.confirm(`Are you sure you want to delete ${this.entity.title}?`)) {
       try {
         await this.config.api.delete(this.entityId)
-        const parent = _.get(_.last(this.breadcrumbs), 'to', '/asdjkfa')
+        const parent = _.get(_.last(this.breadcrumbs), 'to', '/')
         await this.$router.push(parent)
       } catch (err) {
         this.status.setError('Unable to delete data.')

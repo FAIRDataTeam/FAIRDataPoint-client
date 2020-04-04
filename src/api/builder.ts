@@ -22,6 +22,15 @@ function build(entity) {
       return request.get(`/${entity}/${id}/member`)
     },
 
+    post(data) {
+      return request.post(`/${entity}`, data, {
+        headers: {
+          Accept: 'text/turtle',
+          'Content-Type': 'text/turtle',
+        },
+      })
+    },
+
     put(id, data) {
       return request.put(`/${entity}/${id}`, data, {
         headers: {

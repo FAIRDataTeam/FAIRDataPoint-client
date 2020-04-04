@@ -1,12 +1,12 @@
 import _ from 'lodash'
-import { SHACL } from '@/rdf/namespaces'
+import { DEFAULT_URI, SHACL } from '@/rdf/namespaces'
 import Graph from '@/rdf/Graph'
 
 export type ValidationReport = Record<string, Record<string, any>>
 
 
 export function parseValidationReport(rdf: string) {
-  const graph = new Graph(rdf, 'http://example.com')
+  const graph = new Graph(rdf, DEFAULT_URI)
   const report = {}
   const results = graph.findAll(SHACL('result'), { subject: null, value: false })
   results.forEach((result) => {

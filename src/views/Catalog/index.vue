@@ -11,22 +11,19 @@ import { DCAT, DCT, FDPO } from '@/rdf/namespaces'
 import metadata from '@/utils/metadata'
 import breadcrumbs from '@/utils/breadcrumbs'
 import urls from '@/utils/urls'
+import permissions from '@/utils/permissions'
 
-@Component({
-  components: {
-    EntityView,
-  },
-})
+@Component({ components: { EntityView } })
 export default class Catalog extends Vue {
-  get config() {
-    return {
-      api: api.builder.build('catalog'),
-      getSubject: rdfUtils.catalogSubject,
-      createItemList: this.createDatasets,
-      createBreadcrumbs: breadcrumbs.fromCatalog,
-      actions: ['edit', 'settings', 'delete'],
-      getEntityMetadata: this.getEntityMetadata,
-    }
+  config = {
+    api: api.builder.build('catalog'),
+    getSubject: rdfUtils.catalogSubject,
+    createItemList: this.createDatasets,
+    getCreateItemUrl: urls.createDataset,
+    canCreateItem: permissions.hasCreate,
+    createBreadcrumbs: breadcrumbs.fromCatalog,
+    actions: ['edit', 'settings', 'delete'],
+    getEntityMetadata: this.getEntityMetadata,
   }
 
   createDatasets(graph) {

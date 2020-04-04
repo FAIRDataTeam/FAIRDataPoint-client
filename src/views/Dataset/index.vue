@@ -11,19 +11,20 @@ import rdfUtils from '@/rdf/utils'
 import { DCAT, DCT, FDPO } from '@/rdf/namespaces'
 import urls from '@/utils/urls'
 import metadata from '@/utils/metadata'
+import permissions from '@/utils/permissions'
 
 
 @Component({ components: { EntityView } })
 export default class Dataset extends Vue {
-  get config() {
-    return {
-      api: api.builder.build('dataset'),
-      getSubject: rdfUtils.datasetSubject,
-      createItemList: this.createDistributions,
-      createBreadcrumbs: breadcrumbs.fromDataset,
-      actions: ['edit', 'settings', 'delete'],
-      getEntityMetadata: this.getEntityMetadata,
-    }
+  config = {
+    api: api.builder.build('dataset'),
+    getSubject: rdfUtils.datasetSubject,
+    createItemList: this.createDistributions,
+    createBreadcrumbs: breadcrumbs.fromDataset,
+    getCreateItemUrl: urls.createDistribution,
+    canCreateItem: permissions.hasCreate,
+    actions: ['edit', 'settings', 'delete'],
+    getEntityMetadata: this.getEntityMetadata,
   }
 
   createDistributions(graph) {

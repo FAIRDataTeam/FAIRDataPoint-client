@@ -1,6 +1,22 @@
 @import "../variables";
 
 .item-list {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: $space-lg;
+    margin-bottom: $space-sm;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  &__empty {
+    color: $color-text-light;
+  }
+
   &__item {
     display: flex;
     flex-wrap: wrap;

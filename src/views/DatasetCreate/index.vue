@@ -1,24 +1,29 @@
 <template>
-  <entity-edit :config="config" />
+  <entity-create :config="config" />
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import api from '../../api'
 import breadcrumbs from '../../utils/breadcrumbs'
-import EntityEdit from '../../components/EntityEdit/index.vue'
+import EntityCreate from '../../components/EntityCreate/index.vue'
 import urls from '../../utils/urls'
 import rdfUtils from '@/rdf/utils'
 import { SHACLParser } from '@/components/ShaclForm/SHACLParser'
 import fieldBlacklist from '@/rdf/fieldBlacklist'
+import permissions from '../../utils/permissions'
 
-@Component({ components: { EntityEdit } })
-export default class DatasetEdit extends Vue {
+@Component({ components: { EntityCreate } })
+export default class DatasetCreate extends Vue {
   config = {
+    createName: 'Create Dataset',
+    parentApi: api.builder.build('catalog'),
     api: api.builder.build('dataset'),
+    getEntityUrl: urls.dataset,
+    getParentUrl: urls.catalog,
+    createBreadcrumbs: breadcrumbs.fromWithCatalog,
+    isAllowed: permissions.hasCreate,
+    isPartOf: rdfUtils.catalogSubject,
     shape: 'DatasetShape',
-    getSubject: rdfUtils.datasetSubject,
-    toUrl: urls.dataset,
-    createBreadcrumbs: breadcrumbs.fromWithDataset,
     filter: SHACLParser.filterBlacklist(fieldBlacklist.dataset),
   }
 }

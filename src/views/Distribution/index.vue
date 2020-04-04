@@ -13,15 +13,13 @@ import metadata from '@/utils/metadata'
 
 @Component({ components: { EntityView } })
 export default class Distribution extends Vue {
-  get config() {
-    return {
-      api: api.builder.build('distribution'),
-      getSubject: rdfUtils.distributionSubject,
-      createBreadcrumbs: breadcrumbs.fromDistribution,
-      actions: ['edit', 'settings', 'delete'],
-      getEntityMetadata: this.getEntityMetadata,
-      getExtraActions: this.getExtraActions,
-    }
+  config = {
+    api: api.builder.build('distribution'),
+    getSubject: rdfUtils.distributionSubject,
+    createBreadcrumbs: breadcrumbs.fromDistribution,
+    actions: ['edit', 'settings', 'delete'],
+    getEntityMetadata: this.getEntityMetadata,
+    getExtraActions: this.getExtraActions,
   }
 
   getEntityMetadata(graph) {

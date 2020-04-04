@@ -83,6 +83,7 @@ export function toRdf(
   const subjectNode = $rdf.namedNode(subject)
   graph.addAll(rdf.match(subjectNode, null, null, null))
 
+
   Object.entries(data.data).forEach(([key, value]) => {
     graph.removeMany(subjectNode, $rdf.namedNode(key))
   })
@@ -95,7 +96,7 @@ export function toRdf(
   let result = ''
 
   // @ts-ignore
-  $rdf.serialize(null, graph, subject, 'text/turtle', (err, turtle) => {
+  $rdf.serialize(undefined, graph, subject, 'text/turtle', (err, turtle) => {
     result = turtle as string
   })
 

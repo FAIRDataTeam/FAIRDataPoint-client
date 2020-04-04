@@ -1,10 +1,9 @@
 import _ from 'lodash'
 import * as $rdf from 'rdflib'
-import { DASH, RDF, SHACL } from '@/rdf/namespaces'
+import {
+  DASH, DEFAULT_NS, DEFAULT_URI, RDF, SHACL,
+} from '@/rdf/namespaces'
 
-
-const URI = 'http://example.com/'
-const NAMESPACE = $rdf.Namespace(URI)
 
 export type FieldFilter = (field: string) => boolean
 
@@ -37,7 +36,7 @@ export class SHACLParser {
     this.maxDepth = maxDepth
     this.store = $rdf.graph()
     this.filter = filter
-    $rdf.parse(shacl, this.store, URI, 'text/turtle', null)
+    $rdf.parse(shacl, this.store, DEFAULT_URI, 'text/turtle', null)
   }
 
   static filterBlacklist(blacklist: string[]): FieldFilter {
@@ -45,7 +44,7 @@ export class SHACLParser {
   }
 
   public parse(shape: string): FormShape {
-    return this.loadShapeForm(NAMESPACE(shape))
+    return this.loadShapeForm(DEFAULT_NS(shape))
   }
 
   private loadShapeForm(shape: $rdf.ValueType, level: number = 0): FormShape {
@@ -62,13 +61,16 @@ export class SHACLParser {
 
     const ands = this.store.match(shape, SHACL('and'), null, null)
     const andProperties = ands.flatMap((and) => {
-      const elements = _.get(and, 'object.elements', [])
-      return elements
-        .filter(e => this.filter(this.getShaclValue(e, 'path')))
-        .flatMap(e => this.loadElement(e, level))
+      const elements = _.get(and, 'object.elements')
+      if (elements) {
+        return elements
+          .filter(e => this.filter(this.getShaclValue(e, 'path')))
+          .flatMap(e => this.loadElement(e, level))
+      }
+      return this.loadElement(and.object, level)
     })
 
-    return { targetClasses, fields: properties.concat(andProperties) }
+    return { targetClasses, fields: andProperties.concat(properties) }
   }
 
   private loadProps(node: $rdf.ValueType, level: number): Field[] {

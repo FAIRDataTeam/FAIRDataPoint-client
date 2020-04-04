@@ -11,20 +11,23 @@ import EntityView from '@/components/EntityView/index.vue'
 import {
   DCAT, DCT, FDPO, R3D,
 } from '@/rdf/namespaces'
+import urls from '@/utils/urls'
 
 
-@Component({
-  components: { EntityView },
-})
+@Component({ components: { EntityView } })
 export default class Repository extends Vue {
-  get config() {
-    return {
-      api: api.repository,
-      getSubject: rdfUtils.repositorySubject,
-      createItemList: this.createCatalogs,
-      actions: ['edit'],
-      getEntityMetadata: () => [],
-    }
+  config = {
+    api: api.repository,
+    getSubject: rdfUtils.repositorySubject,
+    createItemList: this.createCatalogs,
+    getCreateItemUrl: urls.createCatalog,
+    canCreateItem: () => this.isAuthenticated,
+    actions: ['edit'],
+    getEntityMetadata: () => [],
+  }
+
+  get isAuthenticated(): boolean {
+    return this.$store.getters['auth/authenticated']
   }
 
   createCatalogs(graph) {
@@ -45,7 +48,7 @@ export default class Repository extends Vue {
     })
 
     return {
-      title: 'Catalog',
+      title: 'Catalogs',
       dataCy: 'catalogs',
       items,
     }
