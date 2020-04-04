@@ -4,7 +4,9 @@
       v-if="!status.isDefault()"
       :class="{
         'loader': status.isPending() && !noLoading,
-        'status-flash__alert status-flash__alert--danger': status.isError(),
+        'status-flash--large': status.isError() && status.errorCode > 0,
+        'status-flash__alert status-flash__alert--danger':
+          status.isError() && status.errorCode === 0,
         'status-flash__alert status-flash__alert--success': status.isSuccess()
       }"
     >
@@ -15,7 +17,10 @@
         />
         Loading...
       </template>
-      <template v-if="status.message">
+      <template v-if="status.errorCode === 404">
+        404 Not Found
+      </template>
+      <template v-else-if="status.message">
         {{ status.message }}
       </template>
     </div>

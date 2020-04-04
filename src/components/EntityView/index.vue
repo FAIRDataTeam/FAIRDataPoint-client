@@ -185,7 +185,7 @@ export default class EntityView extends Vue {
 
       this.status.setDone()
     } catch (error) {
-      this.status.setError('Unable to get data.')
+      this.status.setErrorFromResponse(error, 'Unable to get data.')
     }
   }
 

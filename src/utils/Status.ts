@@ -12,6 +12,8 @@ export default class Status {
 
   status: string
 
+  errorCode: number
+
   msg?: string
 
   constructor() {
@@ -46,16 +48,19 @@ export default class Status {
   setPending(): void {
     this.clear()
     this.status = Status.PENDING
+    this.errorCode = null
   }
 
-  setError(msg?: string): void {
+  setError(msg?: string, errorCode: number = null): void {
     this.status = Status.ERROR
     this.msg = msg
+    this.errorCode = errorCode
   }
 
   setErrorFromResponse(error: any, defaultMsg: string): void {
     this.status = Status.ERROR
     this.msg = _.get(error, 'response.data.message', defaultMsg)
+    this.errorCode = _.includes(_.get(error, 'message'), '404') ? 404 : null
   }
 
   setDone(msg?: string): void {

@@ -1,4 +1,5 @@
 @import "../../scss/variables";
+@import "../../scss/typography";
 
 
 .status-flash {
@@ -9,6 +10,12 @@
     max-width: $container-max-width;
     margin: auto;
     box-sizing: border-box;
+  }
+
+  & > &--large {
+    @include typography-default-32-bold;
+    max-width: $container-small-max-width;
+    margin-top: $space-lg;
   }
 
   &__alert {
