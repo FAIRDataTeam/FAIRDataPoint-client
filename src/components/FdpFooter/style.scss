@@ -1,3 +1,4 @@
+@import "../../scss/typography";
 @import "../../scss/variables";
 
 .footer {
@@ -20,5 +21,10 @@
     margin: auto;
     padding: 0 $container-padding;
     text-align: center;
+  }
+
+  &__separator {
+    @include typography-default-16-semibold;
+    margin: 0 $space-sm;
   }
 }
