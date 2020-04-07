@@ -5,7 +5,11 @@
         <div>
           <span>FAIR Data Point</span>
           <span class="footer__separator">&middot;</span>
-          <a href="#" @click.prevent="" v-b-modal.info-modal>About</a>
+          <a
+            v-b-modal.info-modal
+            href="#"
+            @click.prevent=""
+          >About</a>
         </div>
       </div>
       <separator />

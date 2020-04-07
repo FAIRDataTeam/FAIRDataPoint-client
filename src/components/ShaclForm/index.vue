@@ -13,6 +13,25 @@
         :validation-report="validationReport"
         @input="onInput"
       />
+      <div class="mb-5">
+        <a
+          v-b-toggle.rdf-view
+          class="text-primary collapse-link"
+        >
+          View RDF
+          <fa
+            :icon="['fas', 'angle-down']"
+            class="rotate-icon"
+          />
+        </a>
+        <b-collapse id="rdf-view">
+          <prism-editor
+            v-model="turtle"
+            language="turtle"
+            :readonly="true"
+          />
+        </b-collapse>
+      </div>
       <button
         class="btn btn-primary btn-rounded"
         type="submit"
@@ -26,6 +45,7 @@
 <script lang="ts">
 import * as $rdf from 'rdflib'
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import PrismEditor from 'vue-prism-editor'
 import FormRenderer from '@/components/ShaclForm/FormRenderer.vue'
 import StatusFlash from '@/components/StatusFlash/index.vue'
 import Status from '@/utils/Status'
@@ -35,7 +55,11 @@ import { ValidationReport } from '@/components/ShaclForm/ValidationReport'
 
 
 @Component({
-  components: { FormRenderer, StatusFlash },
+  components: {
+    FormRenderer,
+    PrismEditor,
+    StatusFlash,
+  },
 })
 export default class ShaclForm extends Vue {
   @Prop({ required: true })
@@ -54,10 +78,10 @@ export default class ShaclForm extends Vue {
   readonly filter: any
 
   @Prop({ required: true })
-  readonly validationReport : ValidationReport
+  readonly validationReport: ValidationReport
 
   @Prop({ required: false, default: () => [] })
-  readonly skippedFields : string[]
+  readonly skippedFields: string[]
 
   form: any
 

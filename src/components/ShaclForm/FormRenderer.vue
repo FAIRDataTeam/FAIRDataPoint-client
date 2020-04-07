@@ -41,9 +41,10 @@
       </component>
       <button
         v-if="isList(field)"
-        class="btn btn-outline-secondary btn-rounded"
+        class="btn btn-link"
         @click.prevent="addValue(field)"
       >
+        <fa :icon="['fas', 'plus']" />
         Add
       </button>
       <p

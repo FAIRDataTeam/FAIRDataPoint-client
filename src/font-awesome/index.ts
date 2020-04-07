@@ -6,6 +6,7 @@ import * as fas from '@fortawesome/free-solid-svg-icons'
 
 library.add(far.faTrashAlt)
 library.add(fas.faAngleDoubleDown)
+library.add(fas.faAngleDown)
 library.add(fas.faAngleDoubleUp)
 library.add(fas.faChevronDown)
 library.add(fas.faChevronRight)

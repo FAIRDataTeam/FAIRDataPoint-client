@@ -83,7 +83,6 @@ export function toRdf(
   const subjectNode = $rdf.namedNode(subject)
   graph.addAll(rdf.match(subjectNode, null, null, null))
 
-
   Object.entries(data.data).forEach(([key, value]) => {
     graph.removeMany(subjectNode, $rdf.namedNode(key))
   })

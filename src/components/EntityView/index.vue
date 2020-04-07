@@ -33,8 +33,8 @@
         <a
           v-if="actionEnabled('delete') && isAdmin"
           class="btn btn-link text-danger"
-          @click="deleteEntity"
           data-cy="delete"
+          @click="deleteEntity"
         >
           <fa :icon="['far', 'trash-alt']" />
           Delete

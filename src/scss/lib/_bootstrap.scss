@@ -76,3 +76,11 @@ $link-hover-color: $color-primary-lighter;
     }
   }
 }
+
+.collapse-link {
+  &:not(.collapsed) {
+    .rotate-icon {
+      transform: rotate(-180deg);
+    }
+  }
+}
