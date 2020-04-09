@@ -8,18 +8,16 @@ import breadcrumbs from '../../utils/breadcrumbs'
 import EntityEdit from '../../components/EntityEdit/index.vue'
 import urls from '../../utils/urls'
 import rdfUtils from '@/rdf/utils'
-import { SHACLParser } from '@/components/ShaclForm/SHACLParser'
-import fieldBlacklist from '@/rdf/fieldBlacklist'
+import formModels from '@/rdf/formModels'
 
 @Component({ components: { EntityEdit } })
 export default class DatasetEdit extends Vue {
   config = {
     api: api.builder.build('dataset'),
-    shape: 'DatasetShape',
     getSubject: rdfUtils.datasetSubject,
     toUrl: urls.dataset,
     createBreadcrumbs: breadcrumbs.fromWithDataset,
-    filter: SHACLParser.filterBlacklist(fieldBlacklist.dataset),
+    formModel: formModels.dataset,
   }
 }
 </script>

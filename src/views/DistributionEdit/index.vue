@@ -8,8 +8,7 @@ import breadcrumbs from '../../utils/breadcrumbs'
 import EntityEdit from '../../components/EntityEdit/index.vue'
 import urls from '../../utils/urls'
 import rdfUtils from '@/rdf/utils'
-import { SHACLParser } from '@/components/ShaclForm/SHACLParser'
-import fieldBlacklist from '@/rdf/fieldBlacklist'
+import formModels from '@/rdf/formModels'
 
 @Component({ components: { EntityEdit } })
 export default class DistributionEdit extends Vue {
@@ -19,7 +18,7 @@ export default class DistributionEdit extends Vue {
     getSubject: rdfUtils.distributionSubject,
     toUrl: urls.distribution,
     createBreadcrumbs: breadcrumbs.fromWithDistribution,
-    filter: SHACLParser.filterBlacklist(fieldBlacklist.distribution),
+    formModel: formModels.distribution,
   }
 }
 </script>

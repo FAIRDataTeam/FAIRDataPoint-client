@@ -7,10 +7,8 @@ import api from '../../api'
 import breadcrumbs from '../../utils/breadcrumbs'
 import EntityCreate from '../../components/EntityCreate/index.vue'
 import urls from '../../utils/urls'
-import rdfUtils from '@/rdf/utils'
-import { SHACLParser } from '@/components/ShaclForm/SHACLParser'
-import fieldBlacklist from '@/rdf/fieldBlacklist'
 import permissions from '../../utils/permissions'
+import formModels from '@/rdf/formModels'
 
 @Component({ components: { EntityCreate } })
 export default class DatasetCreate extends Vue {
@@ -22,9 +20,7 @@ export default class DatasetCreate extends Vue {
     getParentUrl: urls.catalog,
     createBreadcrumbs: breadcrumbs.fromWithCatalog,
     isAllowed: permissions.hasCreate,
-    isPartOf: rdfUtils.catalogSubject,
-    shape: 'DatasetShape',
-    filter: SHACLParser.filterBlacklist(fieldBlacklist.dataset),
+    formModel: formModels.dataset,
   }
 }
 </script>

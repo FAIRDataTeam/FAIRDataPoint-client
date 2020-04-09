@@ -71,5 +71,6 @@ export default class Status {
   clear(): void {
     this.status = Status.DEFAULT
     this.msg = null
+    this.errorCode = null
   }
 }

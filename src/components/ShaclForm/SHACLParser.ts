@@ -43,8 +43,24 @@ export class SHACLParser {
     return field => !_.includes(blacklist, field)
   }
 
-  public parse(shape: string): FormShape {
-    return this.loadShapeForm(DEFAULT_NS(shape))
+  public parse(targetClasses: $rdf.ValueType[]): FormShape {
+    return targetClasses
+      .flatMap(tc => this.loadShapes(tc))
+      .map(s => this.loadShapeForm(s))
+      .reduce(this.mergeFormShapes)
+  }
+
+  private loadShapes(targetClass: $rdf.ValueType): $rdf.ValueType[] {
+    return this.store
+      .match(null, SHACL('targetClass'), targetClass, null)
+      .map(s => s.subject)
+  }
+
+  private mergeFormShapes(shape1: FormShape, shape2: FormShape): FormShape {
+    return {
+      targetClasses: [...shape1.targetClasses, ...shape2.targetClasses],
+      fields: [...shape1.fields, ...shape2.fields],
+    }
   }
 
   private loadShapeForm(shape: $rdf.ValueType, level: number = 0): FormShape {
@@ -67,7 +83,7 @@ export class SHACLParser {
           .filter(e => this.filter(this.getShaclValue(e, 'path')))
           .flatMap(e => this.loadElement(e, level))
       }
-      return this.loadElement(and.object, level)
+      return []
     })
 
     return { targetClasses, fields: andProperties.concat(properties) }

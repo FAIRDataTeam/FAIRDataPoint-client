@@ -8,18 +8,16 @@ import breadcrumbs from '../../utils/breadcrumbs'
 import EntityEdit from '../../components/EntityEdit/index.vue'
 import urls from '../../utils/urls'
 import rdfUtils from '@/rdf/utils'
-import { SHACLParser } from '@/components/ShaclForm/SHACLParser'
-import fieldBlacklist from '@/rdf/fieldBlacklist'
+import formModels from '@/rdf/formModels'
 
 @Component({ components: { EntityEdit } })
 export default class CatalogEdit extends Vue {
   config = {
     api: api.builder.build('catalog'),
-    shape: 'CatalogShape',
     getSubject: rdfUtils.catalogSubject,
     toUrl: urls.catalog,
     createBreadcrumbs: breadcrumbs.fromWithCatalog,
-    filter: SHACLParser.filterBlacklist(fieldBlacklist.catalog),
+    formModel: formModels.catalog,
   }
 }
 </script>

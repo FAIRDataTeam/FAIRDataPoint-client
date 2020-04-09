@@ -72,16 +72,13 @@ export default class ShaclForm extends Vue {
   readonly subject: string
 
   @Prop({ required: true })
-  readonly shape: string
+  readonly targetClasses: $rdf.ValueType[]
 
   @Prop({ required: true })
   readonly filter: any
 
   @Prop({ required: true })
   readonly validationReport: ValidationReport
-
-  @Prop({ required: false, default: () => [] })
-  readonly skippedFields: string[]
 
   form: any
 
@@ -99,7 +96,7 @@ export default class ShaclForm extends Vue {
   created() {
     try {
       const parser = new SHACLParser(this.shacl, this.filter)
-      this.form = parser.parse(this.shape)
+      this.form = parser.parse(this.targetClasses)
       this.data = formData.fromRdf(this.form, $rdf.namedNode(this.subject), this.rdf)
       this.status.setDone()
     } catch (error) {
@@ -108,7 +105,7 @@ export default class ShaclForm extends Vue {
   }
 
   onInput() {
-    this.turtle = formData.toRdf(this.rdf, this.data, this.subject, this.skippedFields)
+    this.turtle = formData.toRdf(this.rdf, this.data, this.subject)
   }
 
   onSubmit() {

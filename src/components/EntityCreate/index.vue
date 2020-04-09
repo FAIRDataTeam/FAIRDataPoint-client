@@ -16,9 +16,9 @@
         <shacl-form
           :rdf="graph.store"
           :shacl="shacl"
-          :shape="config.shape"
+          :target-classes="config.formModel.targetClasses"
           :subject="subject"
-          :filter="config.filter"
+          :filter="filter"
           :validation-report="validationReport"
           @submit="onSubmit"
         />
@@ -42,6 +42,7 @@ import Graph from '@/rdf/Graph'
 import { DCT } from '@/rdf/namespaces'
 import config from '@/config'
 import { parseValidationReport, ValidationReport } from '@/components/ShaclForm/ValidationReport'
+import { SHACLParser } from '@/components/ShaclForm/SHACLParser'
 
 
 @Component({
@@ -83,7 +84,11 @@ export default class EntityCreate extends Vue {
   }
 
   get isPartOf() {
-    return this.config.isPartOf(this.parentEntityId)
+    return this.config.formModel.isPartOf(this.parentEntityId)
+  }
+
+  get filter() {
+    return SHACLParser.filterBlacklist(this.config.formModel.blacklistedFields)
   }
 
   created(): void {

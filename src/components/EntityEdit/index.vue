@@ -16,11 +16,10 @@
         <shacl-form
           :rdf="graph.store"
           :shacl="shacl"
-          :shape="config.shape"
+          :target-classes="config.formModel.targetClasses"
           :subject="subject"
-          :filter="config.filter"
+          :filter="filter"
           :validation-report="validationReport"
-          :skipped-fields="skippedFields"
           @submit="onSubmit"
         />
       </template>
@@ -43,6 +42,7 @@ import Graph from '@/rdf/Graph'
 import { DCT } from '@/rdf/namespaces'
 import permissions from '@/utils/permissions'
 import { parseValidationReport, ValidationReport } from '@/components/ShaclForm/ValidationReport'
+import { SHACLParser } from '@/components/ShaclForm/SHACLParser'
 
 @Component({
   components: {
@@ -82,9 +82,10 @@ export default class EntityEdit extends Vue {
     return this.config.getSubject(this.entityId)
   }
 
-  get skippedFields() {
-    return _.get(this.config, 'skippedFields', [])
+  get filter() {
+    return SHACLParser.filterBlacklist(this.config.formModel.blacklistedFields)
   }
+
 
   created(): void {
     this.fetchData()

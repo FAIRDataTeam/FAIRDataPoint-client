@@ -1,6 +1,6 @@
 import * as $rdf from 'rdflib'
 import _ from 'lodash'
-import { RDF } from '@/rdf/namespaces'
+import { DCT, RDF } from '@/rdf/namespaces'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import { FormShape } from '@/components/ShaclForm/SHACLParser'
 
@@ -76,21 +76,11 @@ export function toRdf(
   rdf: $rdf.IndexedFormula,
   data: FormData,
   subject: string,
-  skippedFields: string[] = [],
 ): string {
   const graph = $rdf.graph()
 
   const subjectNode = $rdf.namedNode(subject)
-  graph.addAll(rdf.match(subjectNode, null, null, null))
-
-  Object.entries(data.data).forEach(([key, value]) => {
-    graph.removeMany(subjectNode, $rdf.namedNode(key))
-  })
-
-  skippedFields.forEach((key) => {
-    graph.removeMany(subjectNode, $rdf.namedNode(key))
-  })
-
+  graph.addAll(rdf.match(subjectNode, DCT('isPartOf'), null, null))
   graph.addAll(createQuads(data))
   let result = ''
 

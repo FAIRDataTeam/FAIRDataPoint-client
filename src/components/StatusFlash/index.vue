@@ -6,7 +6,7 @@
         'loader': status.isPending() && !noLoading,
         'status-flash--large': status.isError() && status.errorCode > 0,
         'status-flash__alert status-flash__alert--danger':
-          status.isError() && status.errorCode === 0,
+          status.isError() && !(status.errorCode > 0),
         'status-flash__alert status-flash__alert--success': status.isSuccess()
       }"
     >
