@@ -1,8 +1,8 @@
-import _ from 'lodash'
 import axios from 'axios'
+import config from '@/config'
 
 const request = axios.create({
-  baseURL: _.get(window, 'config.publicPath', 'http://localhost:3000'),
+  baseURL: config.apiURL,
   headers: {
     Accept: 'application/json',
   },

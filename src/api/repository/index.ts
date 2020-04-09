@@ -1,19 +1,40 @@
 import request from '../request'
 
 export default {
-  getRepositorySpec() {
-    return request.get('/spec')
+  get() {
+    return request.get('/', {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
   },
 
-  getRepository() {
-    return request.get('/')
+  getSpec() {
+    return request.get('/spec', {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
   },
 
-  putRepository(data) {
-    return request.put('/', data)
+  put(_id, data) {
+    return request.put('/', data, {
+      headers: {
+        Accept: 'text/turtle',
+        'Content-Type': 'text/turtle',
+      },
+    })
   },
 
-  getRepositoryDashboard() {
+  delete() {
+    return request.delete('/')
+  },
+
+  getMembership() {
+    return Promise.resolve({ data: {} })
+  },
+
+  getDashboard() {
     return request.get('/dashboard')
   },
 }

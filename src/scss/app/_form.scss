@@ -3,7 +3,7 @@
 
 
 .form {
-  margin-bottom: 6rem;
+  //margin-bottom: 6rem;
 
   &--inline {
     @media (min-width: $breakpoint-small) {
@@ -48,7 +48,8 @@
 
     & > input, &__input-item input,
     & > select,
-    & > textarea {
+    & > textarea,
+    .input-field {
       @include typography-default-18;
       padding: $space-xs 0;
       width: 100%;
@@ -98,7 +99,7 @@
     }
 
     &--error, &__input-item--error {
-      & > input, .v-select {
+      .input-field, .v-select {
         border-bottom-color: $color-danger;
       }
 

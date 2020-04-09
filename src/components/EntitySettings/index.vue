@@ -1,14 +1,14 @@
 <template>
   <div class="entity-settings">
     <breadcrumbs
-      v-if="entity !== null"
+      v-if="graph !== null"
       :links="breadcrumbs"
       current="Settings"
     />
     <status-flash :status="status" />
     <page
-      v-if="entity !== null"
-      :title="`${entity.title} Settings`"
+      v-if="graph !== null"
+      :title="`${entityTitle} Settings`"
       content-only
     >
       <template v-slot:content>
@@ -78,7 +78,7 @@
         </div>
 
         <div class="entity-settings__section">
-          <h3>Users with access to {{ entity.title }}</h3>
+          <h3>Users with access to {{ entityTitle }}</h3>
           <div class="item-list">
             <user-item
               v-for="member in members"
@@ -126,6 +126,8 @@ import Page from '../Page/index.vue'
 import StatusFlash from '../StatusFlash/index.vue'
 import UserItem from '../UserItem/index.vue'
 import Status from '../../utils/Status'
+import Graph from '@/rdf/Graph'
+import { DCT } from '@/rdf/namespaces'
 
 @Component({
   components: {
@@ -139,7 +141,9 @@ export default class EntitySettings extends Vue {
   @Prop({ required: true })
   readonly config: any
 
-  entity: any = null
+  graph: any = null
+
+  entityTitle: any = null
 
   members: any = null
 
@@ -171,6 +175,10 @@ export default class EntitySettings extends Vue {
     return this.$route.params.id
   }
 
+  get subject() {
+    return this.config.getSubject(this.entityId)
+  }
+
   created() {
     this.fetchData()
   }
@@ -182,22 +190,23 @@ export default class EntitySettings extends Vue {
       this.status.setPending()
 
       const requests = [
-        this.config.getEntity(this.entityId),
-        this.config.getEntityMembers(this.entityId),
+        this.config.api.get(this.entityId),
+        this.config.api.getMembers(this.entityId),
         api.users.getUsers(),
         api.memberships.getMemberships(),
       ]
 
       const [entity, members, users, memberships] = await axios.all(requests)
 
-      this.entity = entity.data
+      this.graph = new Graph(entity.data, this.subject)
+      this.entityTitle = this.graph.findOne(DCT('title'))
       this.members = _.orderBy(members.data, ['user.firstName', 'user.lastName'], ['asc'])
       this.users = this.createUsers(users.data, this.members)
 
       this.memberships = this.createMemberships(memberships.data)
       this.inviteForm.membershipUuid = _.get(this.memberships, '0.uuid')
 
-      this.breadcrumbs = this.config.createBreadcrumbs(this.entity)
+      this.breadcrumbs = this.config.createBreadcrumbs(this.graph)
       this.status.setDone()
     } catch (error) {
       if (_.get(error, 'response.status') === 403) {
@@ -226,7 +235,7 @@ export default class EntitySettings extends Vue {
     if (this.inviteForm.userUuid !== null && this.inviteForm.membershipUuid !== null) {
       try {
         this.inviteStatus.setPending()
-        await this.config.putEntityMember(
+        await this.config.api.putMember(
           this.$route.params.id,
           this.inviteForm.userUuid,
           this.inviteForm.membershipUuid,
@@ -237,7 +246,7 @@ export default class EntitySettings extends Vue {
           userUuid: null,
           membershipUuid: null,
         }
-        this.entity = null
+        this.graph = null
         this.fetchData()
       } catch (error) {
         this.inviteStatus.setErrorFromResponse(error, 'User could not be invited.')
@@ -247,7 +256,7 @@ export default class EntitySettings extends Vue {
 
   async updateMember(userUuid: string, membershipUuid: string): Promise<void> {
     try {
-      await this.config.putEntityMember(this.entityId, userUuid, membershipUuid)
+      await this.config.api.putMember(this.entityId, userUuid, membershipUuid)
       this.fetchData()
     } catch (error) {
       this.status.setErrorFromResponse(error, 'Unable to update user membership.')
@@ -257,7 +266,7 @@ export default class EntitySettings extends Vue {
   async removeMember(user: any): Promise<void> {
     if (window.confirm(`Are you sure you want to remove ${user.firstName} ${user.lastName}?`)) {
       try {
-        await this.config.deleteEntityMember(this.entityId, user.uuid)
+        await this.config.api.deleteMember(this.entityId, user.uuid)
         this.fetchData()
       } catch (error) {
         this.status.setErrorFromResponse(error, 'Unable to remove user.')

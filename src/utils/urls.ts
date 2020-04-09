@@ -2,16 +2,28 @@ function repository(): string {
   return '/'
 }
 
-function catalog(c): string {
-  return `/catalog/${c.identifier}`
+function catalog(id): string {
+  return `/catalog/${id}`
 }
 
-function dataset(d): string {
-  return `/dataset/${d.identifier}`
+function dataset(id): string {
+  return `/dataset/${id}`
 }
 
-function distribution(d): string {
-  return `/distribution/${d.identifier}`
+function distribution(id): string {
+  return `/distribution/${id}`
+}
+
+function createCatalog(): string {
+  return '/create-catalog'
+}
+
+function createDataset(catalogId): string {
+  return `/catalog/${catalogId}/create-dataset`
+}
+
+function createDistribution(datasetId): string {
+  return `/dataset/${datasetId}/create-distribution`
 }
 
 export default {
@@ -19,4 +31,7 @@ export default {
   catalog,
   dataset,
   distribution,
+  createCatalog,
+  createDataset,
+  createDistribution,
 }

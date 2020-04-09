@@ -1,137 +1,54 @@
 <template>
-  <div>
-    <breadcrumbs
-      v-if="distribution !== null"
-      :links="breadcrumbs"
-      :current="distribution.title"
-    />
-    <status-flash :status="status" />
-    <page
-      v-if="distribution !== null"
-      :title="distribution.title"
-    >
-      <template v-slot:actions>
-        <membership-badge :entity="distribution" />
-        <router-link
-          v-if="isAdmin || permissions.hasWrite(distribution)"
-          class="btn btn-link"
-          :to="`/distribution/${distribution.identifier}/edit`"
-          data-cy="edit"
-        >
-          <fa :icon="['fas', 'edit']" />
-          Edit
-        </router-link>
-        <router-link
-          v-if="isAdmin || permissions.hasWrite(distribution)"
-          class="btn btn-link"
-          :to="`/distribution/${distribution.identifier}/settings`"
-          data-cy="settings"
-        >
-          <fa :icon="['fas', 'cog']" />
-          Settings
-        </router-link>
-      </template>
-      <template v-slot:column>
-        <p class="distribution-links">
-          <a
-            v-if="distribution.downloadUrl"
-            class="btn btn-primary btn-rounded mr-3 mb-3"
-            :href="distribution.downloadUrl"
-            target="_blank"
-          >
-            <fa :icon="['fa', 'download']" />
-            Download
-          </a>
-          <a
-            v-if="distribution.accessUrl"
-            class="btn btn-primary btn-rounded mr-3 mb-3"
-            :href="distribution.accessUrl"
-            target="_blank"
-          >
-            <fa :icon="['fa', 'external-link-alt']" />
-            Access Online
-          </a>
-        </p>
-        <entity-metadata :metadata="metadata" />
-      </template>
-      <template v-slot:content>
-        <p class="description">
-          {{ distribution.description }}
-        </p>
-      </template>
-    </page>
-  </div>
+  <entity-view :config="config" />
 </template>
 <script lang="ts">
-import { mapGetters } from 'vuex'
+import { Component, Vue } from 'vue-property-decorator'
 import api from '../../api'
-import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
-import MembershipBadge from '../../components/MembershipBadge/index.vue'
-import EntityMetadata from '../../components/EntityMetadata/index.vue'
-import Page from '../../components/Page/index.vue'
-import StatusFlash from '../../components/StatusFlash/index.vue'
-import Status from '../../utils/Status'
-import metadata from '../../utils/metadata'
 import breadcrumbs from '../../utils/breadcrumbs'
-import permissions from '../../utils/permissions'
+import EntityView from '@/components/EntityView/index.vue'
+import rdfUtils from '@/rdf/utils'
+import { DCAT } from '@/rdf/namespaces'
+import metadata from '@/utils/metadata'
 
 
-export default {
-  name: 'Distribution',
-  components: {
-    MembershipBadge,
-    StatusFlash,
-    Breadcrumbs,
-    EntityMetadata,
-    Page,
-  },
+@Component({ components: { EntityView } })
+export default class Distribution extends Vue {
+  config = {
+    api: api.builder.build('distribution'),
+    getSubject: rdfUtils.distributionSubject,
+    createBreadcrumbs: breadcrumbs.fromDistribution,
+    actions: ['edit', 'settings', 'delete'],
+    getEntityMetadata: this.getEntityMetadata,
+    getExtraActions: this.getExtraActions,
+  }
 
-  data() {
-    return {
-      distribution: null,
-      metadata: null,
-      breadcrumbs: null,
-      status: new Status(),
-      permissions,
+  getEntityMetadata(graph) {
+    const mediaType = graph.findOne(DCAT('mediaType'))
+    return [metadata.field('Media Type', mediaType)]
+  }
+
+  getExtraActions(graph) {
+    const accessUrl = graph.findOne(DCAT('accessURL'))
+    const downloadUrl = graph.findOne(DCAT('downloadURL'))
+    const res = []
+
+    if (accessUrl) {
+      res.push({
+        label: 'Access online',
+        url: accessUrl,
+        icon: ['fas', 'external-link-alt'],
+      })
     }
-  },
 
-  computed: {
-    ...mapGetters('auth', {
-      isAdmin: 'isAdmin',
-    }),
-  },
+    if (downloadUrl) {
+      res.push({
+        label: 'Download',
+        url: downloadUrl,
+        icon: ['fas', 'download'],
+      })
+    }
 
-  watch: {
-    $route: 'fetchData',
-  },
-
-  created() {
-    this.fetchData()
-  },
-
-  methods: {
-    async fetchData() {
-      try {
-        this.status.setPending()
-
-        const response = await api.distribution.getDistribution(this.$route.params.id)
-        this.distribution = response.data
-        this.metadata = this.createMetadata(this.distribution)
-        this.breadcrumbs = breadcrumbs.fromLinks(this.distribution.links)
-        this.status.setDone()
-      } catch (error) {
-        this.status.setError('Unable to get distribution data.')
-      }
-    },
-
-    createMetadata(distribution) {
-      return [
-        ...metadata.commonMetadata(distribution),
-        metadata.fromField('Media Type', distribution.mediaType),
-        metadata.rdfLinks(),
-      ]
-    },
-  },
+    return res
+  }
 }
 </script>

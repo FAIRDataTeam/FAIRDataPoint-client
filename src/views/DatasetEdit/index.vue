@@ -2,24 +2,22 @@
   <entity-edit :config="config" />
 </template>
 <script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
 import api from '../../api'
 import breadcrumbs from '../../utils/breadcrumbs'
 import EntityEdit from '../../components/EntityEdit/index.vue'
 import urls from '../../utils/urls'
+import rdfUtils from '@/rdf/utils'
+import formModels from '@/rdf/formModels'
 
-export default {
-  name: 'DatasetEdit',
-  components: { EntityEdit },
-  data() {
-    return {
-      config: {
-        getEntity: api.dataset.getDataset,
-        getEntitySpec: api.dataset.getDatasetSpec,
-        putEntity: api.dataset.putDataset,
-        toUrl: urls.dataset,
-        createBreadcrumbs: breadcrumbs.fromLinksWithDataset,
-      },
-    }
-  },
+@Component({ components: { EntityEdit } })
+export default class DatasetEdit extends Vue {
+  config = {
+    api: api.builder.build('dataset'),
+    getSubject: rdfUtils.datasetSubject,
+    toUrl: urls.dataset,
+    createBreadcrumbs: breadcrumbs.fromWithDataset,
+    formModel: formModels.dataset,
+  }
 }
 </script>

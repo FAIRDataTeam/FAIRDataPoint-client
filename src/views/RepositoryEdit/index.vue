@@ -2,25 +2,24 @@
   <entity-edit :config="config" />
 </template>
 <script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
 import api from '../../api'
 import breadcrumbs from '../../utils/breadcrumbs'
 import EntityEdit from '../../components/EntityEdit/index.vue'
 import urls from '../../utils/urls'
+import rdfUtils from '@/rdf/utils'
+import formModels from '@/rdf/formModels'
 
-export default {
-  name: 'DistributionEdit',
-  components: { EntityEdit },
-
-  data() {
-    return {
-      config: {
-        getEntity: api.repository.getRepository,
-        getEntitySpec: api.repository.getRepositorySpec,
-        putEntity: (_, data) => api.repository.putRepository(data),
-        toUrl: urls.repository,
-        createBreadcrumbs: breadcrumbs.fromRepository,
-      },
-    }
-  },
+@Component({ components: { EntityEdit } })
+export default class DistributionEdit extends Vue {
+  config = {
+    api: api.repository,
+    shape: 'RepositoryShape',
+    subject: rdfUtils.repositorySubject(),
+    getSubject: rdfUtils.repositorySubject,
+    toUrl: urls.repository,
+    createBreadcrumbs: breadcrumbs.fromRepository,
+    formModel: formModels.repository,
+  }
 }
 </script>

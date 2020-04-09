@@ -1,8 +1,25 @@
 <template>
   <div class="item-list">
-    <h2 v-if="items.length > 0">
-      {{ title }}
-    </h2>
+    <div class="item-list__header">
+      <h2>
+        {{ title }}
+      </h2>
+      <router-link
+        v-if="createLink"
+        class="btn btn-link"
+        :to="createLink"
+        data-cy="create"
+      >
+        <fa :icon="['fas', 'plus']" />
+        Create
+      </router-link>
+    </div>
+    <div
+      v-if="items.length === 0"
+      class="item-list__empty"
+    >
+      {{ emptyText }}
+    </div>
     <item
       v-for="(item, index) in sortByTitle(items)"
       :key="index"
@@ -26,6 +43,13 @@ export default class ItemList extends Vue {
 
   @Prop({ type: Array, required: true })
   readonly items: Array<any>
+
+  @Prop({ type: String, required: false, default: null })
+  readonly createLink: string
+
+  get emptyText() {
+    return `There are no ${_.toLower(this.title)}.`
+  }
 
   sortByTitle(list) {
     return _.orderBy(list, ['title'], ['asc'])

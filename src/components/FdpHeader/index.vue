@@ -41,10 +41,6 @@
                 <fa :icon="['fas', 'user-friends']" />
                 Manage users
               </b-dropdown-item>
-              <b-dropdown-item v-b-modal.info-modal>
-                <fa :icon="['fas', 'user-friends']" />
-                About
-              </b-dropdown-item>
               <b-dropdown-divider />
             </template>
             <b-dropdown-header data-cy="user-menu-user">
@@ -70,27 +66,10 @@
       </div>
     </div>
     <separator />
-    <b-modal
-      id="info-modal"
-      hide-footer
-      title="About"
-    >
-      <version-info-table
-        title="Server"
-        :version="info.version"
-        :built-at="info.builtAt"
-      />
-      <version-info-table
-        title="Client"
-        version="{version}"
-        built-at="{builtAt}"
-      />
-    </b-modal>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import api from '../../api'
 import Separator from '../Separator/index.vue'
 import UserAvatar from '../UserAvatar/index.vue'
 import VersionInfoTable from '../VersionInfoTable/index.vue'
@@ -104,8 +83,6 @@ import VersionInfoTable from '../VersionInfoTable/index.vue'
   },
 })
 export default class FdpHeader extends Vue {
-  info: any = { version: '', builtAt: '' }
-
   get authenticated() {
     return this.$store.getters['auth/authenticated']
   }
@@ -119,15 +96,7 @@ export default class FdpHeader extends Vue {
     if (this.$router.currentRoute.path !== '/') {
       this.$router.push('/')
     }
-  }
-
-  created() {
-    this.fetchData()
-  }
-
-  async fetchData(): Promise<void> {
-    const response = await api.info.getInfo()
-    this.info = response.data
+    window.location.reload()
   }
 }
 </script>
