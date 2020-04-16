@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         node-version: [8]
-    
+
     env:
       PUBLIC_IMAGE: fairdata/fairdatapoint-client
       PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/fairdatapoint-client
@@ -27,7 +27,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-        
+
     - name: Install
       run: npm ci
 
@@ -78,7 +78,7 @@ jobs:
     - name: Docker tag and push - version tag (public)
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
       run: |
-        GITHUB_TAG=`echo $GITHUB_REF | cut -d/ -f3` 
+        GITHUB_TAG=`echo $GITHUB_REF | cut -d/ -f3`
         # Release vX.Y.Z
         if [[ $GITHUB_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
           IMAGE_TAG_MAJOR="$PUBLIC_IMAGE:"`echo $GITHUB_TAG | sed -E "s/v(.*)\..*\..*/\1/g"`
