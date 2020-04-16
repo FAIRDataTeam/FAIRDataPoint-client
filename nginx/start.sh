@@ -6,7 +6,6 @@ echo -n "window.config={publicPath:'"$PUBLIC_PATH"'};" > ${config}
 
 # set correct FDP Host for proxy pass
 sed -i "s#\$FDP_HOST#"$FDP_HOST"#g" /etc/nginx/conf.d/default.conf
-sed -i "s#\$PUBLIC_PATH#"$PUBLIC_PATH"#g" /etc/nginx/conf.d/default.conf
 
 # set correct Public Path
 sed -i "s#/app/#"$PUBLIC_PATH"/#g" /usr/share/nginx/html/js/*.js
