@@ -16,9 +16,8 @@
         <shacl-form
           :rdf="graph.store"
           :shacl="shacl"
-          :target-classes="config.formModel.targetClasses"
+          :target-classes="config.targetClasses"
           :subject="subject"
-          :filter="filter"
           :validation-report="validationReport"
           @submit="onSubmit"
         />
@@ -27,22 +26,20 @@
   </div>
 </template>
 <script lang="ts">
-import {
-  Component, Prop, Vue, Watch,
-} from 'vue-property-decorator'
+import { Component, Prop } from 'vue-property-decorator'
 import axios from 'axios'
 import _ from 'lodash'
 import * as $rdf from 'rdflib'
 import ShaclForm from '@/components/ShaclForm/index.vue'
-import Status from '@/utils/Status'
 import Breadcrumbs from '@/components/Breadcrumbs/index.vue'
 import Page from '@/components/Page/index.vue'
 import StatusFlash from '@/components/StatusFlash/index.vue'
 import Graph from '@/rdf/Graph'
 import { DCT } from '@/rdf/namespaces'
 import config from '@/config'
-import { parseValidationReport, ValidationReport } from '@/components/ShaclForm/ValidationReport'
-import { SHACLParser } from '@/components/ShaclForm/SHACLParser'
+import { parseValidationReport, ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
+import { EntityConfig } from '@/entity/EntityConfig'
+import EntityBase from '@/components/EntityBase'
 
 
 @Component({
@@ -53,30 +50,16 @@ import { SHACLParser } from '@/components/ShaclForm/SHACLParser'
     ShaclForm,
   },
 })
-export default class EntityCreate extends Vue {
+export default class EntityCreate extends EntityBase {
   @Prop({ required: true })
-  readonly config: any
-
-  breadcrumbs: any = null
-
-  status: Status = new Status()
-
-  graph: Graph = null
+  readonly parentConfig: EntityConfig
 
   shacl: any = null
 
   validationReport: ValidationReport = {}
 
   get createName() {
-    return this.config.createName
-  }
-
-  get parentEntityId(): string {
-    return this.$route.params.id
-  }
-
-  get isAdmin(): boolean {
-    return this.$store.getters['auth/isAdmin']
+    return `Create ${this.config.name}`
   }
 
   get subject() {
@@ -84,54 +67,47 @@ export default class EntityCreate extends Vue {
   }
 
   get isPartOf() {
-    return this.config.formModel.isPartOf(this.parentEntityId)
+    return this.parentConfig.subject(this.entityId)
   }
 
-  get filter() {
-    return SHACLParser.filterBlacklist(this.config.formModel.blacklistedFields)
-  }
-
-  created(): void {
-    this.fetchData()
-  }
-
-  @Watch('$route')
   async fetchData(): Promise<void> {
     try {
       this.status.setPending()
 
-      const requests = [
-        this.config.api.getSpec(),
-        this.config.parentApi.get(this.parentEntityId),
-        this.config.parentApi.getMembership(this.parentEntityId),
-      ]
+      const [spec, parent, membership] = await this.loadData()
 
-      const [spec, parent, membership] = await axios.all(requests)
-
-      if (this.isAdmin || this.config.isAllowed(membership.data)) {
+      if (this.isAdmin || this.parentConfig.canCreateChild(this.isAuthenticated, membership.data)) {
         this.shacl = spec.data
         this.graph = new Graph('', this.subject)
         this.graph.store.add($rdf.namedNode(this.subject), DCT('isPartOf'), $rdf.namedNode(this.isPartOf), null)
         this.createBreadcrumbs(parent.data)
         this.status.setDone()
       } else {
-        await this.$router.replace(this.config.getParentUrl(this.isPartOf))
+        await this.$router.replace(this.parentConfig.toUrl(this.entityId))
       }
     } catch (error) {
       this.status.setErrorFromResponse(error, 'Unable to get metadata.')
     }
   }
 
+  async loadData() {
+    return axios.all([
+      this.config.api.getSpec(),
+      this.parentConfig.api.getExpanded(this.entityId),
+      this.parentConfig.api.getMembership(this.entityId),
+    ])
+  }
+
   createBreadcrumbs(data) {
     const graph = new Graph(data, this.isPartOf)
-    this.breadcrumbs = this.config.createBreadcrumbs(graph)
+    this.breadcrumbs = this.parentConfig.createBreadcrumbsWithSelf(graph, this.entityId)
   }
 
   async onSubmit(turtle: string): Promise<void> {
     try {
       const response = await this.config.api.post(turtle)
-      const entityUuid = _.last(_.get(response, 'headers.location', '').split('/'))
-      await this.$router.push(this.config.getEntityUrl(entityUuid))
+      const entityId = _.last(_.get(response, 'headers.location', '').split('/'))
+      await this.$router.push(this.config.toUrl(entityId))
     } catch (error) {
       const validationReport = parseValidationReport(_.get(error, 'response.data', ''))
       const focusNodeReport = _.first(Object.values(validationReport)) || {}

@@ -62,7 +62,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import _ from 'lodash'
 import FormInput from '@/components/ShaclForm/FormInput.vue'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
-import { ValidationReport } from '@/components/ShaclForm/ValidationReport'
+import { ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
 import { SHACL } from '@/rdf/namespaces'
 
 @Component({

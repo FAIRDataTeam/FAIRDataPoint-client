@@ -10,6 +10,14 @@ function build(entity) {
       })
     },
 
+    getExpanded(id) {
+      return request.get(`/${entity}/${id}/expanded`, {
+        headers: {
+          Accept: 'text/turtle',
+        },
+      })
+    },
+
     getSpec() {
       return request.get(`/${entity}/spec`, {
         headers: {
