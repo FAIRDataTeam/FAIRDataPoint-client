@@ -6,7 +6,6 @@ echo -n "window.config={publicPath:'"$PUBLIC_PATH"'};" > ${config}
 
 # set correct FDP Host for proxy pass
 sed -i "s#\$FDP_HOST#"$FDP_HOST"#g" /etc/nginx/conf.d/default.conf
-sed -i "s#\$PUBLIC_PATH#"$PUBLIC_PATH"#g" /etc/nginx/conf.d/default.conf
 
 # set correct Public Path
 sed -i "s#/app/#"$PUBLIC_PATH"/#g" /usr/share/nginx/html/js/*.js
@@ -16,7 +15,7 @@ sed -i "s#/app/#"$PUBLIC_PATH"/#g" /usr/share/nginx/html/index.html
 sed -i "s#/assets/logo.png#"$PUBLIC_PATH"/assets/logo.png#" /src/scss/_variables.scss
 
 # regenerate styles if there are any customizations or Public Path is set
-if [[ ! -z $PUBLIC_PATH || $(find /src/scss/custom -name "*.scss" | xargs cat | wc -c) -gt 0 ]]; then
+if [[ ! -z "$PUBLIC_PATH" || $(find /src/scss/custom -name "*.scss" | xargs cat | wc -c) -gt 0 ]]; then
   find /usr/share/nginx/html/css -name "*.css" -exec sassc -I /src -t compressed /src/scss/main.scss {} \;
 fi
 
