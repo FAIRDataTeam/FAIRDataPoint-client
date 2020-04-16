@@ -1,6 +1,6 @@
 # FAIR Data Point Client
 
-> Client application for the [FAIR Data Point](https://github.com/FAIRDataTeam/FAIRDataPoint) providing a user interface for browsing the metadata and administration.
+> Client application for the [FAIR Data Point](https://github.com/FAIRDataTeam/FAIRDataPoint) providing an HTML-based user interface for browsing the metadata and administration.
 
 [![Build Status](https://travis-ci.org/FAIRDataTeam/FAIRDataPoint-client.svg?branch=master)](https://travis-ci.org/FAIRDataTeam/FAIRDataPoint-client.svg?branch=master)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
