@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumbs
-      v-if="breadcrumbs !== null"
+      v-if="breadcrumbs && breadcrumbs.length > 0"
       :links="breadcrumbs"
       :current="entity.title"
     />
@@ -43,14 +43,14 @@
       <template v-slot:column>
         <p>
           <a
-            v-for="action in extraActions"
-            :key="action.url"
+            v-for="link in extraLinks"
+            :key="link.url"
             class="btn btn-primary btn-rounded mr-3 mb-3"
-            :href="action.url"
+            :href="link.url"
             target="_blank"
           >
-            <fa :icon="action.icon" />
-            {{ action.label }}
+            <fa :icon="link.icon" />
+            {{ link.label }}
           </a>
         </p>
         <entity-metadata :metadata="metadata" />
@@ -64,30 +64,27 @@
           :title="itemList.title"
           :items="itemList.items"
           :create-link="createLink"
-          :data-cy="itemList.dataCy"
+          data-cy="item-list"
         />
       </template>
     </page>
   </div>
 </template>
 <script lang="ts">
-
-import {
-  Component, Prop, Vue, Watch,
-} from 'vue-property-decorator'
+import { Component } from 'vue-property-decorator'
 import axios from 'axios'
 import _ from 'lodash'
 import Breadcrumbs from '@/components/Breadcrumbs/index.vue'
 import EntityMetadata from '@/components/EntityMetadata/index.vue'
-import Graph from '@/rdf/Graph'
 import ItemList from '@/components/ItemList/index.vue'
 import MembershipBadge from '@/components/MembershipBadge/index.vue'
 import Page from '@/components/Page/index.vue'
-import Status from '@/utils/Status'
 import StatusFlash from '@/components/StatusFlash/index.vue'
 import metadata from '@/utils/metadata'
 import permissions from '@/utils/permissions'
-import { DCT } from '@/rdf/namespaces'
+import { parseSHACLView } from '@/components/ShaclForm/Parser/SHACLViewParser'
+import EntityBase from '@/components/EntityBase'
+
 
 @Component({
   components: {
@@ -99,44 +96,30 @@ import { DCT } from '@/rdf/namespaces'
     StatusFlash,
   },
 })
-export default class EntityView extends Vue {
-  @Prop({ required: true })
-  readonly config: any
+export default class EntityView extends EntityBase {
+  createLink: string = null
 
-  breadcrumbs: any = null
-
-  entity: any = null
-
-  metadata: any = null
+  extraLinks: any[] = []
 
   itemList: any = null
 
-  status: Status = new Status()
-
   membership: any = null
 
-  extraActions: any[] = []
+  metadata: any = null
 
-  createLink: string = null
-
-  get entityId(): string {
-    return this.$route.params.id
-  }
-
-  get isAdmin(): boolean {
-    return this.$store.getters['auth/isAdmin']
-  }
-
-  get isAuthenticated(): boolean {
-    return this.$store.getters['auth/authenticated']
-  }
+  shape: any = null
 
   get permissions() {
     return permissions
   }
 
+  get canCreateChild() {
+    return this.config.hasChildren
+      && (this.isAdmin || this.config.canCreateChild(this.isAuthenticated, this.membership))
+  }
+
   actionEnabled(action: string): boolean {
-    return _.includes(this.config.actions, action)
+    return _.includes(this.config.viewActions, action)
   }
 
   actionUrl(action: string): string {
@@ -144,43 +127,34 @@ export default class EntityView extends Vue {
     return _.endsWith('/', path) ? `${path}${action}` : `${path}/${action}`
   }
 
-  created(): void {
-    this.fetchData()
+  reset() {
+    this.metadata = null
+    this.itemList = null
+    this.membership = null
+    this.extraLinks = []
+    this.createLink = null
+    this.shape = null
   }
 
-  @Watch('$route')
   async fetchData(): Promise<void> {
     try {
       this.status.setPending()
+      const [entity, spec, membership] = await this.loadData()
 
-      const requests = [
-        this.config.api.get(this.entityId),
-        this.getMembership(),
-      ]
+      this.buildGraph(entity.data)
 
-      const [entity, membership] = await axios.all(requests)
-
-      const graph = new Graph(entity.data, this.config.getSubject(this.entityId))
-
+      this.shape = parseSHACLView(spec.data, this.config.targetClasses)
       this.membership = membership.data
-      this.metadata = this.createMetadata(graph)
-      this.entity = this.createEntityData(graph)
+      this.metadata = this.createMetadata()
+      this.extraLinks = this.config.getLinks(this.graph)
+      this.breadcrumbs = this.config.createBreadcrumbs(this.graph, this.entityId)
 
-      if (this.config.getExtraActions) {
-        this.extraActions = this.config.getExtraActions(graph)
+      if (this.config.hasChildren) {
+        this.itemList = this.config.createChildrenList(this.graph)
       }
 
-      if (this.config.createItemList) {
-        this.itemList = this.config.createItemList(graph)
-      }
-
-      if (this.config.createBreadcrumbs) {
-        this.breadcrumbs = this.config.createBreadcrumbs(graph)
-      }
-
-      if (this.config.createItemList
-        && (this.isAdmin || this.config.canCreateItem(this.membership))) {
-        this.createLink = this.config.getCreateItemUrl(this.entityId)
+      if (this.canCreateChild) {
+        this.createLink = this.config.createChildUrl(this.entityId)
       }
 
       this.status.setDone()
@@ -189,25 +163,30 @@ export default class EntityView extends Vue {
     }
   }
 
+  async loadData() {
+    return axios.all([
+      this.config.api.getExpanded(this.entityId),
+      this.config.api.getSpec(),
+      this.getMembership(),
+    ])
+  }
+
   getMembership() {
     return this.isAuthenticated
       ? this.config.api.getMembership(this.entityId)
       : Promise.resolve({ data: {} })
   }
 
-  createEntityData(graph) {
-    return {
-      title: graph.findOne(DCT('title')),
-      description: graph.findOne(DCT('description')),
-    }
+  createMetadata() {
+    return [
+      ...metadata.commonMetadata(this.graph),
+      ...this.createLocalMetadata(),
+      metadata.rdfLinks(this.subject),
+    ]
   }
 
-  createMetadata(graph) {
-    return [
-      ...metadata.commonMetadata(graph),
-      ...this.config.getEntityMetadata(graph),
-      metadata.rdfLinks(this.config.getSubject(this.entityId)),
-    ]
+  createLocalMetadata() {
+    return this.shape.fields.map(field => metadata.fromShaclField(this.graph, field))
   }
 
   async deleteEntity() {

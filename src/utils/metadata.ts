@@ -1,8 +1,10 @@
+import * as $rdf from 'rdflib'
 import moment from 'moment'
 import Graph from '@/rdf/Graph'
-import { DCT, FDPO } from '@/rdf/namespaces'
+import { DASH, FDPO } from '@/rdf/namespaces'
 import rdfUtils from '@/rdf/utils'
 import config from '@/config'
+import fieldUtils from '@/components/ShaclForm/fieldUtils'
 
 
 function field(label, input, extra = {}) {
@@ -63,12 +65,26 @@ function commonMetadata(graph: Graph) {
   return [
     dateField('Metadata Issued', graph.findOne(FDPO('metadataIssued')), { sm: true }),
     dateField('Metadata Modified', graph.findOne(FDPO('metadataModified')), { sm: true }),
-    field('Version', graph.findOne(DCT('hasVersion'))),
-    field('License', itemFromPath(graph.findOne(DCT('license')))),
-    field('Specification', itemFromPath(graph.findOne(DCT('conformsTo')))),
-    field('Language', itemFromPath(graph.findOne(DCT('language')))),
-    field('Publisher', itemFromPath(graph.findOne(DCT('publisher')))),
   ]
+}
+
+
+function wrapShaclValue(fieldConfig, value) {
+  switch (fieldConfig.viewer) {
+    case DASH('LabelViewer').value:
+      return itemFromPath(value)
+    case DASH('URIViewer').value:
+      return { label: value, uri: value }
+    default:
+      return value
+  }
+}
+
+
+function fromShaclField(graph: Graph, fieldConfig) {
+  const name = fieldUtils.getName(fieldConfig)
+  const value = graph.findOne($rdf.namedNode(fieldConfig.path))
+  return field(name, wrapShaclValue(fieldConfig, value))
 }
 
 
@@ -78,4 +94,5 @@ export default {
   rdfLinks,
   commonMetadata,
   itemFromPath,
+  fromShaclField,
 }

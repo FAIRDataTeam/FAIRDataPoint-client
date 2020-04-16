@@ -8,7 +8,7 @@
     <status-flash :status="status" />
     <page
       v-if="graph !== null"
-      :title="`${entityTitle} Settings`"
+      :title="`${entity.title} Settings`"
       content-only
     >
       <template v-slot:content>
@@ -78,7 +78,7 @@
         </div>
 
         <div class="entity-settings__section">
-          <h3>Users with access to {{ entityTitle }}</h3>
+          <h3>Users with access to {{ entity.title }}</h3>
           <div class="item-list">
             <user-item
               v-for="member in members"
@@ -115,19 +115,16 @@
 </template>
 <script lang="ts">
 import _ from 'lodash'
-import { required } from 'vuelidate/lib/validators'
 import axios from 'axios'
-import {
-  Component, Prop, Vue, Watch,
-} from 'vue-property-decorator'
+import { Component } from 'vue-property-decorator'
 import api from '../../api'
 import Breadcrumbs from '../Breadcrumbs/index.vue'
 import Page from '../Page/index.vue'
 import StatusFlash from '../StatusFlash/index.vue'
 import UserItem from '../UserItem/index.vue'
 import Status from '../../utils/Status'
-import Graph from '@/rdf/Graph'
-import { DCT } from '@/rdf/namespaces'
+import EntityBase from '@/components/EntityBase'
+
 
 @Component({
   components: {
@@ -137,84 +134,48 @@ import { DCT } from '@/rdf/namespaces'
     UserItem,
   },
 })
-export default class EntitySettings extends Vue {
-  @Prop({ required: true })
-  readonly config: any
-
-  graph: any = null
-
-  entityTitle: any = null
-
-  members: any = null
-
-  users: any = null
-
-  memberships: any = null
-
-  breadcrumbs: any = null
-
-  status: Status = new Status()
-
-  inviteStatus: Status = new Status()
-
+export default class EntitySettings extends EntityBase {
   inviteForm: any = {
     userUuid: null,
     membershipUuid: null,
   }
 
-  validations(): any {
-    return {
-      inviteForm: {
-        userUuid: { required },
-        membershipUuid: { required },
-      },
-    }
-  }
+  inviteStatus: Status = new Status()
 
-  get entityId(): string {
-    return this.$route.params.id
-  }
+  members: any = null
 
-  get subject() {
-    return this.config.getSubject(this.entityId)
-  }
+  memberships: any = null
 
-  created() {
-    this.fetchData()
-  }
+  users: any = null
 
-
-  @Watch('$route')
   async fetchData(): Promise<void> {
     try {
       this.status.setPending()
+      const [entity, members, users, memberships] = await this.loadData()
 
-      const requests = [
-        this.config.api.get(this.entityId),
-        this.config.api.getMembers(this.entityId),
-        api.users.getUsers(),
-        api.memberships.getMemberships(),
-      ]
-
-      const [entity, members, users, memberships] = await axios.all(requests)
-
-      this.graph = new Graph(entity.data, this.subject)
-      this.entityTitle = this.graph.findOne(DCT('title'))
+      this.buildGraph(entity.data)
       this.members = _.orderBy(members.data, ['user.firstName', 'user.lastName'], ['asc'])
       this.users = this.createUsers(users.data, this.members)
-
       this.memberships = this.createMemberships(memberships.data)
       this.inviteForm.membershipUuid = _.get(this.memberships, '0.uuid')
-
-      this.breadcrumbs = this.config.createBreadcrumbs(this.graph)
+      this.breadcrumbs = this.config.createBreadcrumbs(this.graph, this.entityId)
       this.status.setDone()
     } catch (error) {
       if (_.get(error, 'response.status') === 403) {
-        await this.$router.replace(`/${this.config.entityType.toLowerCase()}/${this.entityId}`)
+        await this.$router.replace(this.config.toUrl(this.entityId))
       } else {
         this.status.setErrorFromResponse(error, 'Unable to get data.')
       }
     }
+  }
+
+  async loadData() {
+    return axios.all([
+      this.config.api.getExpanded(this.entityId),
+      this.config.api.getMembers(this.entityId),
+      api.users.getUsers(),
+      api.memberships.getMemberships(),
+    ])
   }
 
   createUsers(users: Array<any>, members: Array<any>): Array<any> {
@@ -225,7 +186,6 @@ export default class EntitySettings extends Vue {
         fullName: `${u.firstName} ${u.lastName}`,
       })), ['firstName', 'lastName'], ['asc'])
   }
-
 
   createMemberships(memberships: Array<any>): Array<any> {
     return memberships.filter(m => _.includes(m.allowedEntities, this.config.entityType))
