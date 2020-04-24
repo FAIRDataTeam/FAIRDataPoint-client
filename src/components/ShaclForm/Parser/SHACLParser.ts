@@ -19,11 +19,17 @@ export class Field<S> {
 
   path: string
 
+  minCount: number | null
+
+  maxCount: number | null
+
   nodeShape: S | null
 
-  constructor(name: string, path: string, nodeShape: S | null) {
+  constructor(name: string, path: string, minCount: number, maxCount: number, nodeShape: S | null) {
     this.name = name
     this.path = path
+    this.minCount = minCount
+    this.maxCount = maxCount
     this.nodeShape = nodeShape
   }
 }
@@ -56,6 +62,8 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
   protected abstract createField(
     name: string,
     path: string,
+    minCount: number | null,
+    maxCount: number | null,
     nodeShape: Shape<F> | null,
     prop: $rdf.ValueType
   ): F[];
@@ -108,6 +116,8 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
     return this.createField(
       this.getShaclValue(prop, 'name'),
       this.getShaclValue(prop, 'path'),
+      this.parseIntNumber(this.getShaclValue(prop, 'minCount')),
+      this.parseIntNumber(this.getShaclValue(prop, 'maxCount')),
       nodeShape,
       prop,
     )

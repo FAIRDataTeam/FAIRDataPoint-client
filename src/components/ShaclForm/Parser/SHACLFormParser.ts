@@ -20,24 +20,20 @@ export class FormField extends Field<FormShape> {
 
   class: string | null
 
-  minCount: number | null
-
-  maxCount: number | null
-
   editor: string | null
 
   constructor(
     name: string,
     path: string,
+    minCount: number | null,
+    maxCount: number | null,
     nodeShape: FormShape | null,
     datatype: string | null,
     nodeKind: string | null,
     clazz: string | null,
-    minCount: number | null,
-    maxCount: number | null,
     editor: string | null,
   ) {
-    super(name, path, nodeShape)
+    super(name, path, minCount, maxCount, nodeShape)
     this.datatype = datatype
     this.nodeKind = nodeKind
     this.class = clazz
@@ -71,6 +67,8 @@ export class SHACLFormParser extends SHACLParser<FormField, FormShape> {
   protected createField(
     name: string,
     path: string,
+    minCount: number,
+    maxCount: number,
     nodeShape: FormShape | null,
     prop: $rdf.ValueType,
   ): FormField[] {
@@ -83,12 +81,12 @@ export class SHACLFormParser extends SHACLParser<FormField, FormShape> {
     return [new FormField(
       name,
       path,
+      minCount,
+      maxCount,
       nodeShape,
       this.getShaclValue(prop, 'datatype'),
       this.getShaclValue(prop, 'nodeKind'),
       this.getShaclValue(prop, 'class'),
-      this.parseIntNumber(this.getShaclValue(prop, 'minCount')),
-      this.parseIntNumber(this.getShaclValue(prop, 'maxCount')),
       editor,
     )]
   }
