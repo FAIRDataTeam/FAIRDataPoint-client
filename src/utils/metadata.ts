@@ -32,9 +32,11 @@ function field(label, input, extra = {}) {
   }
 }
 
+
 function dateField(label, input, extra = {}) {
   return field(label, moment(input).format(config.dateFormat), extra)
 }
+
 
 function rdfLinks(url) {
   return {
@@ -52,6 +54,7 @@ function rdfLinks(url) {
   }
 }
 
+
 function itemFromPath(path) {
   if (!path) return null
 
@@ -60,6 +63,7 @@ function itemFromPath(path) {
     uri: path,
   }
 }
+
 
 function commonMetadata(graph: Graph) {
   return [
@@ -76,15 +80,25 @@ function wrapShaclValue(fieldConfig, value) {
     case DASH('URIViewer').value:
       return { label: value, uri: value }
     default:
-      return value
+      return { label: value }
   }
+}
+
+
+function getShaclValue(graph: Graph, fieldConfig) {
+  if (fieldConfig.maxCount === 1) {
+    const value = graph.findOne($rdf.namedNode(fieldConfig.path))
+    return wrapShaclValue(fieldConfig, value)
+  }
+
+  const values = graph.findAll($rdf.namedNode(fieldConfig.path))
+  return values.map(v => wrapShaclValue(fieldConfig, v))
 }
 
 
 function fromShaclField(graph: Graph, fieldConfig) {
   const name = fieldUtils.getName(fieldConfig)
-  const value = graph.findOne($rdf.namedNode(fieldConfig.path))
-  return field(name, wrapShaclValue(fieldConfig, value))
+  return field(name, getShaclValue(graph, fieldConfig))
 }
 
 
