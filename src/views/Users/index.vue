@@ -4,6 +4,14 @@
       title="Users"
       content-only
     >
+      <template v-slot:actions>
+        <router-link
+          to="/users/create"
+          data-cy="create-shape"
+        >
+          + Create user
+        </router-link>
+      </template>
       <template v-slot:content>
         <status-flash :status="status" />
         <div class="item-list">
@@ -54,13 +62,6 @@
             </template>
           </user-item>
         </div>
-        <router-link
-          class="create-link"
-          to="/users/create"
-          data-cy="create-user"
-        >
-          + Create user
-        </router-link>
       </template>
     </page>
   </div>
@@ -122,15 +123,3 @@ export default {
   },
 }
 </script>
-<style scoped lang="scss">
-@import "../../scss/variables";
-@import "../../scss/typography";
-
-
-.create-link {
-  display: inline-block;
-  margin-top: 2rem;
-  text-decoration: none;
-}
-
-</style>

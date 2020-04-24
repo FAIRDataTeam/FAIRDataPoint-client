@@ -39,7 +39,11 @@
               </b-dropdown-header>
               <b-dropdown-item @click="$router.push('/users')">
                 <fa :icon="['fas', 'user-friends']" />
-                Manage users
+                Users
+              </b-dropdown-item>
+              <b-dropdown-item @click="$router.push('/shapes')">
+                <fa :icon="['fas', 'shapes']" />
+                SHACL shapes
               </b-dropdown-item>
               <b-dropdown-divider />
             </template>
