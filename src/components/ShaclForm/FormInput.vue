@@ -1,7 +1,7 @@
 <template>
   <component
     :is="fieldElement"
-    :value="textValue(value)"
+    :value.prop="textValue(value)"
     class="input-field"
     :placeholder="placeholder"
     :name="name"
@@ -65,7 +65,7 @@ export default class FormInput extends Vue {
 
   textValue(value) {
     if (this.isIRI) {
-      return _.get(value, 'value')
+      return _.get(value, 'value', value)
     }
 
     return value
