@@ -11,7 +11,7 @@ class RepositoryConfig extends EntityConfig {
   }
 
   public subject(_entityId): string {
-    return config.apiURL
+    return config.persistentURL()
   }
 
   public get viewActions() {

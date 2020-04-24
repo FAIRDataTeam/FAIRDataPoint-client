@@ -63,7 +63,7 @@ export default class EntityCreate extends EntityBase {
   }
 
   get subject() {
-    return `${config.apiURL}/new`
+    return `${config.persistentURL()}/new`
   }
 
   get isPartOf() {

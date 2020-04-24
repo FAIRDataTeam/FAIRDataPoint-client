@@ -76,7 +76,7 @@ export class EntityConfig {
   // RDF --
 
   public subject(entityId) {
-    return `${config.apiURL}/${this.spec.name}/${entityId}`
+    return `${config.persistentURL()}/${this.spec.name}/${entityId}`
   }
 
   public get targetClasses() {

@@ -4,6 +4,7 @@ import { RDF } from '@/rdf/namespaces'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import { FormShape } from '@/components/ShaclForm/Parser/SHACLFormParser'
 
+
 export type FormData = {
   subject: $rdf.Node,
   data: Record<string, FormDataValue>
@@ -79,14 +80,12 @@ export function toRdf(rdf: $rdf.IndexedFormula, data: FormData, subject: string)
     rdf.removeMany(quad.subject, quad.predicate)
   })
 
-  rdf.addAll(createQuads(data))
-
-  let result = ''
+  rdf.addAll(quads)
 
   // @ts-ignore
-  $rdf.serialize(undefined, rdf, subject, 'text/turtle', (err, turtle) => {
-    result = turtle as string
-  })
-
-  return result
+  const serializer = $rdf.Serializer(rdf)
+  serializer.setFlags('sir')
+  // @ts-ignore
+  const statements = rdf.statementsMatching(undefined, undefined, undefined)
+  return serializer.statementsToN3(statements)
 }
