@@ -118,7 +118,7 @@ export default {
           await api.shapes.postShape(this.shape)
           await this.$router.replace('/shapes')
         } catch (error) {
-          this.profileSubmitStatus.setErrorFromResponse(error, 'Shape could not be created.')
+          this.status.setErrorFromResponse(error, 'Shape could not be created.')
         }
       }
     },

@@ -149,7 +149,7 @@ export default {
           this.setTitle()
           this.submitStatus.setDone('Shape was successfully updated!')
         } catch (error) {
-          this.submitStatus.setError('Shape could not be updated.')
+          this.submitStatus.setErrorFromResponse(error, 'Shape could not be updated.')
         }
       }
     },
