@@ -15,11 +15,11 @@
           v-for="(_, i) in data[field.path]"
           :key="`${field.path}.${i}`"
         >
-          <div class="d-flex">
+          <div class="d-flex mt-3">
             <form-renderer
-              v-if="field.nodeForm"
+              v-if="field.nodeShape"
               v-model="data[field.path][i]"
-              :definition="field.nodeForm"
+              :definition="field.nodeShape"
               :validation-report="validationReport"
               @input="onInput"
             />
@@ -86,7 +86,7 @@ export default class FormRenderer extends Vue {
   componentKey: number = 0
 
   createDefaultValue(field) {
-    if (field.nodeForm) {
+    if (field.nodeShape) {
       return {
         subject: $rdf.blankNode(null),
         data: {},
