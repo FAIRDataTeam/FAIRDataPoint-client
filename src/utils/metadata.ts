@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import * as $rdf from 'rdflib'
 import moment from 'moment'
 import Graph from '@/rdf/Graph'
@@ -74,6 +75,10 @@ function commonMetadata(graph: Graph) {
 
 
 function wrapShaclValue(fieldConfig, value) {
+  if (!value) {
+    return null
+  }
+
   switch (fieldConfig.viewer) {
     case DASH('LabelViewer').value:
       return itemFromPath(value)
@@ -98,6 +103,12 @@ function getShaclValue(graph: Graph, fieldConfig) {
 
 function fromShaclField(graph: Graph, fieldConfig) {
   const name = fieldUtils.getName(fieldConfig)
+  const value = getShaclValue(graph, fieldConfig)
+
+  if (!value || _.isEmpty(value)) {
+    return null
+  }
+
   return field(name, getShaclValue(graph, fieldConfig))
 }
 

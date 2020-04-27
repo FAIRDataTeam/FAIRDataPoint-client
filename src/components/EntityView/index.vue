@@ -186,7 +186,9 @@ export default class EntityView extends EntityBase {
   }
 
   createLocalMetadata() {
-    return this.shape.fields.map(field => metadata.fromShaclField(this.graph, field))
+    return this.shape.fields
+      .map(field => metadata.fromShaclField(this.graph, field))
+      .filter(field => field !== null)
   }
 
   async deleteEntity() {
