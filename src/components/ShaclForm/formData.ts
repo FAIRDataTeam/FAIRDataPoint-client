@@ -73,14 +73,18 @@ function createQuads(data: FormData): $rdf.Statement[] {
 }
 
 
-export function toRdf(rdf: $rdf.IndexedFormula, data: FormData, subject: string): string {
-  const quads = createQuads(data)
-
-  quads.forEach((quad) => {
-    rdf.removeMany(quad.subject, quad.predicate)
+export function toRdf(
+  rdf: $rdf.IndexedFormula,
+  data: FormData,
+  subjectStr: string,
+  shape: FormShape,
+): string {
+  const subject = $rdf.namedNode(subjectStr)
+  shape.fields.forEach((field) => {
+    rdf.removeMany(subject, $rdf.namedNode(field.path))
   })
 
-  rdf.addAll(quads)
+  rdf.addAll(createQuads(data))
 
   // @ts-ignore
   const serializer = $rdf.Serializer(rdf)

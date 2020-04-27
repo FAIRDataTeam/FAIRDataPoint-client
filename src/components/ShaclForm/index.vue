@@ -49,7 +49,7 @@ import PrismEditor from 'vue-prism-editor'
 import FormRenderer from '@/components/ShaclForm/FormRenderer.vue'
 import StatusFlash from '@/components/StatusFlash/index.vue'
 import Status from '@/utils/Status'
-import { SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLFormParser'
+import { FormShape, SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLFormParser'
 import * as formData from '@/components/ShaclForm/formData'
 import { ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
 
@@ -77,7 +77,7 @@ export default class ShaclForm extends Vue {
   @Prop({ required: true })
   readonly validationReport: ValidationReport
 
-  form: any
+  form: FormShape
 
   data: any = {
     subject: this.subject,
@@ -102,7 +102,7 @@ export default class ShaclForm extends Vue {
   }
 
   onInput() {
-    this.turtle = formData.toRdf(this.rdf, this.data, this.subject)
+    this.turtle = formData.toRdf(this.rdf, this.data, this.subject, this.form)
   }
 
   onSubmit() {
