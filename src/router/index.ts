@@ -15,7 +15,6 @@ import EntityViewPage from '@/views/EntityViewPage/index.vue'
 import EntityEditPage from '@/views/EntityEditPage/index.vue'
 import EntitySettingsPage from '@/views/EntitySettingsPage/index.vue'
 import Shapes from '@/views/Shapes/index.vue'
-import ShapeCreate from '@/views/ShapeCreate/index.vue'
 import ShapeDetail from '@/views/ShapeDetail/index.vue'
 
 Vue.use(VueRouter)
@@ -29,7 +28,6 @@ const routes = [
   { path: '/users/create', component: UserCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
   { path: '/users/:id', component: UserDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
   { path: '/shapes', component: Shapes, meta: { requiresAuth: true, roles: ['ADMIN'] } },
-  { path: '/shapes/create', component: ShapeCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
   { path: '/shapes/:id', component: ShapeDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
   { path: '/not-allowed', component: NotAllowed },
   { path: '/:entity/:id', component: EntityViewPage },

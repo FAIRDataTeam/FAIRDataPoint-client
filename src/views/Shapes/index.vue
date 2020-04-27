@@ -5,12 +5,12 @@
       content-only
     >
       <template v-slot:actions>
-        <router-link
-          to="/shapes/create"
-          data-cy="create-shape"
-        >
-          + Create shape
-        </router-link>
+        <!--        <router-link-->
+        <!--          to="/shapes/create"-->
+        <!--          data-cy="create-shape"-->
+        <!--        >-->
+        <!--          + Create shape-->
+        <!--        </router-link>-->
       </template>
       <template v-slot:content>
         <status-flash :status="status" />
