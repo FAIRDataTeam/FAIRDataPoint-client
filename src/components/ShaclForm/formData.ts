@@ -1,6 +1,6 @@
 import * as $rdf from 'rdflib'
 import _ from 'lodash'
-import { RDF } from '@/rdf/namespaces'
+import { PREFIXES, RDF } from '@/rdf/namespaces'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import { FormShape } from '@/components/ShaclForm/Parser/SHACLFormParser'
 
@@ -89,6 +89,11 @@ export function toRdf(
   // @ts-ignore
   const serializer = $rdf.Serializer(rdf)
   serializer.setFlags('sir')
+
+  Object.entries(PREFIXES).forEach(([prefix, url]) => {
+    serializer.suggestPrefix(prefix, url)
+  })
+
   // @ts-ignore
   const statements = rdf.statementsMatching(undefined, undefined, undefined)
   return serializer.statementsToN3(statements)
