@@ -66,6 +66,7 @@ import { ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport
 import { SHACL } from '@/rdf/namespaces'
 
 @Component({
+  name: 'FormRenderer',
   components: { FormInput },
 })
 export default class FormRenderer extends Vue {
