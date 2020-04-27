@@ -9,6 +9,14 @@ export default {
     })
   },
 
+  getExpanded() {
+    return request.get('/expanded', {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
+  },
+
   getSpec() {
     return request.get('/spec', {
       headers: {

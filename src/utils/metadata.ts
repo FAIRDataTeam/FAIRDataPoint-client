@@ -1,8 +1,11 @@
+import _ from 'lodash'
+import * as $rdf from 'rdflib'
 import moment from 'moment'
 import Graph from '@/rdf/Graph'
-import { DCT, FDPO } from '@/rdf/namespaces'
+import { DASH, FDPO } from '@/rdf/namespaces'
 import rdfUtils from '@/rdf/utils'
 import config from '@/config'
+import fieldUtils from '@/components/ShaclForm/fieldUtils'
 
 
 function field(label, input, extra = {}) {
@@ -30,9 +33,11 @@ function field(label, input, extra = {}) {
   }
 }
 
+
 function dateField(label, input, extra = {}) {
   return field(label, moment(input).format(config.dateFormat), extra)
 }
+
 
 function rdfLinks(url) {
   return {
@@ -50,6 +55,7 @@ function rdfLinks(url) {
   }
 }
 
+
 function itemFromPath(path) {
   if (!path) return null
 
@@ -59,16 +65,51 @@ function itemFromPath(path) {
   }
 }
 
+
 function commonMetadata(graph: Graph) {
   return [
     dateField('Metadata Issued', graph.findOne(FDPO('metadataIssued')), { sm: true }),
     dateField('Metadata Modified', graph.findOne(FDPO('metadataModified')), { sm: true }),
-    field('Version', graph.findOne(DCT('hasVersion'))),
-    field('License', itemFromPath(graph.findOne(DCT('license')))),
-    field('Specification', itemFromPath(graph.findOne(DCT('conformsTo')))),
-    field('Language', itemFromPath(graph.findOne(DCT('language')))),
-    field('Publisher', itemFromPath(graph.findOne(DCT('publisher')))),
   ]
+}
+
+
+function wrapShaclValue(fieldConfig, value) {
+  if (!value) {
+    return null
+  }
+
+  switch (fieldConfig.viewer) {
+    case DASH('LabelViewer').value:
+      return itemFromPath(value)
+    case DASH('URIViewer').value:
+      return { label: value, uri: value }
+    default:
+      return { label: value }
+  }
+}
+
+
+function getShaclValue(graph: Graph, fieldConfig) {
+  if (fieldConfig.maxCount === 1) {
+    const value = graph.findOne($rdf.namedNode(fieldConfig.path))
+    return wrapShaclValue(fieldConfig, value)
+  }
+
+  const values = graph.findAll($rdf.namedNode(fieldConfig.path))
+  return values.map(v => wrapShaclValue(fieldConfig, v))
+}
+
+
+function fromShaclField(graph: Graph, fieldConfig) {
+  const name = fieldUtils.getName(fieldConfig)
+  const value = getShaclValue(graph, fieldConfig)
+
+  if (!value || _.isEmpty(value)) {
+    return null
+  }
+
+  return field(name, getShaclValue(graph, fieldConfig))
 }
 
 
@@ -78,4 +119,5 @@ export default {
   rdfLinks,
   commonMetadata,
   itemFromPath,
+  fromShaclField,
 }

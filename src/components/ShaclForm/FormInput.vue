@@ -1,7 +1,7 @@
 <template>
   <component
-    :is="field.fieldType === 'textarea' ? 'textarea' : 'input'"
-    :value="textValue(value)"
+    :is="fieldElement"
+    :value.prop="textValue(value)"
     class="input-field"
     :placeholder="placeholder"
     :name="name"
@@ -14,6 +14,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import _ from 'lodash'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import rdfUtils from '@/rdf/utils'
+import { DASH } from '@/rdf/namespaces'
 
 @Component
 export default class FormInput extends Vue {
@@ -22,6 +23,13 @@ export default class FormInput extends Vue {
 
   @Prop({ required: true })
   readonly value: any
+
+  get fieldElement() {
+    if (this.field.editor === DASH('TextAreaEditor').value) {
+      return 'textarea'
+    }
+    return 'input'
+  }
 
   get isIRI() {
     return fieldUtils.isIRI(this.field)
@@ -57,7 +65,7 @@ export default class FormInput extends Vue {
 
   textValue(value) {
     if (this.isIRI) {
-      return _.get(value, 'value')
+      return _.get(value, 'value', value)
     }
 
     return value

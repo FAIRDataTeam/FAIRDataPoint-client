@@ -49,9 +49,9 @@ import PrismEditor from 'vue-prism-editor'
 import FormRenderer from '@/components/ShaclForm/FormRenderer.vue'
 import StatusFlash from '@/components/StatusFlash/index.vue'
 import Status from '@/utils/Status'
-import { SHACLParser } from '@/components/ShaclForm/SHACLParser'
+import { FormShape, SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLFormParser'
 import * as formData from '@/components/ShaclForm/formData'
-import { ValidationReport } from '@/components/ShaclForm/ValidationReport'
+import { ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
 
 
 @Component({
@@ -63,10 +63,10 @@ import { ValidationReport } from '@/components/ShaclForm/ValidationReport'
 })
 export default class ShaclForm extends Vue {
   @Prop({ required: true })
-  readonly shacl: any
+  readonly shacl: string
 
   @Prop({ required: true })
-  readonly rdf: any
+  readonly rdf: $rdf.IndexedFormula
 
   @Prop({ required: true })
   readonly subject: string
@@ -75,12 +75,9 @@ export default class ShaclForm extends Vue {
   readonly targetClasses: $rdf.ValueType[]
 
   @Prop({ required: true })
-  readonly filter: any
-
-  @Prop({ required: true })
   readonly validationReport: ValidationReport
 
-  form: any
+  form: FormShape
 
   data: any = {
     subject: this.subject,
@@ -95,7 +92,7 @@ export default class ShaclForm extends Vue {
 
   created() {
     try {
-      const parser = new SHACLParser(this.shacl, this.filter)
+      const parser = new SHACLFormParser(this.shacl)
       this.form = parser.parse(this.targetClasses)
       this.data = formData.fromRdf(this.form, $rdf.namedNode(this.subject), this.rdf)
       this.status.setDone()
@@ -105,7 +102,7 @@ export default class ShaclForm extends Vue {
   }
 
   onInput() {
-    this.turtle = formData.toRdf(this.rdf, this.data, this.subject)
+    this.turtle = formData.toRdf(this.rdf, this.data, this.subject, this.form)
   }
 
   onSubmit() {

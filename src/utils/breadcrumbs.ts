@@ -86,6 +86,7 @@ function fromWithDistribution(graph) {
 }
 
 export default {
+  createItem,
   fromRepository,
   fromCatalog,
   fromWithCatalog,

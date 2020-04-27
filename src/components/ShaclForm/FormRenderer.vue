@@ -15,11 +15,11 @@
           v-for="(_, i) in data[field.path]"
           :key="`${field.path}.${i}`"
         >
-          <div class="d-flex">
+          <div class="d-flex mt-3">
             <form-renderer
-              v-if="field.nodeForm"
+              v-if="field.nodeShape"
               v-model="data[field.path][i]"
-              :definition="field.nodeForm"
+              :definition="field.nodeShape"
               :validation-report="validationReport"
               @input="onInput"
             />
@@ -62,10 +62,11 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import _ from 'lodash'
 import FormInput from '@/components/ShaclForm/FormInput.vue'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
-import { ValidationReport } from '@/components/ShaclForm/ValidationReport'
+import { ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
 import { SHACL } from '@/rdf/namespaces'
 
 @Component({
+  name: 'FormRenderer',
   components: { FormInput },
 })
 export default class FormRenderer extends Vue {
@@ -86,7 +87,7 @@ export default class FormRenderer extends Vue {
   componentKey: number = 0
 
   createDefaultValue(field) {
-    if (field.nodeForm) {
+    if (field.nodeShape) {
       return {
         subject: $rdf.blankNode(null),
         data: {},

@@ -30,7 +30,7 @@
         >
           <div
             v-for="catalog in sortByTitle(dashboard)"
-            :key="catalog.identifier"
+            :key="catalog.uri"
             class="item-list__item"
           >
             <a
@@ -46,14 +46,14 @@
             />
             <avatar
               :initials="catalog.title[0]"
-              :value="catalog.identifier"
+              :value="catalog.uri"
               smaller
             />
             <div class="item-list__item__content">
               <div class="item-list__item__content__row">
-                <router-link :to="`/catalog/${catalog.identifier}`">
+                <a :href="`${catalog.uri}`">
                   {{ catalog.title }}
-                </router-link>
+                </a>
               </div>
             </div>
             <div class="item-list__item__actions">
@@ -66,7 +66,7 @@
             >
               <div
                 v-for="dataset in sortByTitle(catalog.children)"
-                :key="dataset.identifier"
+                :key="dataset.uri"
                 class="item-list__item"
               >
                 <a
@@ -82,14 +82,14 @@
                 />
                 <avatar
                   :initials="dataset.title[0]"
-                  :value="dataset.identifier"
+                  :value="dataset.uri"
                   smaller
                 />
                 <div class="item-list__item__content">
                   <div class="item-list__item__content__row">
-                    <router-link :to="`/dataset/${dataset.identifier}`">
+                    <a :href="`${dataset.uri}`">
                       {{ dataset.title }}
-                    </router-link>
+                    </a>
                   </div>
                 </div>
                 <div class="item-list__item__actions">
@@ -102,19 +102,19 @@
                 >
                   <div
                     v-for="distribution in sortByTitle(dataset.children)"
-                    :key="distribution.identifier"
+                    :key="distribution.uri"
                     class="item-list__item"
                   >
                     <avatar
                       :initials="distribution.title[0]"
-                      :value="distribution.identifier"
+                      :value="distribution.uri"
                       smaller
                     />
                     <div class="item-list__item__content">
                       <div class="item-list__item__content__row">
-                        <router-link :to="`/distribution/${distribution.identifier}`">
+                        <a :href="`${distribution.uri}`">
                           {{ distribution.title }}
-                        </router-link>
+                        </a>
                       </div>
                     </div>
                     <div class="item-list__item__actions">
@@ -179,7 +179,7 @@ export default {
 
     toggleOpen(entity) {
       this.changeOpen(current => (
-        current.identifier === entity.identifier ? !current.open : current.open
+        current.uri === entity.uri ? !current.open : current.open
       ))
     },
 
