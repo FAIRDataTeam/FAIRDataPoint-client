@@ -1,6 +1,6 @@
 import * as $rdf from 'rdflib'
 import _ from 'lodash'
-import { RDF } from '@/rdf/namespaces'
+import { PREFIXES, RDF } from '@/rdf/namespaces'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import { FormShape } from '@/components/ShaclForm/Parser/SHACLFormParser'
 
@@ -79,17 +79,32 @@ export function toRdf(
   subjectStr: string,
   shape: FormShape,
 ): string {
-  const subject = $rdf.namedNode(subjectStr)
-  shape.fields.forEach((field) => {
-    rdf.removeMany(subject, $rdf.namedNode(field.path))
-  })
+  const store = $rdf.graph()
+  store.addAll(rdf.statementsMatching(undefined, undefined, undefined))
 
-  rdf.addAll(createQuads(data))
+  const clear = (subject, fields) => {
+    fields.forEach((field) => {
+      if (field.nodeShape) {
+        store
+          .statementsMatching(subject, $rdf.namedNode(field.path))
+          .forEach(statement => clear(statement.object, field.nodeShape.fields))
+      }
+      store.removeMany(subject, $rdf.namedNode(field.path))
+    })
+  }
+  clear($rdf.namedNode(subjectStr), shape.fields)
+
+  store.addAll(createQuads(data))
 
   // @ts-ignore
   const serializer = $rdf.Serializer(rdf)
   serializer.setFlags('sir')
+
+  Object.entries(PREFIXES).forEach(([prefix, url]) => {
+    serializer.suggestPrefix(prefix, url)
+  })
+
   // @ts-ignore
-  const statements = rdf.statementsMatching(undefined, undefined, undefined)
+  const statements = store.statementsMatching(undefined, undefined, undefined)
   return serializer.statementsToN3(statements)
 }

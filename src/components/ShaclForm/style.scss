@@ -1,0 +1,14 @@
+@import "../../scss/variables";
+
+.form-renderer {
+  .form-renderer {
+    border-left: 4px solid $color-separator;
+    padding: 0.5rem 0 0.5rem 1rem;
+    width: 100%;
+    margin-bottom: 1rem;
+
+    .form__group:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

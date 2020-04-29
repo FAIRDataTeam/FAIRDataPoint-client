@@ -15,7 +15,7 @@
           v-for="(_, i) in data[field.path]"
           :key="`${field.path}.${i}`"
         >
-          <div class="d-flex mt-3">
+          <div class="d-flex">
             <form-renderer
               v-if="field.nodeShape"
               v-model="data[field.path][i]"
@@ -173,10 +173,3 @@ export default class FormRenderer extends Vue {
 }
 
 </script>
-<style lang="scss">
-  .form-renderer .form-renderer {
-    border-left: 4px solid #ccc;
-    padding-left: 20px;
-    width: 100%;
-  }
-</style>
