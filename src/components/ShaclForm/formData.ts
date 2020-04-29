@@ -82,10 +82,17 @@ export function toRdf(
   const store = $rdf.graph()
   store.addAll(rdf.statementsMatching(undefined, undefined, undefined))
 
-  const subject = $rdf.namedNode(subjectStr)
-  shape.fields.forEach((field) => {
-    store.removeMany(subject, $rdf.namedNode(field.path))
-  })
+  const clear = (subject, fields) => {
+    fields.forEach((field) => {
+      if (field.nodeShape) {
+        store
+          .statementsMatching(subject, $rdf.namedNode(field.path))
+          .forEach(statement => clear(statement.object, field.nodeShape.fields))
+      }
+      store.removeMany(subject, $rdf.namedNode(field.path))
+    })
+  }
+  clear($rdf.namedNode(subjectStr), shape.fields)
 
   store.addAll(createQuads(data))
 
