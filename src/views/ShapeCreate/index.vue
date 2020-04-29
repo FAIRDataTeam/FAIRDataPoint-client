@@ -77,7 +77,7 @@ import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
 
 export default {
-  name: 'ShaclCreate',
+  name: 'ShapeCreate',
   components: {
     Breadcrumbs,
     Page,
