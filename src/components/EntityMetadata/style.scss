@@ -75,5 +75,12 @@
         }
       }
     }
+
+    .show-more-link {
+      @include typography-primary-14;
+      margin-top: $space-md;
+      margin-right: 4px;
+      text-decoration: none;
+    }
   }
 }
