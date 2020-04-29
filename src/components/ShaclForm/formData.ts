@@ -79,12 +79,15 @@ export function toRdf(
   subjectStr: string,
   shape: FormShape,
 ): string {
+  const store = $rdf.graph()
+  store.addAll(rdf.statementsMatching(undefined, undefined, undefined))
+
   const subject = $rdf.namedNode(subjectStr)
   shape.fields.forEach((field) => {
-    rdf.removeMany(subject, $rdf.namedNode(field.path))
+    store.removeMany(subject, $rdf.namedNode(field.path))
   })
 
-  rdf.addAll(createQuads(data))
+  store.addAll(createQuads(data))
 
   // @ts-ignore
   const serializer = $rdf.Serializer(rdf)
@@ -95,6 +98,6 @@ export function toRdf(
   })
 
   // @ts-ignore
-  const statements = rdf.statementsMatching(undefined, undefined, undefined)
+  const statements = store.statementsMatching(undefined, undefined, undefined)
   return serializer.statementsToN3(statements)
 }
