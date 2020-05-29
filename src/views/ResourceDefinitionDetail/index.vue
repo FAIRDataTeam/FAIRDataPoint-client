@@ -405,6 +405,7 @@ import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
 import Page from '../../components/Page/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
+import config from '@/config'
 
 export default {
   name: 'ResourceDefinitionCreate',
@@ -534,7 +535,7 @@ export default {
             : api.resourceDefinition.postResourceDefinition
           await request(this.formDataToRequestData(this.resourceDefinition))
           // full reload is necessary after changing resource definitions
-          window.location.href = '/resource-definitions'
+          window.location.href = `${config.publicPath}/resource-definitions`
         } catch (error) {
           const errors = _.get(error, 'response.data.errors')
 

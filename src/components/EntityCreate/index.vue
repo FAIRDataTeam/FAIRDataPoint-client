@@ -6,6 +6,7 @@
       :current="createName"
     />
     <status-flash :status="status" />
+    <status-flash :status="submitStatus" />
     <page
       v-if="graph !== null"
       :title="createName"
@@ -117,7 +118,7 @@ export default class EntityCreate extends EntityBase {
       const validationReport = parseValidationReport(_.get(error, 'response.data', ''))
       const focusNodeReport = _.first(Object.values(validationReport)) || {}
       this.validationReport = { [this.subject]: focusNodeReport }
-      this.status.setError('Unable to save entity data.')
+      this.submitStatus.setError('Unable to save entity data.')
       window.scrollTo(0, 0)
     }
   }
