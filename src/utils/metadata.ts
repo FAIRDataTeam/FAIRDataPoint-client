@@ -2,7 +2,7 @@ import _ from 'lodash'
 import * as $rdf from 'rdflib'
 import moment from 'moment'
 import Graph from '@/rdf/Graph'
-import { DASH, FDPO } from '@/rdf/namespaces'
+import { DASH, FDPO, XSD } from '@/rdf/namespaces'
 import rdfUtils from '@/rdf/utils'
 import config from '@/config'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
@@ -85,6 +85,9 @@ function wrapShaclValue(fieldConfig, value) {
     case DASH('URIViewer').value:
       return { label: value, uri: value }
     default:
+      if (fieldConfig.datatype === XSD('dateTime').value) {
+        return { label: moment(value).format(config.dateFormat) }
+      }
       return { label: value }
   }
 }

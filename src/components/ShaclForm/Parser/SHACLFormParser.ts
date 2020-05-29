@@ -14,8 +14,6 @@ export class FormShape extends Shape<FormField> {
 
 
 export class FormField extends Field<FormShape> {
-  datatype: string | null
-
   nodeKind: string | null
 
   class: string | null
@@ -25,16 +23,15 @@ export class FormField extends Field<FormShape> {
   constructor(
     name: string,
     path: string,
+    datatype: string | null,
     minCount: number | null,
     maxCount: number | null,
     nodeShape: FormShape | null,
-    datatype: string | null,
     nodeKind: string | null,
     clazz: string | null,
     editor: string | null,
   ) {
-    super(name, path, minCount, maxCount, nodeShape)
-    this.datatype = datatype
+    super(name, path, datatype, minCount, maxCount, nodeShape)
     this.nodeKind = nodeKind
     this.class = clazz
     this.minCount = minCount
@@ -67,6 +64,7 @@ export class SHACLFormParser extends SHACLParser<FormField, FormShape> {
   protected createField(
     name: string,
     path: string,
+    datatype: string,
     minCount: number,
     maxCount: number,
     nodeShape: FormShape | null,
@@ -81,10 +79,10 @@ export class SHACLFormParser extends SHACLParser<FormField, FormShape> {
     return [new FormField(
       name,
       path,
+      datatype,
       minCount,
       maxCount,
       nodeShape,
-      this.getShaclValue(prop, 'datatype'),
       this.getShaclValue(prop, 'nodeKind'),
       this.getShaclValue(prop, 'class'),
       editor,
