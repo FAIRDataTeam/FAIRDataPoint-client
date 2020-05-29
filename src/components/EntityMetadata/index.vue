@@ -41,16 +41,16 @@
           </ul>
           <a
             v-if="showMoreActive(index, data.items)"
-            @click.prevent="addViewAll(index)"
             class="show-more-link"
+            @click.prevent="addViewAll(index)"
           >
             <fa :icon="['fas', 'chevron-down']" />
             Show more
           </a>
           <a
             v-if="showLessActive(index, data.items)"
-            @click.prevent="removeViewAll(index)"
             class="show-more-link"
+            @click.prevent="removeViewAll(index)"
           >
             <fa :icon="['fas', 'chevron-up']" />
             Show less

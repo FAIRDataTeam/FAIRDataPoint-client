@@ -9,4 +9,5 @@ export default {
   apiURL,
   dateFormat,
   persistentURL,
+  publicPath,
 }

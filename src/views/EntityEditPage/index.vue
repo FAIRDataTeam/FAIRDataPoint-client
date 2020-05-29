@@ -2,9 +2,9 @@
   <entity-edit :config="config" />
 </template>
 <script lang="ts">
+import _ from 'lodash'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import EntityEdit from '@/components/EntityEdit/index.vue'
-import { getConfigFor } from '@/entity/entityConfigs'
 
 
 @Component({ components: { EntityEdit } })
@@ -17,7 +17,8 @@ export default class EntityEditPage extends Vue {
 
   @Watch('$route')
   init() {
-    this.config = getConfigFor(this.$route.params.entity)
+    const url = _.get(this.$route, 'params.entity', '')
+    this.config = this.$store.getters['entities/config'](url)
   }
 }
 </script>

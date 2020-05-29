@@ -158,7 +158,7 @@ export default class EntitySettings extends EntityBase {
       this.users = this.createUsers(users.data, this.members)
       this.memberships = this.createMemberships(memberships.data)
       this.inviteForm.membershipUuid = _.get(this.memberships, '0.uuid')
-      this.breadcrumbs = this.config.createBreadcrumbs(this.graph, this.entityId)
+      this.breadcrumbs = this.config.createBreadcrumbsWithSelf(this.graph, this.entityId)
       this.status.setDone()
     } catch (error) {
       if (_.get(error, 'response.status') === 403) {
@@ -188,7 +188,7 @@ export default class EntitySettings extends EntityBase {
   }
 
   createMemberships(memberships: Array<any>): Array<any> {
-    return memberships.filter(m => _.includes(m.allowedEntities, this.config.entityType))
+    return memberships.filter(m => _.includes(m.allowedEntities, this.config.uuid))
   }
 
   async submitInvite(): Promise<void> {

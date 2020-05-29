@@ -6,6 +6,7 @@
       :current="createName"
     />
     <status-flash :status="status" />
+    <status-flash :status="submitStatus" />
     <page
       v-if="graph !== null"
       :title="createName"
@@ -19,6 +20,7 @@
           :target-classes="config.targetClasses"
           :subject="subject"
           :validation-report="validationReport"
+          :submit-status="submitStatus"
           @submit="onSubmit"
         />
       </template>
@@ -40,6 +42,7 @@ import config from '@/config'
 import { parseValidationReport, ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
 import { EntityConfig } from '@/entity/EntityConfig'
 import EntityBase from '@/components/EntityBase'
+import Status from '@/utils/Status'
 
 
 @Component({
@@ -58,8 +61,10 @@ export default class EntityCreate extends EntityBase {
 
   validationReport: ValidationReport = {}
 
+  submitStatus : Status = new Status()
+
   get createName() {
-    return `Create ${this.config.name}`
+    return `Create ${this.config.urlPrefix}`
   }
 
   get subject() {
@@ -105,6 +110,7 @@ export default class EntityCreate extends EntityBase {
 
   async onSubmit(turtle: string): Promise<void> {
     try {
+      this.submitStatus.setPending()
       const response = await this.config.api.post(turtle)
       const entityId = _.last(_.get(response, 'headers.location', '').split('/'))
       await this.$router.push(this.config.toUrl(entityId))
@@ -112,7 +118,7 @@ export default class EntityCreate extends EntityBase {
       const validationReport = parseValidationReport(_.get(error, 'response.data', ''))
       const focusNodeReport = _.first(Object.values(validationReport)) || {}
       this.validationReport = { [this.subject]: focusNodeReport }
-      this.status.setError('Unable to save entity data.')
+      this.submitStatus.setError('Unable to save entity data.')
       window.scrollTo(0, 0)
     }
   }

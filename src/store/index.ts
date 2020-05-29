@@ -3,15 +3,19 @@ import Vuex from 'vuex'
 import auth from './modules/auth'
 import apiPlugin from '../api/plugin'
 import vuexLocal from './vuexLocal'
+import { createEntitiesModule } from '@/store/modules/entities'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
-  modules: {
-    auth,
-  },
-  plugins: [
-    apiPlugin,
-    vuexLocal.plugin,
-  ],
-})
+export function createStore(entityConfigs) {
+  return new Vuex.Store({
+    modules: {
+      auth,
+      entities: createEntitiesModule(entityConfigs),
+    },
+    plugins: [
+      apiPlugin,
+      vuexLocal.plugin,
+    ],
+  })
+}

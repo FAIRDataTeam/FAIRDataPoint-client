@@ -41,6 +41,10 @@
                 <fa :icon="['fas', 'user-friends']" />
                 Users
               </b-dropdown-item>
+              <b-dropdown-item @click="$router.push('/resource-definitions')">
+                <fa :icon="['fas', 'sitemap']" />
+                Resources definitions
+              </b-dropdown-item>
               <b-dropdown-item @click="$router.push('/shapes')">
                 <fa :icon="['fas', 'shapes']" />
                 SHACL shapes

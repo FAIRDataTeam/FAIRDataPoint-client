@@ -6,6 +6,7 @@
       current="Edit"
     />
     <status-flash :status="status" />
+    <status-flash :status="submitStatus" />
     <page
       v-if="simpleGraph !== null"
       :title="`Edit ${entity.title}`"
@@ -19,6 +20,7 @@
           :target-classes="config.targetClasses"
           :subject="subject"
           :validation-report="validationReport"
+          :submit-status="submitStatus"
           @submit="onSubmit"
         />
       </template>
@@ -30,19 +32,18 @@ import { Component } from 'vue-property-decorator'
 import axios from 'axios'
 import ShaclForm from '@/components/ShaclForm/index.vue'
 import Breadcrumbs from '@/components/Breadcrumbs/index.vue'
-import FormGenerator from '@/components/FormGenerator/index.vue'
 import Page from '@/components/Page/index.vue'
 import StatusFlash from '@/components/StatusFlash/index.vue'
 import Graph from '@/rdf/Graph'
 import permissions from '@/utils/permissions'
 import { parseValidationReport, ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
 import EntityBase from '@/components/EntityBase'
+import Status from '@/utils/Status'
 
 
 @Component({
   components: {
     Breadcrumbs,
-    FormGenerator,
     Page,
     StatusFlash,
     ShaclForm,
@@ -54,6 +55,8 @@ export default class EntityEdit extends EntityBase {
   shacl: any = null
 
   validationReport : ValidationReport = {}
+
+  submitStatus : Status = new Status()
 
   async fetchData(): Promise<void> {
     try {
@@ -85,11 +88,12 @@ export default class EntityEdit extends EntityBase {
 
   async onSubmit(turtle: string): Promise<void> {
     try {
+      this.submitStatus.setPending()
       await this.config.api.put(this.entityId, turtle)
       await this.$router.push(this.config.toUrl(this.entityId))
     } catch (error) {
       this.validationReport = parseValidationReport(error.response.data)
-      this.status.setError('Unable to update entity data.')
+      this.submitStatus.setError('Unable to update entity data.')
       window.scrollTo(0, 0)
     }
   }
