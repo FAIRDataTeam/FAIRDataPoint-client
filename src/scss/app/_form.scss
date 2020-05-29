@@ -49,7 +49,9 @@
     & > input, &__input-item input,
     & > select,
     & > textarea,
-    .input-field {
+    .input-field,
+    .vdp-datepicker input,
+    {
       @include typography-default-18;
       padding: $space-xs 0;
       width: 100%;
@@ -57,6 +59,12 @@
       border: none;
       border-bottom: 2px solid $color-text-light;
       outline: none;
+
+      &:disabled {
+        cursor: not-allowed;
+        color: $color-text-lighter;
+        border-bottom-color: $color-separator;
+      }
     }
 
     &__xor-options {
@@ -98,8 +106,12 @@
       display: none;
     }
 
+    .input-wrapper {
+      width: 100%;
+    }
+
     &--error, &__input-item--error {
-      .input-field, .v-select {
+      input, select, .input-field, .v-select {
         border-bottom-color: $color-danger;
       }
 

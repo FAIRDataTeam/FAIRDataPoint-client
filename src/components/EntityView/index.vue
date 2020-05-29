@@ -48,6 +48,7 @@
             class="btn btn-primary btn-rounded mr-3 mb-3"
             :href="link.url"
             target="_blank"
+            data-cy="external-link"
           >
             <fa :icon="link.icon" />
             {{ link.label }}
@@ -59,13 +60,16 @@
         <p class="description">
           {{ entity.description }}
         </p>
-        <item-list
-          v-if="itemList !== null"
-          :title="itemList.title"
-          :items="itemList.items"
-          :create-link="createLink"
-          data-cy="item-list"
-        />
+        <template v-if="itemLists !== null">
+          <item-list
+            v-for="(itemList, index) in itemLists"
+            :key="index"
+            :title="itemList.title"
+            :items="itemList.items"
+            :create-link="itemList.createLink"
+            data-cy="item-list"
+          />
+        </template>
       </template>
     </page>
   </div>
@@ -101,7 +105,7 @@ export default class EntityView extends EntityBase {
 
   extraLinks: any[] = []
 
-  itemList: any = null
+  itemLists: any = null
 
   membership: any = null
 
@@ -129,7 +133,7 @@ export default class EntityView extends EntityBase {
 
   reset() {
     this.metadata = null
-    this.itemList = null
+    this.itemLists = null
     this.membership = null
     this.extraLinks = []
     this.createLink = null
@@ -150,11 +154,11 @@ export default class EntityView extends EntityBase {
       this.breadcrumbs = this.config.createBreadcrumbs(this.graph, this.entityId)
 
       if (this.config.hasChildren) {
-        this.itemList = this.config.createChildrenList(this.graph)
-      }
-
-      if (this.canCreateChild) {
-        this.createLink = this.config.createChildUrl(this.entityId)
+        this.itemLists = this.config.createChildrenLists(
+          this.graph,
+          this.canCreateChild,
+          this.entityId,
+        )
       }
 
       this.status.setDone()

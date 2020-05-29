@@ -5,7 +5,7 @@
       current="Create shape"
     />
     <page
-      title="Shape create"
+      title="Create shape"
       content-only
       small
     >

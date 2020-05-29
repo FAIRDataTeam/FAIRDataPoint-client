@@ -1,11 +1,10 @@
-import { DCAT, R3D } from '@/rdf/namespaces'
-import { EntityConfig } from '@/entity/EntityConfig'
+import { ChildSpec, EntityConfig } from '@/entity/EntityConfig'
 import api from '@/api'
 import Graph from '@/rdf/Graph'
 import config from '@/config'
 
 
-class RepositoryConfig extends EntityConfig {
+export class RepositoryConfig extends EntityConfig {
   protected buildApi(): any {
     return api.repository
   }
@@ -22,33 +21,11 @@ class RepositoryConfig extends EntityConfig {
     return authenticated
   }
 
-  public createChildUrl(entityId): string {
-    return `/create-${this.spec.children.name}`
+  public createChildUrl(child: ChildSpec, _entityId): string {
+    return `/create-${this.getChildUrlPrefix(child)}`
   }
 
-  public createBreadcrumbs(graph: Graph, entityId) {
+  public createBreadcrumbs(_graph: Graph, _entityId) {
     return []
   }
 }
-
-
-const repositorySpec = {
-  name: 'repository',
-  targetClasses: [
-    DCAT('Resource').value,
-    R3D('Repository').value,
-  ],
-  children: {
-    title: 'Catalogs',
-    name: 'catalog',
-    relation: R3D('dataCatalog').value,
-    tags: DCAT('themeTaxonomy').value,
-    metadata: null,
-  },
-  hierarchy: [],
-  links: null,
-}
-
-const repositoryConfig = new RepositoryConfig(repositorySpec)
-
-export default repositoryConfig

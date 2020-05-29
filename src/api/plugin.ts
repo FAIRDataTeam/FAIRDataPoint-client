@@ -19,9 +19,11 @@ const createResponseInterceptor = (store) => {
   request.interceptors.response.use(null, async (error) => {
     const { status } = error.response
     if (status === 401) {
-      store.dispatch('auth/logout')
+      await store.dispatch('auth/logout')
+      window.location.href = '/login'
+    } else {
+      throw error
     }
-    throw error
   })
 }
 

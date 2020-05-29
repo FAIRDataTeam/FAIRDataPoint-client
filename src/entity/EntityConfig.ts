@@ -9,52 +9,61 @@ import { DCT, FDPO } from '@/rdf/namespaces'
 import metadata from '@/utils/metadata'
 import breadcrumbs from '@/utils/breadcrumbs'
 
-export type EntitySpecLink = {
-  label: string,
-  relation: string,
-  icon: string[],
+export type ChildSpec = {
+  resourceDefinitionUuid: string,
+  relationUri: string,
+  listView: {
+    title: string,
+    tagsUri: string,
+    metadata: {
+      title: string,
+      propertyUri: string,
+    }[],
+  },
 }
 
 export type EntitySpec = {
+  uuid: string,
   name: string,
-  targetClasses: string[],
-  children: {
+  urlPrefix: string,
+  targetClassUris: string[],
+  children: ChildSpec[],
+  externalLinks: {
     title: string,
-    name: string,
-    relation: string,
-    tags: string,
-    metadata: {
-      label: string,
-      property: string,
-    }[],
-  },
-  hierarchy: string [],
-  links: EntitySpecLink[] | null
+    propertyUri: string,
+  }[],
 }
 
 
 export class EntityConfig {
   protected spec: EntitySpec
 
+  protected specs: Record<string, EntitySpec>
+
   protected enityApi: any
 
-  constructor(spec: EntitySpec) {
+  constructor(spec: EntitySpec, specs: Record<string, EntitySpec>) {
     this.spec = spec
+    this.specs = specs
     this.enityApi = this.buildApi()
   }
 
-  public get name(): string {
-    return this.spec.name
+  public get urlPrefix(): string {
+    return this.spec.urlPrefix
   }
 
-  public get parentEntity(): string {
-    return _.last(this.spec.hierarchy)
+  public get uuid(): string {
+    return this.spec.uuid
+  }
+
+  get children() {
+    return this.spec.children
   }
 
   // API --
 
   protected buildApi(): any {
-    return api.builder.build(this.spec.name)
+    return api.builder.build(this.spec.urlPrefix)
   }
 
   public get api() {
@@ -64,23 +73,17 @@ export class EntityConfig {
   // Navigation --
 
   public toUrl(enityId) {
-    return this.createUrl(this.spec.name, enityId)
-  }
-
-  // Memberships --
-
-  public get entityType() {
-    return this.spec.name.toUpperCase()
+    return this.createUrl(this.spec.urlPrefix, enityId)
   }
 
   // RDF --
 
   public subject(entityId) {
-    return `${config.persistentURL()}/${this.spec.name}/${entityId}`
+    return `${config.persistentURL()}/${this.spec.urlPrefix}/${entityId}`
   }
 
   public get targetClasses() {
-    return this.spec.targetClasses.map($rdf.namedNode)
+    return this.spec.targetClassUris.map($rdf.namedNode)
   }
 
   // VIEW --
@@ -90,55 +93,70 @@ export class EntityConfig {
   }
 
   public getLinks(graph: Graph) {
-    if (this.spec.links === null) {
+    if (this.spec.externalLinks === null) {
       return null
     }
 
-    return this.spec.links.flatMap((link) => {
-      const url = graph.findOne($rdf.namedNode(link.relation))
+    return this.spec.externalLinks.flatMap((link) => {
+      const url = graph.findOne($rdf.namedNode(link.propertyUri))
       if (!url) return []
 
-      return [{
-        label: link.label,
-        icon: link.icon,
-        url,
-      }]
+      const icon = link.propertyUri.indexOf('download') > -1
+        ? ['fas', 'download']
+        : ['fas', 'external-link-alt']
+
+      return [{ label: link.title, icon, url }]
     })
   }
 
   public get hasChildren() {
-    return this.spec.children !== null
+    return this.spec.children.length > 0
+  }
+
+  public getChildUrlPrefix(child: ChildSpec) {
+    return this.specs[child.resourceDefinitionUuid].urlPrefix
   }
 
   public canCreateChild(authenticated, entity) {
     return authenticated && permissions.hasCreate(entity)
   }
 
-  public createChildUrl(entityId) {
-    return `/${this.spec.name}/${entityId}/create-${this.spec.children.name}`
+  public createChildUrl(child: ChildSpec, entityId: string) {
+    return `/${this.spec.urlPrefix}/${entityId}/create-${this.getChildUrlPrefix(child)}`
   }
 
-  public createChildrenList(graph: Graph) {
-    const children = graph.findAll($rdf.namedNode(this.spec.children.relation), { value: false })
-      .map((child) => {
-        const id = rdfUtils.pathTerm(_.get(child, 'value'))
-        const options = { subject: child }
+  public createChildrenLists(graph: Graph, canCreateChild = false, entityId = null) {
+    return this.spec.children.map(child => this.createChildrenList(
+      child, graph, canCreateChild, entityId,
+    ))
+  }
 
-        const tags = this.spec.children.tags
-          ? graph.findAll($rdf.namedNode(this.spec.children.tags), options)
+  public createChildrenList(
+    child: ChildSpec,
+    graph: Graph,
+    canCreateChild = false,
+    entityId = null,
+  ) {
+    const children = graph.findAll($rdf.namedNode(child.relationUri), { value: false })
+      .map((c) => {
+        const id = rdfUtils.pathTerm(_.get(c, 'value'))
+        const options = { subject: c }
+
+        const tags = child.listView.tagsUri
+          ? graph.findAll($rdf.namedNode(child.listView.tagsUri), options)
             .map(metadata.itemFromPath)
           : null
 
-        const extraMetadata = this.spec.children.metadata
-          ? this.spec.children.metadata.map((m) => {
-            const value = graph.findOne($rdf.namedNode(m.property), options)
-            return metadata.field(m.label, value)
+        const extraMetadata = child.listView.metadata
+          ? child.listView.metadata.map((m) => {
+            const value = graph.findOne($rdf.namedNode(m.propertyUri), options)
+            return metadata.field(m.title, value)
           })
           : []
 
         return {
           title: graph.findOne(DCT('title'), options),
-          link: `/${this.spec.children.name}/${id}`,
+          link: `/${this.getChildUrlPrefix(child)}/${id}`,
           description: graph.findOne(DCT('description'), options),
           tags,
           metadata: [
@@ -149,8 +167,9 @@ export class EntityConfig {
       })
 
     return {
-      title: this.spec.children.title,
+      title: child.listView.title,
       items: children,
+      createLink: canCreateChild ? this.createChildUrl(child, entityId) : null,
     }
   }
 
@@ -166,32 +185,41 @@ export class EntityConfig {
     ]
   }
 
-  public createBreadcrumbs(graph: Graph, entityId) {
-    const buildBreadcrumbs = (list, subject) => {
-      if (list.length === 0) {
+  public createBreadcrumbs(graph: Graph, entityId: string) {
+    const buildBreadcrumbs = (spec, subject) => {
+      if (!spec) {
         return []
       }
 
-      const entityType = list.pop()
       const parent = graph.findOne(DCT('isPartOf'), { value: false, subject })
       const title = graph.findOne(DCT('title'), { subject: parent }) as string
       const parentId = rdfUtils.pathTerm(_.get(parent, 'value'))
-      const parentUrl = this.createUrl(entityType, parentId)
+      const parentUrl = this.createUrl(spec.urlPrefix, parentId)
       const item = breadcrumbs.createItem(title, parentUrl)
 
-      return buildBreadcrumbs(list, parent).concat([item])
+      const parentSpec = this.getParentOf(spec.uuid)
+      return buildBreadcrumbs(parentSpec, parent).concat([item])
     }
 
     return buildBreadcrumbs(
-      this.spec.hierarchy.slice(),
+      this.getParentOf(this.spec.uuid),
       $rdf.namedNode(this.subject(entityId)),
     )
   }
 
-  createUrl(entityType, entityId) {
-    if (entityType === 'repository') {
+  getParentOf(specUuid: string): EntitySpec {
+    return Object.values<EntitySpec>(this.specs).reduce((parentSpec, spec) => {
+      if (spec.children.some(child => child.resourceDefinitionUuid === specUuid)) {
+        return spec
+      }
+      return parentSpec
+    }, null)
+  }
+
+  createUrl(urlPrefix, entityId) {
+    if (urlPrefix === '') {
       return '/'
     }
-    return `/${entityType}/${entityId}`
+    return `/${urlPrefix}/${entityId}`
   }
 }

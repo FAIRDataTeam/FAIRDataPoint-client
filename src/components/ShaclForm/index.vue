@@ -34,9 +34,15 @@
       </div>
       <button
         class="btn btn-primary btn-rounded"
+        :disabled="submitStatus.isPending()"
         type="submit"
         data-cy="save"
       >
+        <fa
+          v-if="submitStatus.isPending()"
+          :icon="['fas', 'spinner']"
+          spin
+        />
         Save
       </button>
     </form>
@@ -76,6 +82,9 @@ export default class ShaclForm extends Vue {
 
   @Prop({ required: true })
   readonly validationReport: ValidationReport
+
+  @Prop({ required: true })
+  readonly submitStatus: Status
 
   form: FormShape
 

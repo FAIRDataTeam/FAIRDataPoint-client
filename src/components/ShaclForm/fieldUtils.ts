@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { SHACL } from '@/rdf/namespaces'
+import { SHACL, XSD } from '@/rdf/namespaces'
 import rdfUtils from '@/rdf/utils'
 import { FormField } from '@/components/ShaclForm/Parser/SHACLFormParser'
 
@@ -7,6 +7,11 @@ import { FormField } from '@/components/ShaclForm/Parser/SHACLFormParser'
 function getName(field: FormField): string {
   const pathToName = path => _.upperFirst(_.lowerCase(rdfUtils.pathTerm(path)))
   return field.name ? _.capitalize(field.name) : pathToName(field.path)
+}
+
+
+function isDatetime(field: FormField): boolean {
+  return field.datatype === XSD('dateTime').value
 }
 
 
@@ -32,6 +37,7 @@ function isRequired(field: FormField): boolean {
 
 export default {
   getName,
+  isDatetime,
   isIRI,
   isList,
   isLiteral,

@@ -4,7 +4,6 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import EntitySettings from '@/components/EntitySettings/index.vue'
-import { getConfigFor } from '@/entity/entityConfigs'
 
 
 @Component({ components: { EntitySettings } })
@@ -17,7 +16,7 @@ export default class EntitySettingsPage extends Vue {
 
   @Watch('$route')
   init() {
-    this.config = getConfigFor(this.$route.params.entity)
+    this.config = this.$store.getters['entities/config'](this.$route.params.entity)
   }
 }
 </script>

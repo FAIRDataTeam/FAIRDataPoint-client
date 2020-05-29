@@ -28,6 +28,12 @@ export function fromRdf(form: FormShape, subject: $rdf.Node, rdf: $rdf.IndexedFo
           } catch {
             // nothing to do
           }
+        } else if (fieldUtils.isDatetime(field)) {
+          try {
+            data[field.path].push(new Date(statement.object.value))
+          } catch {
+            // nothing to do
+          }
         } else {
           data[field.path].push(statement.object.value)
         }
@@ -43,15 +49,18 @@ function isFormData(value: object): value is FormData {
 }
 
 
-function createQuads(data: FormData): $rdf.Statement[] {
+function createQuads(data: FormData, originalRdf : $rdf.IndexedFormula): $rdf.Statement[] {
+  // Add RDF type statements only if they are not present in original RDF
   const targetClasses = _.get(data, 'targetClasses', [])
+    .filter(tc => originalRdf.statementsMatching(data.subject, RDF('type'), tc).length === 0)
     .map(tc => $rdf.quad(data.subject, RDF('type'), tc, null))
+
 
   const quads = Object.entries(data.data).flatMap(([key, values]) => {
     if (_.isArray(values)) {
       return values.flatMap((value) => {
         if (isFormData(value)) {
-          const nestedQuads = createQuads(value)
+          const nestedQuads = createQuads(value, originalRdf)
 
           if (nestedQuads.length > 0) {
             return [
@@ -63,7 +72,8 @@ function createQuads(data: FormData): $rdf.Statement[] {
           return []
         }
 
-        return _.isEmpty(value) ? [] : [$rdf.quad(data.subject, $rdf.namedNode(key), value, null)]
+        const hasValue = !_.isEmpty(value) || _.isObject(value)
+        return hasValue ? [$rdf.quad(data.subject, $rdf.namedNode(key), value, null)] : []
       })
     }
     return []
@@ -94,7 +104,7 @@ export function toRdf(
   }
   clear($rdf.namedNode(subjectStr), shape.fields)
 
-  store.addAll(createQuads(data))
+  store.addAll(createQuads(data, rdf))
 
   // @ts-ignore
   const serializer = $rdf.Serializer(rdf)
