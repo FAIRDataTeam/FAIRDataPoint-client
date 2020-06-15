@@ -58,6 +58,10 @@
               <fa :icon="['fas', 'project-diagram']" />
               My Metadata
             </b-dropdown-item>
+            <b-dropdown-item @click="$router.push(`/api-keys`)">
+              <fa :icon="['fas', 'key']" />
+              API Keys
+            </b-dropdown-item>
             <b-dropdown-item
               v-if="user.role === 'ADMIN'"
               @click="$router.push(`/users/${user.uuid}`)"
