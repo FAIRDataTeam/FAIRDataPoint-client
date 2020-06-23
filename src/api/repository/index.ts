@@ -38,8 +38,8 @@ export default {
     return request.delete('/')
   },
 
-  getMembership() {
-    return Promise.resolve({ data: {} })
+  getMeta() {
+    return request.get('/meta')
   },
 
   getDashboard() {

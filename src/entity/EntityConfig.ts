@@ -89,7 +89,7 @@ export class EntityConfig {
   // VIEW --
 
   public get viewActions() {
-    return ['edit', 'settings', 'delete']
+    return ['publish', 'edit', 'settings', 'delete']
   }
 
   public getLinks(graph: Graph) {
@@ -125,15 +125,16 @@ export class EntityConfig {
     return `/${this.spec.urlPrefix}/${entityId}/create-${this.getChildUrlPrefix(child)}`
   }
 
-  public createChildrenLists(graph: Graph, canCreateChild = false, entityId = null) {
+  public createChildrenLists(graph: Graph, meta = null, canCreateChild = false, entityId = null) {
     return this.spec.children.map(child => this.createChildrenList(
-      child, graph, canCreateChild, entityId,
+      child, graph, meta, canCreateChild, entityId,
     ))
   }
 
   public createChildrenList(
     child: ChildSpec,
     graph: Graph,
+    meta = null,
     canCreateChild = false,
     entityId = null,
   ) {
@@ -154,8 +155,11 @@ export class EntityConfig {
           })
           : []
 
+        const stateChildren = _.get(meta, 'state.children', {})
+        const prefix = stateChildren[c.value] === 'DRAFT' ? '[DRAFT] ' : ''
+
         return {
-          title: graph.findOne(DCT('title'), options),
+          title: prefix + graph.findOne(DCT('title'), options),
           link: `/${this.getChildUrlPrefix(child)}/${id}`,
           description: graph.findOne(DCT('description'), options),
           tags,

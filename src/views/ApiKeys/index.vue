@@ -5,9 +5,12 @@
       content-only
     >
       <template v-slot:actions>
-        <a @click="generateApiKey()">
+        <btn
+          class="btn btn-link"
+          @click="generateApiKey()"
+        >
           + Generate API Key
-        </a>
+        </btn>
       </template>
       <template v-slot:content>
         <status-flash :status="status" />
@@ -18,7 +21,7 @@
             class="item-list__item item-list__item--simple"
           >
             <div class="content">
-                {{ apiKey.token }}
+              {{ apiKey.token }}
             </div>
             <div class="actions">
               <a
@@ -30,13 +33,15 @@
               </a>
             </div>
           </div>
+          <div v-if="apiKeys.length === 0">
+            You have no API keys yet.
+          </div>
         </div>
       </template>
     </page>
   </div>
 </template>
 <script lang="ts">
-import _ from 'lodash'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import api from '../../api'
 import ItemSimple from '../../components/ItemSimple/index.vue'

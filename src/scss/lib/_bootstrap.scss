@@ -29,6 +29,7 @@ $link-hover-color: $color-primary-lighter;
 
 .btn {
   white-space: nowrap;
+  cursor: pointer;
 
   &-primary {
     @include typography-inverse-16;
@@ -45,6 +46,7 @@ $link-hover-color: $color-primary-lighter;
 
   &-link {
     @include typography-primary-16;
+    color: $color-primary;
     text-decoration: none !important;
 
     &:hover {

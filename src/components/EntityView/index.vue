@@ -8,12 +8,21 @@
     <status-flash :status="status" />
     <page
       v-if="entity !== null"
-      :title="entity.title"
+      :title="title"
     >
       <template v-slot:actions>
-        <membership-badge :entity="membership" />
+        <membership-badge :entity="meta" />
+        <button
+          v-if="actionEnabled('publish') && isDraft && (isAdmin || permissions.hasWrite(meta))"
+          class="btn btn-link"
+          data-cy="publish"
+          @click="publishEntity"
+        >
+          <fa :icon="['fas', 'file-export']" />
+          Publish
+        </button>
         <router-link
-          v-if="actionEnabled('edit') && (isAdmin || permissions.hasWrite(membership))"
+          v-if="actionEnabled('edit') && (isAdmin || permissions.hasWrite(meta))"
           class="btn btn-link"
           :to="actionUrl('edit')"
           data-cy="edit"
@@ -22,7 +31,7 @@
           Edit
         </router-link>
         <router-link
-          v-if="actionEnabled('settings') && (isAdmin || permissions.hasWrite(membership))"
+          v-if="actionEnabled('settings') && (isAdmin || permissions.hasWrite(meta))"
           class="btn btn-link"
           :to="actionUrl('settings')"
           data-cy="settings"
@@ -107,7 +116,7 @@ export default class EntityView extends EntityBase {
 
   itemLists: any = null
 
-  membership: any = null
+  meta: any = null
 
   metadata: any = null
 
@@ -119,7 +128,15 @@ export default class EntityView extends EntityBase {
 
   get canCreateChild() {
     return this.config.hasChildren
-      && (this.isAdmin || this.config.canCreateChild(this.isAuthenticated, this.membership))
+      && (this.isAdmin || this.config.canCreateChild(this.isAuthenticated, this.meta))
+  }
+
+  get isDraft() {
+    return _.get(this.meta, 'state.current') === 'DRAFT'
+  }
+
+  get title() {
+    return this.isDraft ? `[DRAFT] ${this.entity.title}` : this.entity.title
   }
 
   actionEnabled(action: string): boolean {
@@ -134,7 +151,7 @@ export default class EntityView extends EntityBase {
   reset() {
     this.metadata = null
     this.itemLists = null
-    this.membership = null
+    this.meta = null
     this.extraLinks = []
     this.createLink = null
     this.shape = null
@@ -143,12 +160,12 @@ export default class EntityView extends EntityBase {
   async fetchData(): Promise<void> {
     try {
       this.status.setPending()
-      const [entity, spec, membership] = await this.loadData()
+      const [entity, spec, meta] = await this.loadData()
 
       this.buildGraph(entity.data)
 
       this.shape = parseSHACLView(spec.data, this.config.targetClasses)
-      this.membership = membership.data
+      this.meta = meta.data
       this.metadata = this.createMetadata()
       this.extraLinks = this.config.getLinks(this.graph)
       this.breadcrumbs = this.config.createBreadcrumbs(this.graph, this.entityId)
@@ -156,6 +173,7 @@ export default class EntityView extends EntityBase {
       if (this.config.hasChildren) {
         this.itemLists = this.config.createChildrenLists(
           this.graph,
+          this.meta,
           this.canCreateChild,
           this.entityId,
         )
@@ -171,13 +189,13 @@ export default class EntityView extends EntityBase {
     return axios.all([
       this.config.api.getExpanded(this.entityId),
       this.config.api.getSpec(),
-      this.getMembership(),
+      this.getMeta(),
     ])
   }
 
-  getMembership() {
+  getMeta() {
     return this.isAuthenticated
-      ? this.config.api.getMembership(this.entityId)
+      ? this.config.api.getMeta(this.entityId)
       : Promise.resolve({ data: {} })
   }
 
@@ -203,6 +221,18 @@ export default class EntityView extends EntityBase {
         await this.$router.push(parent)
       } catch (err) {
         this.status.setError('Unable to delete data.')
+      }
+    }
+  }
+
+  async publishEntity() {
+    if (window.confirm(`Are you sure you want to publish ${this.entity.title}?`)) {
+      try {
+        this.status.setPending()
+        await this.config.api.putMetaState(this.entityId, { current: 'PUBLISHED' })
+        await this.fetchData()
+      } catch (err) {
+        this.status.setError('Unable to publish data.')
       }
     }
   }

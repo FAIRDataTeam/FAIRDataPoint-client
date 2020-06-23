@@ -79,9 +79,9 @@ export default class EntityCreate extends EntityBase {
     try {
       this.status.setPending()
 
-      const [spec, parent, membership] = await this.loadData()
+      const [spec, parent, meta] = await this.loadData()
 
-      if (this.isAdmin || this.parentConfig.canCreateChild(this.isAuthenticated, membership.data)) {
+      if (this.isAdmin || this.parentConfig.canCreateChild(this.isAuthenticated, meta.data)) {
         this.shacl = spec.data
         this.graph = new Graph('', this.subject)
         this.graph.store.add($rdf.namedNode(this.subject), DCT('isPartOf'), $rdf.namedNode(this.isPartOf), null)
@@ -99,7 +99,7 @@ export default class EntityCreate extends EntityBase {
     return axios.all([
       this.config.api.getSpec(),
       this.parentConfig.api.getExpanded(this.entityId),
-      this.parentConfig.api.getMembership(this.entityId),
+      this.parentConfig.api.getMeta(this.entityId),
     ])
   }
 

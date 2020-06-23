@@ -24,108 +24,10 @@
       </template>
       <template v-slot:content>
         <status-flash :status="status" />
-        <div
+        <item-tree
           v-if="dashboard && dashboard.length > 0"
-          class="item-list"
-        >
-          <div
-            v-for="catalog in sortByTitle(dashboard)"
-            :key="catalog.uri"
-            class="item-list__item"
-          >
-            <a
-              v-if="catalog.children.length > 0"
-              class="item-list__item__control"
-              @click.prevent="toggleOpen(catalog)"
-            >
-              <fa :icon="['fas', catalog.open ? 'chevron-down' : 'chevron-right']" />
-            </a>
-            <span
-              v-else
-              class="item-list__item__control"
-            />
-            <avatar
-              :initials="catalog.title[0]"
-              :value="catalog.uri"
-              smaller
-            />
-            <div class="item-list__item__content">
-              <div class="item-list__item__content__row">
-                <a :href="`${catalog.uri}`">
-                  {{ catalog.title }}
-                </a>
-              </div>
-            </div>
-            <div class="item-list__item__actions">
-              <membership-badge :entity="catalog" />
-            </div>
-
-            <div
-              v-if="catalog.open"
-              class="item-list"
-            >
-              <div
-                v-for="dataset in sortByTitle(catalog.children)"
-                :key="dataset.uri"
-                class="item-list__item"
-              >
-                <a
-                  v-if="dataset.children.length > 0"
-                  class="item-list__item__control"
-                  @click.prevent="toggleOpen(dataset)"
-                >
-                  <fa :icon="['fas', dataset.open ? 'chevron-down' : 'chevron-right']" />
-                </a>
-                <span
-                  v-else
-                  class="item-list__item__control"
-                />
-                <avatar
-                  :initials="dataset.title[0]"
-                  :value="dataset.uri"
-                  smaller
-                />
-                <div class="item-list__item__content">
-                  <div class="item-list__item__content__row">
-                    <a :href="`${dataset.uri}`">
-                      {{ dataset.title }}
-                    </a>
-                  </div>
-                </div>
-                <div class="item-list__item__actions">
-                  <membership-badge :entity="dataset" />
-                </div>
-
-                <div
-                  v-if="dataset.open"
-                  class="item-list"
-                >
-                  <div
-                    v-for="distribution in sortByTitle(dataset.children)"
-                    :key="distribution.uri"
-                    class="item-list__item"
-                  >
-                    <avatar
-                      :initials="distribution.title[0]"
-                      :value="distribution.uri"
-                      smaller
-                    />
-                    <div class="item-list__item__content">
-                      <div class="item-list__item__content__row">
-                        <a :href="`${distribution.uri}`">
-                          {{ distribution.title }}
-                        </a>
-                      </div>
-                    </div>
-                    <div class="item-list__item__actions">
-                      <membership-badge :entity="distribution" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+          v-model="dashboard"
+        />
         <div v-if="dashboard && dashboard.length === 0">
           <p>
             You have no metadata.
@@ -138,16 +40,17 @@
 <script lang="ts">
 import _ from 'lodash'
 import api from '../../api'
-import Avatar from '../../components/Avatar/index.vue'
 import Page from '../../components/Page/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
-import MembershipBadge from '../../components/MembershipBadge/index.vue'
+import ItemTree from '@/views/MyMetadata/ItemTree.vue'
 
 export default {
   name: 'Dashboard',
   components: {
-    MembershipBadge, Avatar, StatusFlash, Page,
+    ItemTree,
+    Page,
+    StatusFlash,
   },
   data() {
     return {
