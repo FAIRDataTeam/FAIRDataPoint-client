@@ -33,6 +33,19 @@
       border: none !important;
     }
 
+    &--simple {
+      flex-wrap: nowrap;
+
+      .content {
+        word-break: break-all;
+        margin-right: 3rem;
+      }
+
+      .actions {
+        white-space: nowrap;
+      }
+    }
+
     &__control {
       color: $color-text-default !important;
       width: 2rem;

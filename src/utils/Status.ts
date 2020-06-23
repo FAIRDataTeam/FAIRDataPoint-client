@@ -60,7 +60,7 @@ export default class Status {
   setErrorFromResponse(error: any, defaultMsg: string): void {
     this.status = Status.ERROR
     this.msg = _.get(error, 'response.data.message', defaultMsg)
-    this.errorCode = _.includes(_.get(error, 'message'), '404') ? 404 : null
+    this.errorCode = _.get(error, 'response.status')
   }
 
   setDone(msg?: string): void {

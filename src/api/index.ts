@@ -1,3 +1,4 @@
+import apiKeys from '@/api/apiKeys'
 import builder from '@/api/builder'
 import configs from '@/api/configs'
 import info from './info'
@@ -9,6 +10,7 @@ import tokens from './tokens'
 import users from './users'
 
 export default {
+  apiKeys,
   builder,
   configs,
   info,

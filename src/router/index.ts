@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import ApiKeys from '../views/ApiKeys/index.vue'
 import Dashboard from '../views/MyMetadata/index.vue'
 import Login from '../views/Login/index.vue'
 import NotAllowed from '../views/NotAllowed/index.vue'
@@ -34,6 +35,7 @@ export function createRouter(store) {
     { path: '/shapes', component: Shapes, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/shapes/create', component: ShapeCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/shapes/:id', component: ShapeDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/api-keys', component: ApiKeys, meta: { requiresAuth: true } },
     { path: '/not-allowed', component: NotAllowed },
     { path: '/:entity/:id', component: EntityViewPage },
     { path: '/:entity/:id/edit', component: EntityEditPage, meta: { requiresAuth: true } },

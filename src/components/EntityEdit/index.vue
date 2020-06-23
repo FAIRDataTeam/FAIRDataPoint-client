@@ -61,9 +61,9 @@ export default class EntityEdit extends EntityBase {
   async fetchData(): Promise<void> {
     try {
       this.status.setPending()
-      const [entity, expandedEntity, spec, membership] = await this.loadData()
+      const [entity, expandedEntity, spec, meta] = await this.loadData()
 
-      if (this.isAdmin || permissions.hasWrite(membership.data)) {
+      if (this.isAdmin || permissions.hasWrite(meta.data)) {
         this.buildGraph(expandedEntity.data)
         this.shacl = spec.data
         this.simpleGraph = new Graph(entity.data, this.subject)
@@ -82,7 +82,7 @@ export default class EntityEdit extends EntityBase {
       this.config.api.get(this.entityId),
       this.config.api.getExpanded(this.entityId),
       this.config.api.getSpec(),
-      this.config.api.getMembership(this.entityId),
+      this.config.api.getMeta(this.entityId),
     ])
   }
 

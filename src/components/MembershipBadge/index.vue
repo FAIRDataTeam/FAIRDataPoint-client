@@ -18,7 +18,7 @@ export default class MembershipBadge extends Vue {
   readonly entity: any
 
   get role() {
-    return _.get(this.entity, 'membership.name')
+    return _.get(this.entity, 'member.membership.name', _.get(this.entity, 'membership.name'))
   }
 }
 </script>

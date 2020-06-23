@@ -17,7 +17,10 @@
         />
         Loading...
       </template>
-      <template v-if="status.errorCode === 404">
+      <template v-else-if="status.errorCode === 403">
+        403 You are not allowed to see this content
+      </template>
+      <template v-else-if="status.errorCode === 404">
         404 Not Found
       </template>
       <template v-else-if="status.message">

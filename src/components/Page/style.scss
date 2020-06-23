@@ -13,13 +13,15 @@
     @media (min-width: $breakpoint-small) {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
     }
   }
 
   &__actions {
     display: flex;
     align-items: center;
+    margin-left: $space-lg;
+    margin-top: $space-md;
 
     @media (max-width: $breakpoint-small - 1) {
       margin-bottom: $space-lg;

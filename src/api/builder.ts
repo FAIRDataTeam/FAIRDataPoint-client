@@ -26,10 +26,6 @@ function build(entity) {
       })
     },
 
-    getMembership(id) {
-      return request.get(`/${entity}/${id}/member`)
-    },
-
     post(data) {
       return request.post(`/${entity}`, data, {
         headers: {
@@ -46,6 +42,14 @@ function build(entity) {
           'Content-Type': 'text/turtle',
         },
       })
+    },
+
+    getMeta(id) {
+      return request.get(`/${entity}/${id}/meta`)
+    },
+
+    putMetaState(id, data) {
+      return request.put(`/${entity}/${id}/meta/state`, data)
     },
 
     delete(id) {
