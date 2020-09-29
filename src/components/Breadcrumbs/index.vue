@@ -12,7 +12,7 @@
           </router-link>
         </li>
         <li data-cy="breadcrumbs-current">
-          {{ current }}
+          <span>{{ current }}</span>
         </li>
       </ul>
     </div>
