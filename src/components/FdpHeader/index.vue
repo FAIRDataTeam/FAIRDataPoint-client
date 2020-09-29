@@ -14,7 +14,10 @@
       </router-link>
       <div class="header__nav">
         <search-field />
-        <div class="header__menu">
+        <div
+          v-if="!isIndex"
+          class="header__menu"
+        >
           <router-link
             v-if="!user"
             to="/login"
@@ -83,6 +86,7 @@ import Separator from '../Separator/index.vue'
 import UserAvatar from '../UserAvatar/index.vue'
 import VersionInfoTable from '../VersionInfoTable/index.vue'
 import SearchField from '@/components/SearchField/index.vue'
+import config from '@/config'
 
 
 @Component({
@@ -100,6 +104,10 @@ export default class FdpHeader extends Vue {
 
   get user() {
     return this.$store.getters['auth/user']
+  }
+
+  get isIndex() {
+    return config.isIndex()
   }
 
   logout() {

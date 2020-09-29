@@ -25,13 +25,17 @@ import SearchResults from '@/views/SearchResults/index.vue'
 Vue.use(VueRouter)
 
 export function createRouter(store) {
-  const indexComponent = config.isIndex() ? Index : EntityViewPage
-
-  const routes = [
-    { path: '/', component: indexComponent },
+  const indexRoutes = [
+    { path: '/', component: Index },
     { path: '/entry/:id', component: IndexDetail },
-    { path: '/search', component: SearchResults },
     { path: '/edit', component: EntityEditPage, meta: { requiresAuth: true } },
+    { path: '/search', component: SearchResults },
+    { path: '/not-allowed', component: NotAllowed },
+    { path: '*', component: NotFound },
+  ]
+
+  const fpdRoutes = [
+    { path: '/', component: EntityViewPage },
     { path: '/my-metadata', component: Dashboard, meta: { requiresAuth: true } },
     { path: '/login', component: Login },
     { path: '/users', component: Users, meta: { requiresAuth: true, roles: ['ADMIN'] } },
@@ -45,19 +49,20 @@ export function createRouter(store) {
     { path: '/shapes/create', component: ShapeCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/shapes/:id', component: ShapeDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/api-keys', component: ApiKeys, meta: { requiresAuth: true } },
-    { path: '/not-allowed', component: NotAllowed },
     { path: '/:entity/:id', component: EntityViewPage },
     { path: '/:entity/:id/edit', component: EntityEditPage, meta: { requiresAuth: true } },
     { path: '/:entity/:id/settings', component: EntitySettingsPage, meta: { requiresAuth: true } },
     { path: '/create-:entity', component: EntityCreatePage, meta: { requiresAuth: true } },
     { path: '/:parentEntity/:id/create-:entity', component: EntityCreatePage, meta: { requiresAuth: true } },
+    { path: '/search', component: SearchResults },
+    { path: '/not-allowed', component: NotAllowed },
     { path: '*', component: NotFound },
   ]
 
   const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
-    routes,
+    routes: config.isIndex() ? indexRoutes : fpdRoutes,
   })
 
   router.beforeEach((to, from, next) => {

@@ -12,7 +12,8 @@
   </form>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import _ from 'lodash'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 
 @Component
 export default class SearchField extends Vue {
@@ -20,6 +21,15 @@ export default class SearchField extends Vue {
 
   submit() {
     this.$router.push(`/search?q=${this.q}`)
+  }
+
+  created(): void {
+    this.setQ()
+  }
+
+  @Watch('$route')
+  setQ() {
+    this.q = _.get(this.$route, 'query.q', '')
   }
 }
 </script>
