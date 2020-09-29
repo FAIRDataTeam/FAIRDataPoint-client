@@ -17,17 +17,26 @@ import ResourceDefinitionDetail from '@/views/ResourceDefinitionDetail/index.vue
 import Shapes from '@/views/Shapes/index.vue'
 import ShapeCreate from '@/views/ShapeCreate/index.vue'
 import ShapeDetail from '@/views/ShapeDetail/index.vue'
+import Index from '@/views/Index/index.vue'
+import IndexDetail from '@/views/IndexDetail/index.vue'
+import config from '@/config'
+import SearchResults from '@/views/SearchResults/index.vue'
 
 Vue.use(VueRouter)
 
 export function createRouter(store) {
+  const indexComponent = config.isIndex() ? Index : EntityViewPage
+
   const routes = [
-    { path: '/', component: EntityViewPage },
+    { path: '/', component: indexComponent },
+    { path: '/entry/:id', component: IndexDetail },
+    { path: '/search', component: SearchResults },
     { path: '/edit', component: EntityEditPage, meta: { requiresAuth: true } },
     { path: '/my-metadata', component: Dashboard, meta: { requiresAuth: true } },
     { path: '/login', component: Login },
     { path: '/users', component: Users, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/users/create', component: UserCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/users/current', component: UserDetail, meta: { requiresAuth: true } },
     { path: '/users/:id', component: UserDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/resource-definitions', component: ResourceDefinitions, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/resource-definitions/create', component: ResourceDefinitionDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },

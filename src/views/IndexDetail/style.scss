@@ -1,0 +1,15 @@
+@import "../../scss/variables";
+@import "../../scss/mixins";
+@import "../../scss/typography";
+
+.index-detail {
+  .entry-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  td {
+    max-width: 20rem;
+  }
+}

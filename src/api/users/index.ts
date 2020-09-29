@@ -17,15 +17,15 @@ export default {
     return request.post('/users', user)
   },
 
-  putUser(user) {
-    return request.put(`/users/${user.uuid}`, user)
+  putUser(userUuid, user) {
+    return request.put(`/users/${userUuid}`, user)
   },
 
   deleteUser(user) {
     return request.delete(`/users/${user.uuid}`)
   },
 
-  putUserPassword(user, password) {
-    return request.put(`/users/${user.uuid}/password`, { password })
+  putUserPassword(userUuid, password) {
+    return request.put(`/users/${userUuid}/password`, { password })
   },
 }

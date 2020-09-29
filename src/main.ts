@@ -27,6 +27,7 @@ let entitySpecs = []
 api.configs.getBootstrap()
   .then((config) => {
     _.set(window, 'config.persistentURL', _.get(config, 'data.persistentUrl'))
+    _.set(window, 'config.index', _.get(config, 'data.index', false))
     entitySpecs = _.get(config, 'data.resourceDefinitions', [])
   })
   .finally(() => {
