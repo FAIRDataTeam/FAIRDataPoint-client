@@ -54,26 +54,26 @@
                   >{{ fdp.clientUrl }}</a>
                 </td>
               </tr>
-              <tr>
+              <tr v-if="metadataTitle">
                 <th>Title</th>
-                <td>{{ fdp.currentMetadata.metadata.title }}</td>
+                <td>{{ metadataTitle }}</td>
               </tr>
-              <tr>
+              <tr v-if="metadataVersion">
                 <th>Version</th>
-                <td>{{ fdp.currentMetadata.metadata.version }}</td>
+                <td>{{ metadataVersion }}</td>
               </tr>
-              <tr>
+              <tr v-if="metadataPublisher && metadataPublisherName">
                 <th>Publisher</th>
                 <td>
                   <a
-                    :href="fdp.currentMetadata.metadata.publisher"
+                    :href="metadataPublisher"
                     target="_blank"
-                  >{{ fdp.currentMetadata.metadata.publisherName }}</a>
+                  >{{ metadataPublisherName }}</a>
                 </td>
               </tr>
-              <tr>
+              <tr v-if="metadataDescription">
                 <th>Description</th>
-                <td>{{ fdp.currentMetadata.metadata.description }}</td>
+                <td>{{ metadataDescription }}</td>
               </tr>
             </tbody>
           </table>
@@ -131,6 +131,26 @@ export default class IndexDetail extends Vue {
 
   get title() {
     return _.get(this.fdp, 'clientUrl')
+  }
+
+  get metadataTitle() {
+    return _.get(this.fdp, 'currentMetadata.metadata.title')
+  }
+
+  get metadataVersion() {
+    return _.get(this.fdp, 'currentMetadata.metadata.version')
+  }
+
+  get metadataPublisher() {
+    return _.get(this.fdp, 'currentMetadata.metadata.publisher')
+  }
+
+  get metadataPublisherName() {
+    return _.get(this.fdp, 'currentMetadata.metadata.publisherName')
+  }
+
+  get metadataDescription() {
+    return _.get(this.fdp, 'currentMetadata.metadata.description')
   }
 
   created(): void {
