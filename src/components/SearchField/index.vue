@@ -20,7 +20,9 @@ export default class SearchField extends Vue {
   q: string = ''
 
   submit() {
-    this.$router.push(`/search?q=${this.q}`)
+    if (this.q.length > 0) {
+      this.$router.push(`/search?q=${this.q}`)
+    }
   }
 
   created(): void {
