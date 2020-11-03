@@ -1,7 +1,7 @@
 import request from '../request'
 
 export default {
-  getEntries() {
+  get() {
     return request.get('/', {
       headers: {
         Accept: 'text/turtle',

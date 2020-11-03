@@ -28,7 +28,6 @@ export function createRouter(store) {
   const indexRoutes = [
     { path: '/', component: Index },
     { path: '/entry/:id', component: IndexDetail },
-    { path: '/edit', component: EntityEditPage, meta: { requiresAuth: true } },
     { path: '/search', component: SearchResults },
     { path: '/not-allowed', component: NotAllowed },
     { path: '*', component: NotFound },
@@ -36,6 +35,7 @@ export function createRouter(store) {
 
   const fpdRoutes = [
     { path: '/', component: EntityViewPage },
+    { path: '/edit', component: EntityEditPage, meta: { requiresAuth: true } },
     { path: '/my-metadata', component: Dashboard, meta: { requiresAuth: true } },
     { path: '/login', component: Login },
     { path: '/users', component: Users, meta: { requiresAuth: true, roles: ['ADMIN'] } },
