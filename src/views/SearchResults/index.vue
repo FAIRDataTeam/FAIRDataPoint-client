@@ -30,6 +30,20 @@
               >
                 {{ item.description | truncate }}
               </p>
+              <div
+                v-if="item.types"
+                class="item__tags"
+              >
+                <a
+                  v-for="(type, index) in item.types"
+                  :key="index"
+                  :href="type"
+                  class="item__tags__tag"
+                  target="_blank"
+                >
+                  {{ pathTerm(type) }}
+                </a>
+              </div>
             </div>
           </div>
         </template>
@@ -40,6 +54,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import api from '@/api'
+import rdfUtils from '@/rdf/utils'
 import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
 import StatusFlash from '@/components/StatusFlash/index.vue'
@@ -55,6 +70,10 @@ export default class SearchResults extends Vue {
 
   created(): void {
     this.init()
+  }
+
+  pathTerm(term): string {
+    return rdfUtils.pathTerm(term)
   }
 
   @Watch('$route')
