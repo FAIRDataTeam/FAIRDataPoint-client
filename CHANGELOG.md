@@ -142,7 +142,7 @@ Initial version of client application for [FAIR Data Point] providing user inter
 
 [FAIR Data Point]: https://github.com/FAIRDataTeam/FAIRDataPoint
 
-[Unreleased]: /../../compare/v1.6.0...develop
+[Unreleased]: /../../compare/master...develop
 [1.0.0]: /../../tree/v1.0.0
 [1.1.0]: /../../tree/v1.1.0
 [1.2.0]: /../../tree/v1.2.0
