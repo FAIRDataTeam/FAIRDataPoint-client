@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumbs
-      v-if="user"
+      v-if="user && !isCurrentUser"
       :links="breadcrumbs"
       :current="title"
     />
@@ -82,7 +82,10 @@
                 This is not a valid email
               </p>
             </div>
-            <div class="form__group">
+            <div
+              v-if="!isCurrentUser"
+              class="form__group"
+            >
               <label for="user-role">Role</label>
               <select
                 id="user-role"
@@ -171,6 +174,7 @@
   </div>
 </template>
 <script lang="ts">
+import _ from 'lodash'
 import { email, required } from 'vuelidate/lib/validators'
 import { mapGetters } from 'vuex'
 import api from '../../api'
@@ -205,6 +209,7 @@ export default {
     return {
       title: null,
       user: null,
+      isCurrentUser: true,
       passwordForm: {
         password: null,
         passwordCheck: null,
@@ -234,11 +239,30 @@ export default {
   },
 
   methods: {
+    getUserUuid() {
+      return _.get(this.$route.params, 'id', 'current')
+    },
+
+    getUserData() {
+      const data = {
+        firstName: this.user.firstName,
+        lastName: this.user.lastName,
+        email: this.user.email,
+      }
+
+      if (this.getUserUuid() !== 'current') {
+        _.set(data, 'role', this.user.role)
+      }
+
+      return data
+    },
+
     async fetchData() {
       try {
         this.status.setPending()
 
-        const response = await api.users.getUser(this.$route.params.id)
+        const response = await api.users.getUser(this.getUserUuid())
+        this.isCurrentUser = this.getUserUuid() === 'current'
         this.user = response.data
         this.setTitle()
         this.status.setDone()
@@ -253,7 +277,7 @@ export default {
       if (!this.$v.user.$invalid) {
         try {
           this.profileSubmitStatus.setPending()
-          await api.users.putUser(this.user)
+          await api.users.putUser(this.getUserUuid(), this.getUserData())
           this.setTitle()
           this.profileSubmitStatus.setDone('User profile was successfully updated!')
 
@@ -272,7 +296,7 @@ export default {
       if (!this.$v.passwordForm.$invalid) {
         try {
           this.passwordSubmitStatus.setPending()
-          await api.users.putUserPassword(this.user, this.passwordForm.password)
+          await api.users.putUserPassword(this.getUserUuid(), this.passwordForm.password)
           this.passwordSubmitStatus.setDone('Password was successfully updated!')
         } catch (error) {
           this.passwordSubmitStatus.setError('Password could not be updated.')

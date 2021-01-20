@@ -11,11 +11,12 @@ jobs:
 
     strategy:
       matrix:
+        app: [fairdatapoint-index, fairdatapoint]
         node-version: [8]
 
     env:
-      PUBLIC_IMAGE: fairdata/fairdatapoint-client
-      PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/fairdatapoint-client
+      PUBLIC_IMAGE: fairdata/${{ matrix.app }}-client
+      PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/${{ matrix.app }}-client
       TAG_DEVELOP: develop
       TAG_LATEST: latest
 
@@ -36,7 +37,7 @@ jobs:
       run: |
         npm run build
         ./scripts/build_info.sh
-        docker build -t $PRIVATE_IMAGE:$GITHUB_SHA .
+        docker build -t $PRIVATE_IMAGE:$GITHUB_SHA --build-arg fdp_app=${{ matrix.app }} .
 
 # (3) -> Docker image tagging
     - name: Docker login

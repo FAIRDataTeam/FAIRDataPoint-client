@@ -17,17 +17,30 @@ import ResourceDefinitionDetail from '@/views/ResourceDefinitionDetail/index.vue
 import Shapes from '@/views/Shapes/index.vue'
 import ShapeCreate from '@/views/ShapeCreate/index.vue'
 import ShapeDetail from '@/views/ShapeDetail/index.vue'
+import Index from '@/views/Index/index.vue'
+import IndexDetail from '@/views/IndexDetail/index.vue'
+import config from '@/config'
+import SearchResults from '@/views/SearchResults/index.vue'
 
 Vue.use(VueRouter)
 
 export function createRouter(store) {
-  const routes = [
+  const indexRoutes = [
+    { path: '/', component: Index },
+    { path: '/entry/:id', component: IndexDetail },
+    { path: '/search', component: SearchResults },
+    { path: '/not-allowed', component: NotAllowed },
+    { path: '*', component: NotFound },
+  ]
+
+  const fpdRoutes = [
     { path: '/', component: EntityViewPage },
     { path: '/edit', component: EntityEditPage, meta: { requiresAuth: true } },
     { path: '/my-metadata', component: Dashboard, meta: { requiresAuth: true } },
     { path: '/login', component: Login },
     { path: '/users', component: Users, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/users/create', component: UserCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/users/current', component: UserDetail, meta: { requiresAuth: true } },
     { path: '/users/:id', component: UserDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/resource-definitions', component: ResourceDefinitions, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/resource-definitions/create', component: ResourceDefinitionDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
@@ -36,19 +49,20 @@ export function createRouter(store) {
     { path: '/shapes/create', component: ShapeCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/shapes/:id', component: ShapeDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/api-keys', component: ApiKeys, meta: { requiresAuth: true } },
-    { path: '/not-allowed', component: NotAllowed },
     { path: '/:entity/:id', component: EntityViewPage },
     { path: '/:entity/:id/edit', component: EntityEditPage, meta: { requiresAuth: true } },
     { path: '/:entity/:id/settings', component: EntitySettingsPage, meta: { requiresAuth: true } },
     { path: '/create-:entity', component: EntityCreatePage, meta: { requiresAuth: true } },
     { path: '/:parentEntity/:id/create-:entity', component: EntityCreatePage, meta: { requiresAuth: true } },
+    { path: '/search', component: SearchResults },
+    { path: '/not-allowed', component: NotAllowed },
     { path: '*', component: NotFound },
   ]
 
   const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
-    routes,
+    routes: config.isIndex() ? indexRoutes : fpdRoutes,
   })
 
   router.beforeEach((to, from, next) => {

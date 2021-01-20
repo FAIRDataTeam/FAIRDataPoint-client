@@ -13,8 +13,11 @@
         </span>
       </router-link>
       <div class="header__nav">
-        <!-- <SearchField /> -->
-        <div class="header__menu">
+        <search-field />
+        <div
+          v-if="!isIndex"
+          class="header__menu"
+        >
           <router-link
             v-if="!user"
             to="/login"
@@ -62,10 +65,7 @@
               <fa :icon="['fas', 'key']" />
               API Keys
             </b-dropdown-item>
-            <b-dropdown-item
-              v-if="user.role === 'ADMIN'"
-              @click="$router.push(`/users/${user.uuid}`)"
-            >
+            <b-dropdown-item @click="$router.push('/users/current')">
               <fa :icon="['fas', 'user-edit']" />
               Edit profile
             </b-dropdown-item>
@@ -85,10 +85,13 @@ import { Component, Vue } from 'vue-property-decorator'
 import Separator from '../Separator/index.vue'
 import UserAvatar from '../UserAvatar/index.vue'
 import VersionInfoTable from '../VersionInfoTable/index.vue'
+import SearchField from '@/components/SearchField/index.vue'
+import config from '@/config'
 
 
 @Component({
   components: {
+    SearchField,
     Separator,
     UserAvatar,
     VersionInfoTable,
@@ -101,6 +104,10 @@ export default class FdpHeader extends Vue {
 
   get user() {
     return this.$store.getters['auth/user']
+  }
+
+  get isIndex() {
+    return config.isIndex()
   }
 
   logout() {
