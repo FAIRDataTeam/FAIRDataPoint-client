@@ -7,6 +7,7 @@
       <template v-slot:content>
         <status-flash :status="status" />
         <template v-if="data">
+          <status-flash :status="actionStatus" />
           <div class="table-filter">
             <div class="filter-name">
               Filter:
@@ -74,6 +75,7 @@
                 <th>
                   Status
                 </th>
+                <th v-if="isAdmin" />
               </tr>
             </thead>
             <tbody>
@@ -92,6 +94,26 @@
                   <span :class="`badge badge-${badgeClass(fdp.state)}`">
                     {{ fdp.state }}
                   </span>
+                </td>
+                <td v-if="isAdmin">
+                  <a
+                    class="mr-3"
+                    :class="{ 'disabled': actionStatus.isPending() }"
+                    title="Sync FDP"
+                    href=""
+                    @click.prevent="syncFdp(fdp)"
+                  >
+                    <fa :icon="['fas', 'sync-alt']" />
+                  </a>
+                  <a
+                    class="color-danger"
+                    :class="{ 'disabled': actionStatus.isPending() }"
+                    title="Remove FDP"
+                    href=""
+                    @click.prevent="removeFdp(fdp)"
+                  >
+                    <fa :icon="['far', 'trash-alt']" />
+                  </a>
                 </td>
               </tr>
             </tbody>
@@ -133,7 +155,17 @@ export default class Index extends Vue {
 
   status: Status = new Status()
 
+  actionStatus: Status = new Status()
+
   states: string[] = ['ALL', 'ACTIVE', 'INACTIVE', 'UNREACHABLE', 'INVALID', 'UNKNOWN']
+
+  get user() {
+    return this.$store.getters['auth/user']
+  }
+
+  get isAdmin() {
+    return _.get(this.user, 'role') === 'ADMIN'
+  }
 
   created(): void {
     this.init()
@@ -170,8 +202,8 @@ export default class Index extends Vue {
       this.data = null
 
       const requests = axios.all([
-        api.indexEntries.getEntries({ state: this.filter, sort: this.sort, page: this.page }),
-        api.indexEntries.getInfo(),
+        api.fdpIndex.getEntries({ state: this.filter, sort: this.sort, page: this.page }),
+        api.fdpIndex.getInfo(),
       ])
 
       const [dataResponse, infoResponse] = await requests
@@ -182,6 +214,30 @@ export default class Index extends Vue {
       this.status.setDone()
     } catch (error) {
       this.status.setError('Unable to get FAIR Data Points.')
+    }
+  }
+
+  async syncFdp(entry) {
+    try {
+      this.actionStatus.setPending()
+      await api.fdpIndex.ping(entry.clientUrl)
+      await this.init()
+      this.actionStatus.setDone(`Syncing of "${entry.clientUrl}" started!`)
+    } catch (error) {
+      this.actionStatus.setError(`Unable to sync "${entry.clientUrl}"`)
+    }
+  }
+
+  async removeFdp(entry) {
+    if (window.confirm(`Are you sure you want to remove "${entry.clientUrl}"?`)) {
+      try {
+        this.actionStatus.setPending()
+        await api.fdpIndex.deleteEntry(entry.uuid)
+        await this.init()
+        this.actionStatus.setDone(`Successfully removed "${entry.clientUrl}"`)
+      } catch (error) {
+        this.actionStatus.setError(`Unable to remove "${entry.clientUrl}"`)
+      }
     }
   }
 }
