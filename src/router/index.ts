@@ -21,12 +21,22 @@ import Index from '@/views/Index/index.vue'
 import IndexDetail from '@/views/IndexDetail/index.vue'
 import config from '@/config'
 import SearchResults from '@/views/SearchResults/index.vue'
+import IndexSettings from '@/views/IndexSettings/index.vue'
+import IndexPing from '@/views/IndexPing/index.vue'
 
 Vue.use(VueRouter)
 
 export function createRouter(store) {
   const indexRoutes = [
     { path: '/', component: Index },
+    { path: '/login', component: Login },
+    { path: '/users', component: Users, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/users/create', component: UserCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/users/current', component: UserDetail, meta: { requiresAuth: true } },
+    { path: '/users/:id', component: UserDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/api-keys', component: ApiKeys, meta: { requiresAuth: true } },
+    { path: '/settings', component: IndexSettings, meta: { requiresAuth: true } },
+    { path: '/trigger-ping', component: IndexPing, meta: { requiresAuth: true } },
     { path: '/entry/:id', component: IndexDetail },
     { path: '/search', component: SearchResults },
     { path: '/not-allowed', component: NotAllowed },

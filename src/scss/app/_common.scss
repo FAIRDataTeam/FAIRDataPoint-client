@@ -42,6 +42,12 @@ a {
   &:hover {
     color: $color-primary-lighter;
   }
+
+  &.disabled {
+    cursor: not-allowed;
+    opacity: .5;
+    color: $color-primary;
+  }
 }
 
 .color-danger {
@@ -49,6 +55,10 @@ a {
 
   &:hover {
     color: $color-danger-lighter;
+  }
+
+  &.disabled {
+    color: $color-danger;
   }
 }
 

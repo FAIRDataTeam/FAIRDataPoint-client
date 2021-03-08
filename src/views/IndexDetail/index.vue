@@ -169,7 +169,7 @@ export default class IndexDetail extends Vue {
   async init() {
     try {
       this.status.setPending()
-      const response = await api.indexEntries.getEntry(this.$route.params.id)
+      const response = await api.fdpIndex.getEntry(this.$route.params.id)
       this.fdp = response.data
       this.status.setDone()
     } catch (error) {

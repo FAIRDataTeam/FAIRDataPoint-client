@@ -1,7 +1,7 @@
 import apiKeys from './apiKeys'
 import builder from './builder'
 import configs from './configs'
-import indexEntries from './indexEntries'
+import fdpIndex from './fdpIndex'
 import info from './info'
 import repository from './repository'
 import memberships from './memberships'
@@ -15,7 +15,7 @@ export default {
   apiKeys,
   builder,
   configs,
-  indexEntries,
+  fdpIndex,
   info,
   memberships,
   repository,

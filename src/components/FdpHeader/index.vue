@@ -14,10 +14,7 @@
       </router-link>
       <div class="header__nav">
         <search-field />
-        <div
-          v-if="!isIndex"
-          class="header__menu"
-        >
+        <div class="header__menu">
           <router-link
             v-if="!user"
             to="/login"
@@ -44,11 +41,31 @@
                 <fa :icon="['fas', 'user-friends']" />
                 Users
               </b-dropdown-item>
-              <b-dropdown-item @click="$router.push('/resource-definitions')">
+              <b-dropdown-item
+                v-if="isIndex"
+                @click="$router.push('/trigger-ping')"
+              >
+                <fa :icon="['fas', 'sync-alt']" />
+                Trigger ping
+              </b-dropdown-item>
+              <b-dropdown-item
+                v-if="isIndex"
+                @click="$router.push('/settings')"
+              >
+                <fa :icon="['fas', 'cogs']" />
+                Settings
+              </b-dropdown-item>
+              <b-dropdown-item
+                v-if="!isIndex"
+                @click="$router.push('/resource-definitions')"
+              >
                 <fa :icon="['fas', 'sitemap']" />
                 Resources definitions
               </b-dropdown-item>
-              <b-dropdown-item @click="$router.push('/shapes')">
+              <b-dropdown-item
+                v-if="!isIndex"
+                @click="$router.push('/shapes')"
+              >
                 <fa :icon="['fas', 'shapes']" />
                 SHACL shapes
               </b-dropdown-item>
@@ -57,7 +74,10 @@
             <b-dropdown-header data-cy="user-menu-user">
               {{ user.firstName }} {{ user.lastName }}
             </b-dropdown-header>
-            <b-dropdown-item @click="$router.push(`/my-metadata`)">
+            <b-dropdown-item
+              v-if="!isIndex"
+              @click="$router.push(`/my-metadata`)"
+            >
               <fa :icon="['fas', 'project-diagram']" />
               My Metadata
             </b-dropdown-item>
