@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0]
+
+### Added
+
+- Admin UI to FDP Index
+
+### Changed
+
+- Proxy forwards client IP address in headers to FDP
+
 ## [1.7.0]
 
 ### Added
@@ -154,3 +164,4 @@ Initial version of client application for [FAIR Data Point] providing user inter
 [1.5.0]: /../../tree/v1.5.0
 [1.6.0]: /../../tree/v1.6.0
 [1.7.0]: /../../tree/v1.7.0
+[1.8.0]: /../../tree/v1.8.0
