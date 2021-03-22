@@ -57,6 +57,27 @@
               Field is required
             </p>
           </div>
+          <div
+            v-if="editable"
+            class="form__group"
+            :class="{'form__group--error': $v.shape.published.$error}"
+          >
+            <label>
+              <input
+                id="shape-published"
+                v-model.trim="$v.shape.published.$model"
+                placeholder="Name"
+                name="name"
+                type="checkbox"
+              >
+              Published</label>
+            <p
+              v-if="!$v.shape.definition.required"
+              class="invalid-feedback"
+            >
+              Field is required
+            </p>
+          </div>
           <div v-if="editable">
             <button
               class="btn btn-primary btn-rounded"
@@ -94,6 +115,7 @@ export default {
       shape: {
         name: { required },
         definition: { required },
+        published: { required },
       },
     }
   },
@@ -106,6 +128,7 @@ export default {
       shapeForm: {
         name: null,
         definition: null,
+        published: false,
       },
       status: new Status(),
       submitStatus: new Status(),

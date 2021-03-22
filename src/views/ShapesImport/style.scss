@@ -1,0 +1,30 @@
+@import "../../scss/variables";
+@import "../../scss/typography";
+
+.shapes-import {
+  .item__title {
+    display: flex;
+    justify-content: space-between;
+
+    &:hover {
+      color: $color-primary;
+    }
+
+    label:hover, a:hover {
+      color: $color-primary-lighter;
+      cursor: pointer;
+    }
+
+    label {
+      margin-bottom: 0;
+    }
+
+    a {
+      @include typography-primary-14;
+    }
+  }
+
+  .prism-editor__code {
+    background: $color-background;
+  }
+}

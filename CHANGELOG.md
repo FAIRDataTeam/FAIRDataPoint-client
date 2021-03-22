@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Importing shapes from other FDPs
+
 ## [1.8.0]
 
 ### Added

@@ -21,4 +21,12 @@ export default {
   deleteShape(shape) {
     return request.delete(`/shapes/${shape.uuid}`)
   },
+
+  getImport(fdpUrl) {
+    return request.get(`/shapes/import?from=${fdpUrl}`)
+  },
+
+  postImport(shapes) {
+    return request.post('/shapes/import', shapes)
+  },
 }
