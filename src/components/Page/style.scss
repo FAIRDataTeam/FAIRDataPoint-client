@@ -30,6 +30,10 @@
     .membership-badge {
       margin-right: 0.75rem;
     }
+
+    &>a {
+      margin-left: 1.5rem;
+    }
   }
 
   &__content-wrapper {

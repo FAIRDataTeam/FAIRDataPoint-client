@@ -17,6 +17,7 @@ import ResourceDefinitionDetail from '@/views/ResourceDefinitionDetail/index.vue
 import Shapes from '@/views/Shapes/index.vue'
 import ShapeCreate from '@/views/ShapeCreate/index.vue'
 import ShapeDetail from '@/views/ShapeDetail/index.vue'
+import ShapesImport from '@/views/ShapesImport/index.vue'
 import Index from '@/views/Index/index.vue'
 import IndexDetail from '@/views/IndexDetail/index.vue'
 import config from '@/config'
@@ -57,6 +58,7 @@ export function createRouter(store) {
     { path: '/resource-definitions/:uuid', component: ResourceDefinitionDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/shapes', component: Shapes, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/shapes/create', component: ShapeCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/shapes/import', component: ShapesImport, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/shapes/:id', component: ShapeDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/api-keys', component: ApiKeys, meta: { requiresAuth: true } },
     { path: '/:entity/:id', component: EntityViewPage },
