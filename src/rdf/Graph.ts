@@ -7,9 +7,11 @@ export default class Graph {
 
   defaultSubject = null
 
-  constructor(source: string, defaultSubject: string, format: string = 'text/turtle') {
+  constructor(source: string, defaultSubject: string = null, format: string = 'text/turtle') {
     this.store = $rdf.graph()
-    this.defaultSubject = $rdf.namedNode(defaultSubject)
+    if (defaultSubject) {
+      this.defaultSubject = $rdf.namedNode(defaultSubject)
+    }
     $rdf.parse(source, this.store, defaultSubject, format, null)
   }
 
