@@ -1,30 +1,35 @@
 <template>
   <nav class="d-flex justify-content-center">
     <ul
-      v-if="data.totalPages > 1"
+      v-if="lastPage > 0"
       class="pagination"
     >
-      <li class="page-item">
-        <router-link
-          v-if="currentPage > 1"
-          :to="`${baseUrl}&page=1`"
+      <li
+        v-if="currentPage > 0"
+        class="page-item"
+      >
+        <a
+          href=""
           class="page-link"
+          :class="{'disabled': currentPage===0}"
+          @click.prevent="selectPage(0)"
         >
           <fa :icon="['fas', 'angle-double-left']" />
           First
-        </router-link>
+        </a>
       </li>
-      <li :class="{'page-item': true, 'disabled': currentPage <= 1 }">
-        <router-link
-          :to="`${baseUrl}&page=${currentPage - 1}`"
+      <li :class="{'page-item': true, 'disabled': currentPage <= 0 }">
+        <a
+          href=""
           class="page-link"
+          @click.prevent="selectPage(currentPage - 1)"
         >
           <fa :icon="['fas', 'angle-left']" />
           Prev
-        </router-link>
+        </a>
       </li>
       <li
-        v-if="currentPage - 4 > 1"
+        v-if="currentPage - pageSelectionCount > 1"
         class="page-item disabled"
       >
         <a class="page-link">...</a>
@@ -34,37 +39,40 @@
         :key="page"
         :class="{'page-item': true, 'active': page === currentPage}"
       >
-        <router-link
-          :to="`${baseUrl}&page=${page}`"
-          :class="{'page-link': true, 'active': page === currentPage}"
+        <a
+          href=""
+          class="page-link"
+          @click.prevent="selectPage(page)"
         >
-          {{ page }}
-        </router-link>
+          {{ page + 1 }}
+        </a>
       </li>
       <li
-        v-if="currentPage + 4 < lastPage"
+        v-if="currentPage + pageSelectionCount < lastPage"
         class="page-item disabled"
       >
         <a class="page-link">...</a>
       </li>
       <li :class="{'page-item': true, 'disabled': currentPage >= lastPage }">
-        <router-link
-          :to="`${baseUrl}&page=${currentPage + 1}`"
+        <a
+          href=""
           class="page-link"
+          @click.prevent="selectPage(currentPage + 1)"
         >
           Next
           <fa :icon="['fas', 'angle-right']" />
-        </router-link>
+        </a>
       </li>
       <li class="page-item">
-        <router-link
+        <a
           v-if="currentPage < lastPage"
-          :to="`${baseUrl}&page=${data.lastPage}`"
           class="page-link"
+          href=""
+          @click.prevent="selectPage(lastPage)"
         >
           Last
           <fa :icon="['fas', 'angle-double-right']" />
-        </router-link>
+        </a>
       </li>
     </ul>
   </nav>
@@ -75,24 +83,24 @@ import _ from 'lodash'
 
 @Component
 export default class Pagination extends Vue {
-  @Prop({ type: Object, required: true })
-  readonly data: any
-
-  @Prop({ type: String, required: true })
-  readonly baseUrl: string
-
+  @Prop({ type: Number, required: true })
+  readonly lastPage: number
 
   @Prop({ type: Number, required: true })
   readonly currentPage: number
 
+  readonly pageSelectionCount = 3;
+
   get pageRange() {
-    const start = Math.max(this.currentPage - 4, 1)
-    const end = Math.min(this.currentPage + 4, this.lastPage)
+    const start = Math.max(this.currentPage - this.pageSelectionCount, 0)
+    const end = Math.min(this.currentPage + this.pageSelectionCount, this.lastPage)
     return _.range(start, end + 1)
   }
 
-  get lastPage() {
-    return this.data.totalPages
+  selectPage(page) {
+    if (page !== this.currentPage) {
+      this.$emit('pageSelected', page)
+    }
   }
 }
 </script>

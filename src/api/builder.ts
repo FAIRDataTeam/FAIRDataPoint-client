@@ -1,3 +1,4 @@
+import config from '@/config'
 import request from '@/api/request'
 
 function build(entity) {
@@ -20,6 +21,14 @@ function build(entity) {
 
     getSpec() {
       return request.get(`/${entity}/spec`, {
+        headers: {
+          Accept: 'text/turtle',
+        },
+      })
+    },
+
+    getChildren(id, child, page) {
+      return request.get(`/${entity}/${id}/page/${child}?page=${page}&size=${config.defaultPageSize}`, {
         headers: {
           Accept: 'text/turtle',
         },

@@ -73,8 +73,12 @@
           <item-list
             v-for="(itemList, index) in itemLists"
             :key="index"
+            :config="config"
+            :child-spec="itemList.childSpec"
+            :meta="meta"
+            :child-url-prefix="itemList.childUrlPrefix"
+            :entity-id="entityId"
             :title="itemList.title"
-            :items="itemList.items"
             :create-link="itemList.createLink"
             data-cy="item-list"
           />
@@ -171,12 +175,7 @@ export default class EntityView extends EntityBase {
       this.breadcrumbs = this.config.createBreadcrumbs(this.graph, this.entityId)
 
       if (this.config.hasChildren) {
-        this.itemLists = this.config.createChildrenLists(
-          this.graph,
-          this.meta,
-          this.canCreateChild,
-          this.entityId,
-        )
+        this.itemLists = this.config.createChildrenLists(this.canCreateChild, this.entityId)
       }
 
       this.status.setDone()

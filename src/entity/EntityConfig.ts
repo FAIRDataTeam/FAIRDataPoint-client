@@ -60,6 +60,10 @@ export class EntityConfig {
     return this.spec.children
   }
 
+  get entitySpec() {
+    return this.spec
+  }
+
   // API --
 
   protected buildApi(): any {
@@ -125,23 +129,40 @@ export class EntityConfig {
     return `/${this.spec.urlPrefix}/${entityId}/create-${this.getChildUrlPrefix(child)}`
   }
 
-  public createChildrenLists(graph: Graph, meta = null, canCreateChild = false, entityId = null) {
-    return this.spec.children.map(child => this.createChildrenList(
-      child, graph, meta, canCreateChild, entityId,
+  public createChildrenLists(canCreateChild = false, entityId = null) {
+    return this.spec.children.map(child => this.createChildrenListSpec(
+      child, canCreateChild, entityId,
     ))
   }
 
-  public createChildrenList(
+  private createChildrenListSpec(
     child: ChildSpec,
-    graph: Graph,
-    meta = null,
     canCreateChild = false,
     entityId = null,
   ) {
-    const children = graph.findAll($rdf.namedNode(child.relationUri), { value: false })
+    const childSpec = this.specs[child.resourceDefinitionUuid]
+
+    return {
+      title: child.listView.title,
+      childUrlPrefix: childSpec.urlPrefix,
+      childSpec: child,
+      createLink: canCreateChild ? this.createChildUrl(child, entityId) : null,
+    }
+  }
+
+  public createChildrenList(
+    entity: EntitySpec,
+    child: ChildSpec,
+    graph: Graph,
+    meta = null,
+  ) {
+    const typePredicate = $rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
+    const typeNode = $rdf.namedNode(_.first(entity.targetClassUris))
+
+    return graph.store.match(null, typePredicate, typeNode)
       .map((c) => {
-        const id = rdfUtils.pathTerm(_.get(c, 'value'))
-        const options = { subject: c }
+        const id = rdfUtils.pathTerm(_.get(c.subject, 'value'))
+        const options = { subject: c.subject }
 
         const tags = child.listView.tagsUri
           ? graph.findAll($rdf.namedNode(child.listView.tagsUri), options)
@@ -156,7 +177,7 @@ export class EntityConfig {
           : []
 
         const stateChildren = _.get(meta, 'state.children', {})
-        const prefix = stateChildren[c.value] === 'DRAFT' ? '[DRAFT] ' : ''
+        const prefix = stateChildren[c.subject.value] === 'DRAFT' ? '[DRAFT] ' : ''
 
         return {
           title: prefix + graph.findOne(DCT('title'), options),
@@ -169,13 +190,8 @@ export class EntityConfig {
           ].concat(extraMetadata),
         }
       })
-
-    return {
-      title: child.listView.title,
-      items: children,
-      createLink: canCreateChild ? this.createChildUrl(child, entityId) : null,
-    }
   }
+
 
   // BREADCRUMBS --
 

@@ -6,11 +6,13 @@ const isIndex = () => _.get(window, 'config.index', false)
 const persistentURL = () => _.get(window, 'config.persistentURL', apiURL)
 const dateFormat = 'DD-MM-Y'
 const dateTimeFormat = 'DD-MM-Y, HH:mm:ss'
+const defaultPageSize = 5
 
 export default {
   apiURL,
   dateFormat,
   dateTimeFormat,
+  defaultPageSize,
   isIndex,
   persistentURL,
   publicPath,
