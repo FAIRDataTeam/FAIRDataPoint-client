@@ -112,13 +112,15 @@ $link-hover-color: $color-primary-lighter;
 }
 
 .pagination {
+  .page-item.active {
+    .page-link {
+      z-index: 3;
+    }
+  }
+
   .page-link {
     &:focus {
       box-shadow: none !important;
-    }
-
-    svg {
-      width: 0.5em;
     }
   }
 }

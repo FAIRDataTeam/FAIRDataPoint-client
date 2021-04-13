@@ -66,8 +66,7 @@
               <input
                 id="shape-published"
                 v-model.trim="$v.shape.published.$model"
-                placeholder="Name"
-                name="name"
+                name="shape-published"
                 type="checkbox"
               >
               Published</label>

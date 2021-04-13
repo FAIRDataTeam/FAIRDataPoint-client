@@ -1,4 +1,5 @@
 import request from '../request'
+import config from '@/config'
 
 export default {
   get() {
@@ -19,6 +20,14 @@ export default {
 
   getSpec() {
     return request.get('/spec', {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
+  },
+
+  getChildren(_id, child, page) {
+    return request.get(`/page/${child}?page=${page}&size=${config.defaultPageSize}`, {
       headers: {
         Accept: 'text/turtle',
       },
