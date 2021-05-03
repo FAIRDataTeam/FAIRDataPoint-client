@@ -58,9 +58,8 @@ import rdfUtils from '@/rdf/utils'
 import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
 import StatusFlash from '@/components/StatusFlash/index.vue'
-import ItemList from '@/components/ItemList/index.vue'
 
-@Component({ components: { ItemList, Page, StatusFlash } })
+@Component({ components: { Page, StatusFlash } })
 export default class SearchResults extends Vue {
   query: string = null
 

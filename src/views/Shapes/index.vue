@@ -11,6 +11,11 @@
         >
           + Create shape
         </router-link>
+        <router-link
+          to="/shapes/import"
+        >
+          Import shapes
+        </router-link>
       </template>
       <template v-slot:content>
         <status-flash :status="status" />
@@ -33,6 +38,13 @@
                   variant="light"
                 >
                   Internal
+                </b-badge>
+                <b-badge
+                  v-if="shape.published"
+                  pill
+                  variant="info"
+                >
+                  Published
                 </b-badge>
               </router-link>
             </template>

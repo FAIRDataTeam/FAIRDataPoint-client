@@ -119,9 +119,9 @@
             </tbody>
           </table>
           <pagination
-            :data="data"
-            :base-url="`/?state=${filter}&sort=${sort}`"
-            :current-page="page"
+            :current-page="page - 1"
+            :last-page="data.totalPages"
+            @pageSelected="openPage"
           />
         </template>
       </template>
@@ -189,6 +189,10 @@ export default class Index extends Vue {
 
   badgeClass(state) {
     return stateClass(state)
+  }
+
+  openPage(page) {
+    this.$router.push(`/?state=${this.filter}&sort=${this.sort}&page=${page + 1}`)
   }
 
   @Watch('$route')
