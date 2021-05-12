@@ -30,7 +30,6 @@
               v-model.trim="$v.shape.name.$model"
               placeholder="Name"
               name="name"
-              :readonly="!editable"
             >
             <p
               v-if="!$v.shape.name.required"
@@ -48,7 +47,6 @@
               id="shape-definition"
               v-model="$v.shape.definition.$model"
               language="turtle"
-              :readonly="!editable"
             />
             <p
               v-if="!$v.shape.definition.required"
@@ -58,7 +56,7 @@
             </p>
           </div>
           <div
-            v-if="editable"
+            v-if="!internal"
             class="form__group"
             :class="{'form__group--error': $v.shape.published.$error}"
           >
@@ -77,7 +75,15 @@
               Field is required
             </p>
           </div>
-          <div v-if="editable">
+          <div
+            v-if="internal"
+            class="status-flash__alert status-flash__alert--danger mb-4"
+          >
+            You are editing an internal shape. This action might break the FDP.
+            <br>
+            Make sure you know what you are doing before saving.
+          </div>
+          <div>
             <button
               class="btn btn-primary btn-rounded"
               :disabled="status.isPending()"
@@ -123,7 +129,7 @@ export default {
     return {
       title: null,
       shape: null,
-      editable: false,
+      internal: false,
       shapeForm: {
         name: null,
         definition: null,
@@ -153,7 +159,7 @@ export default {
 
         const response = await api.shapes.getShape(this.$route.params.id)
         this.shape = response.data
-        this.editable = this.shape.type === 'CUSTOM'
+        this.internal = this.shape.type === 'INTERNAL'
         this.setTitle()
         this.status.setDone()
       } catch (error) {

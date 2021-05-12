@@ -50,7 +50,6 @@
             </template>
             <template v-slot:actions>
               <b-dropdown
-                v-if="shape.type === 'CUSTOM'"
                 text="Actions"
                 right
                 variant="link"
@@ -65,8 +64,9 @@
                   <fa :icon="['fas', 'edit']" />
                   Edit shape
                 </b-dropdown-item>
-                <b-dropdown-divider />
+                <b-dropdown-divider v-if="shape.type === 'CUSTOM'" />
                 <b-dropdown-item
+                  v-if="shape.type === 'CUSTOM'"
                   class="dropdown-item-danger"
                   @click.prevent="deleteShape(shape)"
                 >
