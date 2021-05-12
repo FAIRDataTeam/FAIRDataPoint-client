@@ -69,20 +69,36 @@
         <p class="description">
           {{ entity.description }}
         </p>
-        <template v-if="itemLists !== null">
-          <item-list
+        <ul
+          v-if="itemLists && itemLists.length > 1"
+          class="nav nav-tabs item-list-nav"
+        >
+          <li
             v-for="(itemList, index) in itemLists"
-            :key="index"
-            :config="config"
-            :child-spec="itemList.childSpec"
-            :meta="meta"
-            :child-url-prefix="itemList.childUrlPrefix"
-            :entity-id="entityId"
-            :title="itemList.title"
-            :create-link="itemList.createLink"
-            data-cy="item-list"
-          />
-        </template>
+            :key="`item-menu-${index}`"
+            class="nav-item"
+          >
+            <a
+              class="nav-link"
+              :class="{'active': activeItemList == itemList}"
+              @click.prevent="setActiveItemList(itemList)"
+            >
+              {{ itemList.title }}
+            </a>
+          </li>
+        </ul>
+        <item-list
+          v-if="activeItemList"
+          :key="activeItemList.childUrlPrefix"
+          :config="config"
+          :child-spec="activeItemList.childSpec"
+          :meta="meta"
+          :child-url-prefix="activeItemList.childUrlPrefix"
+          :entity-id="entityId"
+          :title="activeItemList.title"
+          :create-link="activeItemList.createLink"
+          data-cy="item-list"
+        />
       </template>
     </page>
   </div>
@@ -120,6 +136,8 @@ export default class EntityView extends EntityBase {
 
   itemLists: any = null
 
+  activeItemList: any = null
+
   meta: any = null
 
   metadata: any = null
@@ -152,9 +170,14 @@ export default class EntityView extends EntityBase {
     return _.endsWith('/', path) ? `${path}${action}` : `${path}/${action}`
   }
 
+  setActiveItemList(itemList) {
+    this.activeItemList = itemList
+  }
+
   reset() {
     this.metadata = null
     this.itemLists = null
+    this.activeItemList = null
     this.meta = null
     this.extraLinks = []
     this.createLink = null
@@ -176,6 +199,7 @@ export default class EntityView extends EntityBase {
 
       if (this.config.hasChildren) {
         this.itemLists = this.config.createChildrenLists(this.canCreateChild, this.entityId)
+        this.activeItemList = _.first(this.itemLists)
       }
 
       this.status.setDone()
