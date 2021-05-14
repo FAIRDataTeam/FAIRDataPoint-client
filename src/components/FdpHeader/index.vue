@@ -69,6 +69,13 @@
                 <fa :icon="['fas', 'shapes']" />
                 SHACL shapes
               </b-dropdown-item>
+              <b-dropdown-item
+                v-if="!isIndex"
+                @click="$router.push('/reset-to-defaults')"
+              >
+                <fa :icon="['fas', 'trash']" />
+                Reset to defaults
+              </b-dropdown-item>
               <b-dropdown-divider />
             </template>
             <b-dropdown-header data-cy="user-menu-user">
