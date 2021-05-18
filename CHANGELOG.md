@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.10.0]
+
+### Added
+
+- Reset to defaults
+- Metadata children separated by type
+- Default shapes changing allowed
+
+
 ## [1.9.0]
 
 ### Added
@@ -172,3 +181,5 @@ Initial version of client application for [FAIR Data Point] providing user inter
 [1.6.0]: /../../tree/v1.6.0
 [1.7.0]: /../../tree/v1.7.0
 [1.8.0]: /../../tree/v1.8.0
+[1.9.0]: /../../tree/v1.9.0
+[1.10.0]: /../../tree/v1.10.0
