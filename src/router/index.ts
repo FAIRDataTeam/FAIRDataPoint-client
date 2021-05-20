@@ -12,6 +12,7 @@ import EntityCreatePage from '@/views/EntityCreatePage/index.vue'
 import EntityViewPage from '@/views/EntityViewPage/index.vue'
 import EntityEditPage from '@/views/EntityEditPage/index.vue'
 import EntitySettingsPage from '@/views/EntitySettingsPage/index.vue'
+import ResetToDefaults from '@/views/ResetToDefaults/index.vue'
 import ResourceDefinitions from '@/views/ResourceDefinitions/index.vue'
 import ResourceDefinitionDetail from '@/views/ResourceDefinitionDetail/index.vue'
 import Shapes from '@/views/Shapes/index.vue'
@@ -53,6 +54,7 @@ export function createRouter(store) {
     { path: '/users/create', component: UserCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/users/current', component: UserDetail, meta: { requiresAuth: true } },
     { path: '/users/:id', component: UserDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/reset-to-defaults', component: ResetToDefaults, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/resource-definitions', component: ResourceDefinitions, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/resource-definitions/create', component: ResourceDefinitionDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/resource-definitions/:uuid', component: ResourceDefinitionDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },

@@ -5,6 +5,7 @@ import fdpIndex from './fdpIndex'
 import info from './info'
 import repository from './repository'
 import memberships from './memberships'
+import reset from './reset'
 import resourceDefinition from './resourceDefinitions'
 import search from './search'
 import shapes from './shapes'
@@ -19,6 +20,7 @@ export default {
   info,
   memberships,
   repository,
+  reset,
   resourceDefinition,
   search,
   shapes,
