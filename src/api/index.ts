@@ -3,6 +3,7 @@ import builder from './builder'
 import configs from './configs'
 import fdpIndex from './fdpIndex'
 import info from './info'
+import label from './label'
 import repository from './repository'
 import memberships from './memberships'
 import reset from './reset'
@@ -18,6 +19,7 @@ export default {
   configs,
   fdpIndex,
   info,
+  label,
   memberships,
   repository,
   reset,
