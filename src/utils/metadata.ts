@@ -100,7 +100,7 @@ function getShaclValue(graph: Graph, fieldConfig) {
   }
 
   const values = graph.findAll($rdf.namedNode(fieldConfig.path))
-  return values.map(v => wrapShaclValue(fieldConfig, v))
+  return values.map(v => wrapShaclValue(fieldConfig, v)).filter(v => v !== null)
 }
 
 
