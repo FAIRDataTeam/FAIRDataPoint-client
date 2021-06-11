@@ -85,6 +85,7 @@ export default class EntityMetadata extends Vue {
   viewAll = []
 
   get filteredMetadata() {
+    if (!this.metadata) return []
     return this.metadata.filter(data => !data.items || data.items.length > 0)
   }
 
