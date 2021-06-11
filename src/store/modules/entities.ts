@@ -15,6 +15,9 @@ export function createEntitiesModule(entityConfigs) {
       parentConfig: state => entity => getConfigFor(
         state, _.get(getConfigFor(state, entity), 'parentEntity'),
       ),
+      configByUuid: state => uuid => Object.values(state.entityConfigs).reduce(
+        (cfg, acc) => (_.get(cfg, 'uuid') === uuid ? cfg : acc),
+      ),
     },
   }
 }

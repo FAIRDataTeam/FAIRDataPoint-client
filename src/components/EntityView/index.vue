@@ -190,7 +190,6 @@ export default class EntityView extends EntityBase {
       const [entity, spec, meta] = await this.loadData()
 
       this.buildGraph(entity.data)
-
       this.shape = parseSHACLView(spec.data, this.config.targetClasses)
       this.meta = meta.data
       this.metadata = this.createMetadata()
