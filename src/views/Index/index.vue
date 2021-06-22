@@ -120,7 +120,7 @@
           </table>
           <pagination
             :current-page="page - 1"
-            :last-page="data.totalPages"
+            :last-page="data.totalPages - 1"
             @pageSelected="openPage"
           />
         </template>

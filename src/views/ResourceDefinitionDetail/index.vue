@@ -419,7 +419,7 @@ export default {
       resourceDefinition: {
         name: null,
         urlPrefix: null,
-        targetClassUris: [],
+        shapeUuids: [],
         children: [],
         externalLinks: [],
       },
