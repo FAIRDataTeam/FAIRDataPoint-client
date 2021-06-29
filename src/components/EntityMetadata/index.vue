@@ -27,13 +27,11 @@
               v-for="(item, itemIndex) in viewItems(index, data.items)"
               :key="itemIndex"
             >
-              <a
+              <rdf-link
                 v-if="item.uri"
-                :href="item.uri"
-                target="_blank"
-              >
-                {{ item.label }}
-              </a>
+                :uri="item.uri"
+                :label="item.label"
+              />
               <template v-else>
                 {{ item.label }}
               </template>
@@ -57,13 +55,11 @@
           </a>
         </template>
         <template v-else>
-          <a
+          <rdf-link
             v-if="data.uri"
-            :href="data.uri"
-            target="_blank"
-          >
-            {{ data.value }}
-          </a>
+            :uri="data.uri"
+            :label="data.value"
+          />
           <template v-else>
             {{ data.value }}
           </template>
@@ -76,8 +72,9 @@
 
 import _ from 'lodash'
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import RdfLink from '@/components/RdfLink/index.vue'
 
-@Component
+@Component({ components: { RdfLink } })
 export default class EntityMetadata extends Vue {
   @Prop({ type: Array, default: [] })
   readonly metadata: Array<any>
@@ -85,6 +82,7 @@ export default class EntityMetadata extends Vue {
   viewAll = []
 
   get filteredMetadata() {
+    if (!this.metadata) return []
     return this.metadata.filter(data => !data.items || data.items.length > 0)
   }
 

@@ -59,7 +59,7 @@
               :disabled="isEdit"
             >
             <p
-              v-if="!$v.resourceDefinition.targetClassUris.uniqueness"
+              v-if="!$v.resourceDefinition.urlPrefix.uniqueness"
               class="invalid-feedback"
             >
               This URL Prefix is already used
@@ -68,50 +68,48 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.resourceDefinition.targetClassUris.$error}"
+            :class="{'form__group--error': $v.resourceDefinition.shapeUuids.$error}"
           >
             <label
               for="urlPrefix"
               class="required"
             >
-              Target Class URIs
+              Shapes
             </label>
             <ul>
               <li
-                v-for="(v, index) in $v.resourceDefinition.targetClassUris.$each.$iter"
+                v-for="(v, index) in $v.resourceDefinition.shapeUuids.$each.$iter"
                 :key="`target-class-${index}`"
                 data-cy="target-class"
               >
                 <div class="d-flex align-items-start">
                   <div
-                    class="form-group flex-grow-1"
-                    :class="{'form__group--error': v.uri.$error}"
+                    class="form__group flex-grow-1"
+                    :class="{'form__group--error': v.uuid.$error}"
                   >
-                    <input
-                      v-model.trim="v.uri.$model"
-                      placeholder="Target Class URI"
-                      :name="`targetClass.${index}.uri`"
-                      class="input-field"
-                      :disabled="isEdit"
+                    <select
+                      v-model="resourceDefinition.shapeUuids[index].uuid"
+                      :name="`shapeUuids.${index}.uuid`"
                     >
+                      <option
+                        v-for="shape in shapeOptions"
+                        :key="shape.key"
+                        :value="shape.key"
+                      >
+                        {{ shape.value }}
+                      </option>
+                    </select>
                     <p
-                      v-if="!v.uri.required"
+                      v-if="!v.uuid.required"
                       class="invalid-feedback"
                     >
                       Field cannot be empty
                     </p>
-                    <p
-                      v-if="!v.uri.url"
-                      class="invalid-feedback"
-                    >
-                      Field should be a valid IRI
-                    </p>
                   </div>
                   <a
-                    v-if="!isEdit"
                     class="text-danger ml-3 p-1"
-                    :data-cy="`targetClass.${index}.remove`"
-                    @click.prevent="removeTargetClassUri(index)"
+                    :data-cy="`shapeUuids.${index}.remove`"
+                    @click.prevent="removeShapeUuid(index)"
                   >
                     <fa :icon="['fas', 'times']" />
                   </a>
@@ -119,16 +117,15 @@
               </li>
             </ul>
             <p
-              v-if="!$v.resourceDefinition.targetClassUris.required"
+              v-if="!$v.resourceDefinition.shapeUuids.required"
               class="invalid-feedback"
             >
-              You should specify at least one target class
+              You should specify at least one shape
             </p>
             <button
-              v-if="!isEdit"
               class="btn btn-link"
-              data-cy="add-target-class"
-              @click.prevent="addTargetClassUri()"
+              data-cy="add-shape"
+              @click.prevent="addShapeUuid()"
             >
               <fa :icon="['fas', 'plus']" />
               Add
@@ -399,6 +396,7 @@
 </template>
 <script lang="ts">
 import { required, url } from 'vuelidate/lib/validators'
+import axios from 'axios'
 import _ from 'lodash'
 import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
@@ -421,7 +419,7 @@ export default {
       resourceDefinition: {
         name: null,
         urlPrefix: null,
-        targetClassUris: [],
+        shapeUuids: [],
         children: [],
         externalLinks: [],
       },
@@ -460,9 +458,11 @@ export default {
             return !(code === 'Uniqueness' && rejectedValue === value)
           },
         },
-        targetClassUris: {
+        shapeUuids: {
           required,
-          $each: { uri: { required, url } },
+          $each: {
+            uuid: { required },
+          },
         },
         children: {
           $each: {
@@ -502,14 +502,19 @@ export default {
     async fetchData() {
       try {
         this.status.setPending()
-        const response = await api.resourceDefinition.getResourceDefinitions()
-        this.resourceOptions = _.orderBy(response.data, ['name'], ['asc'])
-          .map(shape => ({ key: shape.uuid, value: shape.name }))
+        const [resourceDefinitions, shapes] = await this.loadData()
+
+        this.resourceOptions = _.orderBy(resourceDefinitions.data, ['name'], ['asc'])
+          .map(resource => ({ key: resource.uuid, value: resource.name }))
         this.resourceOptions.unshift({ key: null, value: '- select -' })
+
+        this.shapeOptions = _.orderBy(shapes.data, ['name'], ['asc'])
+          .map(shape => ({ key: shape.uuid, value: shape.name }))
+        this.shapeOptions.unshift({ key: null, value: '- select -' })
 
         if (this.isEdit) {
           const resourceDefinition = _.first(
-            response.data.filter(r => r.uuid === this.$route.params.uuid),
+            resourceDefinitions.data.filter(r => r.uuid === this.$route.params.uuid),
           )
           if (resourceDefinition) {
             this.resourceDefinition = this.requestDataToFormData(resourceDefinition)
@@ -521,6 +526,13 @@ export default {
       } catch (error) {
         this.status.setError('Unable to get shapes')
       }
+    },
+
+    async loadData() {
+      return axios.all([
+        api.resourceDefinition.getResourceDefinitions(),
+        api.shapes.getShapes(),
+      ])
     },
 
     async submit() {
@@ -552,13 +564,13 @@ export default {
 
     formDataToRequestData(formData) {
       const data = { ...formData }
-      data.targetClassUris = formData.targetClassUris.map(u => u.uri)
+      data.shapeUuids = _.uniq(formData.shapeUuids.map(u => u.uuid))
       return data
     },
 
     requestDataToFormData(requestData) {
       const formData = { ...requestData }
-      formData.targetClassUris = requestData.targetClassUris.map(uri => ({ uri }))
+      formData.shapeUuids = requestData.shapeUuids.map(uuid => ({ uuid }))
       return formData
     },
 
@@ -578,12 +590,12 @@ export default {
       this.resourceDefinition.children.splice(index, 1)
     },
 
-    addTargetClassUri() {
-      this.resourceDefinition.targetClassUris.push({ uri: null })
+    addShapeUuid() {
+      this.resourceDefinition.shapeUuids.push({ uuid: null })
     },
 
-    removeTargetClassUri(index) {
-      this.resourceDefinition.targetClassUris.splice(index, 1)
+    removeShapeUuid(index) {
+      this.resourceDefinition.shapeUuids.splice(index, 1)
     },
 
     addMetadata(childIndex) {

@@ -14,6 +14,12 @@
         Create
       </router-link>
     </div>
+    <div
+      v-if="status.isError()"
+      class="status-flash__alert status-flash__alert--danger"
+    >
+      {{ status.message }}
+    </div>
     <div v-if="status.isDefault()">
       <div
         v-if="items.length === 0"
@@ -128,8 +134,10 @@ export default class ItemList extends Vue {
       this.prevPage = parsePage('prev')
       this.nextPage = parsePage('next')
 
+
+      const childEntityConfig = this.$store.getters['entities/configByUuid'](this.childSpec.resourceDefinitionUuid)
       this.items = this.config.createChildrenList(
-        this.config.entitySpec, this.childSpec, graph, this.meta,
+        childEntityConfig.spec, this.childSpec, graph, this.meta,
       )
 
       this.status.setDone()

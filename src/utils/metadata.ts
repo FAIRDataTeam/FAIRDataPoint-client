@@ -2,7 +2,9 @@ import _ from 'lodash'
 import * as $rdf from 'rdflib'
 import moment from 'moment'
 import Graph from '@/rdf/Graph'
-import { DASH, FDPO, XSD } from '@/rdf/namespaces'
+import {
+  DASH, DCT, FDPO, RDFS, XSD,
+} from '@/rdf/namespaces'
 import rdfUtils from '@/rdf/utils'
 import config from '@/config'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
@@ -67,10 +69,20 @@ function itemFromPath(path) {
 
 
 function commonMetadata(graph: Graph) {
-  return [
+  const metadata = [
     dateField('Metadata Issued', graph.findOne(FDPO('metadataIssued')), { sm: true }),
     dateField('Metadata Modified', graph.findOne(FDPO('metadataModified')), { sm: true }),
   ]
+
+  const conformsTo = graph.findOne(DCT('conformsTo'))
+  if (conformsTo) {
+    const conformsToLabel = graph.findOne(RDFS('label'), {
+      subject: $rdf.namedNode(`${conformsTo}`),
+    })
+
+    metadata.push(field('Conforms to', { label: conformsToLabel, uri: conformsTo }))
+  }
+  return metadata
 }
 
 
@@ -100,7 +112,7 @@ function getShaclValue(graph: Graph, fieldConfig) {
   }
 
   const values = graph.findAll($rdf.namedNode(fieldConfig.path))
-  return values.map(v => wrapShaclValue(fieldConfig, v))
+  return values.map(v => wrapShaclValue(fieldConfig, v)).filter(v => v !== null)
 }
 
 
