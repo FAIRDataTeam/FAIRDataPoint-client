@@ -13,7 +13,12 @@ export type FormData = {
 export type FormDataValue = FormData | $rdf.NamedNode | string
 
 
-export function fromRdf(form: FormShape, subject: $rdf.Node, rdf: $rdf.IndexedFormula): FormData {
+export function fromRdf(
+  form: FormShape,
+  subject: $rdf.Node,
+  rdf: $rdf.IndexedFormula,
+  defaults = false,
+): FormData {
   const data = {}
   form.fields.forEach((field) => {
     const statements = rdf.match(subject, $rdf.namedNode(field.path), null, null)
@@ -21,7 +26,7 @@ export function fromRdf(form: FormShape, subject: $rdf.Node, rdf: $rdf.IndexedFo
       data[field.path] = []
       statements.forEach((statement) => {
         if (field.nodeShape) {
-          data[field.path].push(fromRdf(field.nodeShape, statement.object, rdf))
+          data[field.path].push(fromRdf(field.nodeShape, statement.object, rdf, defaults))
         } else if (fieldUtils.isIRI(field)) {
           try {
             data[field.path].push($rdf.namedNode(statement.object.value))
@@ -38,6 +43,24 @@ export function fromRdf(form: FormShape, subject: $rdf.Node, rdf: $rdf.IndexedFo
           data[field.path].push(statement.object.value)
         }
       })
+    } else if (defaults && field.defaultValue) {
+      if (fieldUtils.isIRI(field)) {
+        try {
+          data[field.path] = [$rdf.namedNode(field.defaultValue)]
+        } catch {
+          // nothing to do
+        }
+      } else if (fieldUtils.isDatetime(field)) {
+        try {
+          data[field.path] = [new Date(field.defaultValue)]
+        } catch {
+          // nothing to do
+        }
+      } else {
+        data[field.path] = [field.defaultValue]
+      }
+    } else if (defaults && field.nodeShape) {
+      data[field.path] = [fromRdf(field.nodeShape, $rdf.blankNode(''), rdf, defaults)]
     }
   })
   return { subject, data }
@@ -49,7 +72,7 @@ function isFormData(value: object): value is FormData {
 }
 
 
-function createQuads(data: FormData, originalRdf : $rdf.IndexedFormula): $rdf.Statement[] {
+function createQuads(data: FormData, originalRdf: $rdf.IndexedFormula): $rdf.Statement[] {
   // Add RDF type statements only if they are not present in original RDF
   const targetClasses = _.get(data, 'targetClasses', [])
     .filter(tc => originalRdf.statementsMatching(data.subject, RDF('type'), tc).length === 0)

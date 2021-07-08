@@ -86,6 +86,9 @@ export default class ShaclForm extends Vue {
   @Prop({ required: true })
   readonly submitStatus: Status
 
+  @Prop({ required: false, default: false })
+  readonly fillDefaults: boolean
+
   form: FormShape
 
   data: any = {
@@ -103,7 +106,12 @@ export default class ShaclForm extends Vue {
     try {
       const parser = new SHACLFormParser(this.shacl)
       this.form = parser.parse(this.targetClasses)
-      this.data = formData.fromRdf(this.form, $rdf.namedNode(this.subject), this.rdf)
+      this.data = formData.fromRdf(
+        this.form,
+        $rdf.namedNode(this.subject),
+        this.rdf,
+        this.fillDefaults,
+      )
       this.status.setDone()
     } catch (error) {
       this.status.setError('The form configuration is not valid.')
