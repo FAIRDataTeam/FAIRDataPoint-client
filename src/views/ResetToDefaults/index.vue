@@ -46,6 +46,18 @@
               Delete all existing resource definitions and SHACL shapes and create the default ones.
             </p>
           </div>
+          <div class="form__group">
+            <label for="settings">
+              <input
+                id="settings"
+                v-model="reset.settings"
+                type="checkbox"
+              > <strong>Settings</strong>
+            </label>
+            <p>
+              Reset all settings options to the default values.
+            </p>
+          </div>
           <div>
             <button
               class="btn btn-primary btn-danger btn-rounded"
@@ -72,12 +84,14 @@ export default class ResetToDefaults extends Vue {
     users: false,
     metadata: false,
     resourceDefinitions: false,
+    settings: false,
   }
 
   status: Status = new Status()
 
   get anySelected() {
     return this.reset.users || this.reset.metadata || this.reset.resourceDefinitions
+      || this.reset.settings
   }
 
   async submit() {

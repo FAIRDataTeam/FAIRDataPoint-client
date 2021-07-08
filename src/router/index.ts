@@ -25,6 +25,7 @@ import config from '@/config'
 import SearchResults from '@/views/SearchResults/index.vue'
 import IndexSettings from '@/views/IndexSettings/index.vue'
 import IndexPing from '@/views/IndexPing/index.vue'
+import FdpSettings from '@/views/FdpSettings/index.vue'
 
 Vue.use(VueRouter)
 
@@ -63,6 +64,7 @@ export function createRouter(store) {
     { path: '/shapes/import', component: ShapesImport, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/shapes/:id', component: ShapeDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/api-keys', component: ApiKeys, meta: { requiresAuth: true } },
+    { path: '/settings', component: FdpSettings, meta: { requiresAuth: true } },
     { path: '/:entity/:id', component: EntityViewPage },
     { path: '/:entity/:id/edit', component: EntityEditPage, meta: { requiresAuth: true } },
     { path: '/:entity/:id/settings', component: EntitySettingsPage, meta: { requiresAuth: true } },
