@@ -21,6 +21,7 @@
           :subject="subject"
           :validation-report="validationReport"
           :submit-status="submitStatus"
+          :fill-defaults="true"
           @submit="onSubmit"
         />
       </template>
