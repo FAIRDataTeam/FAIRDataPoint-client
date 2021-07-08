@@ -9,6 +9,7 @@ import memberships from './memberships'
 import reset from './reset'
 import resourceDefinition from './resourceDefinitions'
 import search from './search'
+import settings from './settings'
 import shapes from './shapes'
 import tokens from './tokens'
 import users from './users'
@@ -25,6 +26,7 @@ export default {
   reset,
   resourceDefinition,
   search,
+  settings,
   shapes,
   tokens,
   users,

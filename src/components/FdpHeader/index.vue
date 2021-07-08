@@ -49,13 +49,6 @@
                 Trigger ping
               </b-dropdown-item>
               <b-dropdown-item
-                v-if="isIndex"
-                @click="$router.push('/settings')"
-              >
-                <fa :icon="['fas', 'cogs']" />
-                Settings
-              </b-dropdown-item>
-              <b-dropdown-item
                 v-if="!isIndex"
                 @click="$router.push('/resource-definitions')"
               >
@@ -68,6 +61,12 @@
               >
                 <fa :icon="['fas', 'shapes']" />
                 SHACL shapes
+              </b-dropdown-item>
+              <b-dropdown-item
+                @click="$router.push('/settings')"
+              >
+                <fa :icon="['fas', 'cogs']" />
+                Settings
               </b-dropdown-item>
               <b-dropdown-item
                 v-if="!isIndex"
