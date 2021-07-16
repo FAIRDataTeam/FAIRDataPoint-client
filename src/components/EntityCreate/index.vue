@@ -80,13 +80,16 @@ export default class EntityCreate extends EntityBase {
     try {
       this.status.setPending()
 
-      const [spec, parent, meta] = await this.loadData()
+      const [spec, meta] = await this.loadData()
 
       if (this.isAdmin || this.parentConfig.canCreateChild(this.isAuthenticated, meta.data)) {
         this.shacl = spec.data
         this.graph = new Graph('', this.subject)
         this.graph.store.add($rdf.namedNode(this.subject), DCT('isPartOf'), $rdf.namedNode(this.isPartOf), null)
-        this.createBreadcrumbs(parent.data)
+        this.breadcrumbs = this.parentConfig.createBreadcrumbsWithSelf(
+          meta.data.path,
+          this.parentConfig.subject(this.entityId),
+        )
         this.status.setDone()
       } else {
         await this.$router.replace(this.parentConfig.toUrl(this.entityId))
@@ -99,14 +102,8 @@ export default class EntityCreate extends EntityBase {
   async loadData() {
     return axios.all([
       this.config.api.getSpec(),
-      this.parentConfig.api.getExpanded(this.entityId),
       this.parentConfig.api.getMeta(this.entityId),
     ])
-  }
-
-  createBreadcrumbs(data) {
-    const graph = new Graph(data, this.isPartOf)
-    this.breadcrumbs = this.parentConfig.createBreadcrumbsWithSelf(graph, this.entityId)
   }
 
   async onSubmit(turtle: string): Promise<void> {
