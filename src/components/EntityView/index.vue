@@ -194,7 +194,7 @@ export default class EntityView extends EntityBase {
       this.meta = meta.data
       this.metadata = this.createMetadata()
       this.extraLinks = this.config.getLinks(this.graph)
-      this.breadcrumbs = this.config.createBreadcrumbs(this.graph, this.entityId)
+      this.breadcrumbs = this.config.createBreadcrumbs(this.meta.path, this.subject)
 
       if (this.config.hasChildren) {
         this.itemLists = this.config.createChildrenLists(this.canCreateChild, this.entityId)
@@ -209,16 +209,10 @@ export default class EntityView extends EntityBase {
 
   async loadData() {
     return axios.all([
-      this.config.api.getExpanded(this.entityId),
+      this.config.api.get(this.entityId),
       this.config.api.getSpec(),
-      this.getMeta(),
+      this.config.api.getMeta(this.entityId),
     ])
-  }
-
-  getMeta() {
-    return this.isAuthenticated
-      ? this.config.api.getMeta(this.entityId)
-      : Promise.resolve({ data: {} })
   }
 
   createMetadata() {
