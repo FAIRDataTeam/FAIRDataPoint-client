@@ -195,45 +195,25 @@ export class EntityConfig {
 
   // BREADCRUMBS --
 
-  public createBreadcrumbsWithSelf(graph: Graph, entityId) {
-    return [
-      ...this.createBreadcrumbs(graph, entityId),
-      breadcrumbs.createItem(
-        graph.findOne(DCT('title')) as string,
-        this.toUrl(entityId),
-      ),
-    ]
+  public createBreadcrumbsWithSelf(path, entityIri: string) {
+    return this.buildBreadcrumbs(path, entityIri)
   }
 
-  public createBreadcrumbs(graph: Graph, entityId: string) {
-    const buildBreadcrumbs = (spec, subject) => {
-      if (!spec) {
-        return []
-      }
-
-      const parent = graph.findOne(DCT('isPartOf'), { value: false, subject })
-      const title = graph.findOne(DCT('title'), { subject: parent }) as string
-      const parentId = rdfUtils.pathTerm(_.get(parent, 'value'))
-      const parentUrl = this.createUrl(spec.urlPrefix, parentId)
-      const item = breadcrumbs.createItem(title, parentUrl)
-
-      const parentSpec = this.getParentOf(spec.uuid)
-      return buildBreadcrumbs(parentSpec, parent).concat([item])
-    }
-
-    return buildBreadcrumbs(
-      this.getParentOf(this.spec.uuid),
-      $rdf.namedNode(this.subject(entityId)),
-    )
+  public createBreadcrumbs(path, entityIri: string) {
+    return this.buildBreadcrumbs(path, _.get(path[entityIri], 'parent'))
   }
 
-  getParentOf(specUuid: string): EntitySpec {
-    return Object.values<EntitySpec>(this.specs).reduce((parentSpec, spec) => {
-      if (spec.children.some(child => child.resourceDefinitionUuid === specUuid)) {
-        return spec
-      }
-      return parentSpec
-    }, null)
+  buildBreadcrumbs(path, iri) {
+    if (!iri) return []
+
+    const pathItem = _.get(path, iri)
+    const spec = _.get(this.specs, pathItem.resourceDefinitionUuid)
+
+    const id = rdfUtils.pathTerm(iri)
+    const url = this.createUrl(spec.urlPrefix, id)
+    const item = breadcrumbs.createItem(pathItem.title, url)
+
+    return this.buildBreadcrumbs(path, pathItem.parent).concat([item])
   }
 
   createUrl(urlPrefix, entityId) {

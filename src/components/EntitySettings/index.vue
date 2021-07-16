@@ -151,14 +151,14 @@ export default class EntitySettings extends EntityBase {
   async fetchData(): Promise<void> {
     try {
       this.status.setPending()
-      const [entity, members, users, memberships] = await this.loadData()
+      const [entity, meta, members, users, memberships] = await this.loadData()
 
       this.buildGraph(entity.data)
       this.members = _.orderBy(members.data, ['user.firstName', 'user.lastName'], ['asc'])
       this.users = this.createUsers(users.data, this.members)
       this.memberships = this.createMemberships(memberships.data)
       this.inviteForm.membershipUuid = _.get(this.memberships, '0.uuid')
-      this.breadcrumbs = this.config.createBreadcrumbsWithSelf(this.graph, this.entityId)
+      this.breadcrumbs = this.config.createBreadcrumbsWithSelf(meta.data.path, this.subject)
       this.status.setDone()
     } catch (error) {
       if (_.get(error, 'response.status') === 403) {
@@ -171,7 +171,8 @@ export default class EntitySettings extends EntityBase {
 
   async loadData() {
     return axios.all([
-      this.config.api.getExpanded(this.entityId),
+      this.config.api.get(this.entityId),
+      this.config.api.getMeta(this.entityId),
       this.config.api.getMembers(this.entityId),
       api.users.getUsers(),
       api.memberships.getMemberships(),
