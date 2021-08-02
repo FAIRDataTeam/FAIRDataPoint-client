@@ -74,13 +74,19 @@ function commonMetadata(graph: Graph) {
     dateField('Metadata Modified', graph.findOne(FDPO('metadataModified')), { sm: true }),
   ]
 
-  const conformsTo = graph.findOne(DCT('conformsTo'))
-  if (conformsTo) {
-    const conformsToLabel = graph.findOne(RDFS('label'), {
-      subject: $rdf.namedNode(`${conformsTo}`),
-    })
+  const conformsTo = graph.findAll(DCT('conformsTo'))
+  if (conformsTo.length > 0) {
+    const data = conformsTo.map((uri) => {
+      const label = graph.findOne(RDFS('label'), {
+        subject: $rdf.namedNode(`${uri}`),
+      })
 
-    metadata.push(field('Conforms to', { label: conformsToLabel, uri: conformsTo }))
+      return {
+        label: label || rdfUtils.pathTerm(`${uri}`),
+        uri,
+      }
+    })
+    metadata.push(field('Conforms to', data))
   }
   return metadata
 }
