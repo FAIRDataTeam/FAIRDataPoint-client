@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.12.0]
+
+### Added
+
+- FDP settings
+- SHACL default values
+
+### Fixed
+
+- Multiple children with the same child relation
+- Multiple conformsTo
 
 ## [1.11.0]
 
@@ -20,7 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Metadata with empty keywords
 - Pagination in index
-
 
 ## [1.10.0]
 
@@ -199,3 +209,4 @@ Initial version of client application for [FAIR Data Point] providing user inter
 [1.9.0]: /../../tree/v1.9.0
 [1.10.0]: /../../tree/v1.10.0
 [1.11.0]: /../../tree/v1.11.0
+[1.12.0]: /../../tree/v1.12.0
