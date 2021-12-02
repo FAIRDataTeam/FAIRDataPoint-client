@@ -17,6 +17,8 @@ $color-separator: #DCDCDC !default;
 $color-danger: #900 !default;
 $color-danger-lighter: lighten($color-danger, 10%) !default;
 $color-danger-light: lighten($color-danger, 65%) !default;
+$color-warning: #856404 !default;
+$color-warning-light: lighten($color-warning, 65%) !default;
 $color-success: #090 !default;
 $color-success-light: lighten($color-success, 65%) !default;
 
