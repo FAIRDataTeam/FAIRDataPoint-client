@@ -7,10 +7,11 @@ import EntitySettingsPage from '@/views/EntitySettingsPage/index.vue'
 import ResetToDefaults from '@/views/ResetToDefaults/index.vue'
 import ResourceDefinitions from '@/views/ResourceDefinitions/index.vue'
 import ResourceDefinitionDetail from '@/views/ResourceDefinitionDetail/index.vue'
-import Shapes from '@/views/Shapes/index.vue'
-import ShapeCreate from '@/views/ShapeCreate/index.vue'
-import ShapeEdit from '@/views/ShapeEdit/index.vue'
-import ShapesImport from '@/views/ShapesImport/index.vue'
+import SchemaDetail from '@/views/SchemaDetail/index.vue'
+import SchemaRelease from '@/views/SchemaRelease/index.vue'
+import Schemas from '@/views/Schemas/index.vue'
+import SchemasImport from '@/views/SchemasImport/index.vue'
+import SchemasUpdate from '@/views/SchemasUpdate/index.vue'
 import Index from '@/views/Index/index.vue'
 import IndexDetail from '@/views/IndexDetail/index.vue'
 import config from '@/config'
@@ -19,7 +20,6 @@ import IndexSettings from '@/views/IndexSettings/index.vue'
 import IndexPing from '@/views/IndexPing/index.vue'
 import FdpSettings from '@/views/FdpSettings/index.vue'
 import Profile from '@/views/Profile/index.vue'
-import ShapeView from '@/views/ShapeView/index.vue'
 import Users from '../views/Users/index.vue'
 import UserDetail from '../views/UserDetail/index.vue'
 import UserCreate from '../views/UserCreate/index.vue'
@@ -61,11 +61,12 @@ export function createRouter(store) {
     { path: '/resource-definitions', component: ResourceDefinitions, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/resource-definitions/create', component: ResourceDefinitionDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/resource-definitions/:uuid', component: ResourceDefinitionDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
-    { path: '/shapes', component: Shapes, meta: { requiresAuth: true, roles: ['ADMIN'] } },
-    { path: '/shapes/create', component: ShapeCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
-    { path: '/shapes/import', component: ShapesImport, meta: { requiresAuth: true, roles: ['ADMIN'] } },
-    { path: '/shapes/:id', component: ShapeView },
-    { path: '/shapes/:id/edit', component: ShapeEdit, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/schemas', component: Schemas, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/schemas/create', component: SchemaDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/schemas/import', component: SchemasImport, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/schemas/update', component: SchemasUpdate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/schemas/:uuid/release', component: SchemaRelease, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/schemas/:uuid', component: SchemaDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/api-keys', component: ApiKeys, meta: { requiresAuth: true } },
     { path: '/settings', component: FdpSettings, meta: { requiresAuth: true } },
     { path: '/profile/:id', component: Profile },

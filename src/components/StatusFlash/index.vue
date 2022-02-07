@@ -4,9 +4,8 @@
       v-if="!status.isDefault()"
       :class="{
         'loader': status.isPending() && !noLoading,
-        'status-flash--large': status.isError() && status.errorCode > 0,
-        'status-flash__alert status-flash__alert--danger':
-          status.isError() && !(status.errorCode > 0),
+        'status-flash--large': status.isError() && !noLoading,
+        'status-flash__alert status-flash__alert--danger': status.isError() && noLoading,
         'status-flash__alert status-flash__alert--success': status.isSuccess()
       }"
     >

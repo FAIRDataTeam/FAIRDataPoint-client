@@ -5,16 +5,16 @@ module.exports = {
   configureWebpack: {
     resolve: {
       fallback: {
-        'querystring': require.resolve('querystring-es3'),
-        'url': require.resolve('url/')
-      }
-    }
+        querystring: require.resolve('querystring-es3'),
+        url: require.resolve('url/'),
+      },
+    },
   },
   css: {
     loaderOptions: {
       css: {
-        url: false
-      }
-    }
-  }
+        url: false,
+      },
+    },
+  },
 }

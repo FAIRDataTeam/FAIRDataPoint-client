@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Rework metadata schemas
+
 ## [1.13.0]
+
+### Added
 
 - Add form preview to shape edit
 

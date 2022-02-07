@@ -22,6 +22,12 @@
     color: $color-text-light;
   }
 
+  .nav-tabs + & {
+    .item-list__item:first-child {
+      border-top: none;
+    }
+  }
+
   &__item {
     display: flex;
     flex-wrap: wrap;
