@@ -34,7 +34,7 @@ module.exports = {
     'vuejs-accessibility/anchor-has-content': 'off',
     'max-classes-per-file': 'off',
     'no-use-before-define': 'off',
-    'vue/multi-word-component-names': 'off'
+    'vue/multi-word-component-names': 'off',
   },
   parserOptions: {
     parser: '@typescript-eslint/parser',

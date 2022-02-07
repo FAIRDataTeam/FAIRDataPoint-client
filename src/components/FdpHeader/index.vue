@@ -57,10 +57,10 @@
               </b-dropdown-item>
               <b-dropdown-item
                 v-if="!isIndex"
-                @click="$router.push('/shapes')"
+                @click="$router.push('/schemas')"
               >
                 <fa :icon="['fas', 'shapes']" />
-                SHACL shapes
+                Metadata schemas
               </b-dropdown-item>
               <b-dropdown-item
                 @click="$router.push('/settings')"

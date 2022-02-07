@@ -93,10 +93,10 @@ export default class ResourceDefinitions extends Vue {
   }
 
   async deleteResourceDefinition(resourceDefinition) {
-    if (window.confirm(`Are you sure you want to delete ${resourceDefinition.name}?`)) {
+    if (window.confirm(`Are you sure you want to remove ${resourceDefinition.name}?`)) {
       try {
         await api.resourceDefinition.deleteResourceDefinition(resourceDefinition)
-        this.fetchData()
+        await this.fetchData()
       } catch (error) {
         this.status.setError('Unable to delete resource definition')
       }
