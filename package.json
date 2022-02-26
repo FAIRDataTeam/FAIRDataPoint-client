@@ -20,7 +20,7 @@
     "lodash": "^4.17.19",
     "moment": "^2.24.0",
     "parse-link-header": "^1.0.1",
-    "prismjs": "^1.21.0",
+    "prismjs": "^1.27.0",
     "rdflib": "^1.0.6",
     "vue": "^2.6.10",
     "vue-class-component": "^7.1.0",
