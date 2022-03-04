@@ -150,7 +150,7 @@ import { SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLFormParser'
 import FormRenderer from '@/components/ShaclForm/FormRenderer.vue'
 
 export default {
-  name: 'ShaclDetail',
+  name: 'ShaclEdit',
   components: {
     Breadcrumbs,
     FormRenderer,

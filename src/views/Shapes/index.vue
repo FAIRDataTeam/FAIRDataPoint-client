@@ -28,7 +28,7 @@
           >
             <template v-slot:name>
               <router-link
-                :to="`/shapes/${shape.uuid}`"
+                :to="`/shapes/${shape.uuid}/edit`"
                 data-cy="shape-link"
               >
                 {{ shape.name }}

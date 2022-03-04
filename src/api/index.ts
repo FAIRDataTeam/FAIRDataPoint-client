@@ -6,6 +6,7 @@ import info from './info'
 import label from './label'
 import repository from './repository'
 import memberships from './memberships'
+import profiles from './profiles'
 import reset from './reset'
 import resourceDefinition from './resourceDefinitions'
 import search from './search'
@@ -22,6 +23,7 @@ export default {
   info,
   label,
   memberships,
+  profiles,
   repository,
   reset,
   resourceDefinition,

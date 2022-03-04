@@ -21,14 +21,19 @@ export default class RdfLink extends Vue {
   @Prop({ type: String })
   readonly label: string
 
+  @Prop({ type: Boolean, default: false })
+  readonly labelResolved: boolean
+
   resolvedLabel : string = null
 
   async created(): Promise<void> {
-    try {
-      const label = await api.label.getLabel(this.uri)
-      this.resolvedLabel = label.data.label
-    } catch {
-      // nothing could be fetched, keep default label
+    if (!this.labelResolved) {
+      try {
+        const label = await api.label.getLabel(this.uri)
+        this.resolvedLabel = label.data.label
+      } catch {
+        // nothing could be fetched, keep default label
+      }
     }
   }
 }
