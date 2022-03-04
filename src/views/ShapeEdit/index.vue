@@ -1,23 +1,25 @@
 <template>
   <div>
     <breadcrumbs
+      v-if="shape"
       :links="breadcrumbs"
-      current="Create shape"
+      :current="title"
     />
     <page
-      title="Create shape"
+      :title="title"
       content-only
       small
     >
       <template v-slot:content>
+        <status-flash :status="status" />
+        <status-flash
+          :status="submitStatus"
+          no-loading
+        />
         <form
           class="form"
           @submit.prevent="submit"
         >
-          <status-flash
-            :status="status"
-            no-loading
-          />
           <ul class="nav nav-tabs mb-4">
             <li class="nav-item">
               <a
@@ -75,6 +77,7 @@
               </p>
             </div>
             <div
+              v-if="!internal"
               class="form__group"
               :class="{'form__group--error': $v.shape.published.$error}"
             >
@@ -113,13 +116,21 @@
               {{ previewError }}
             </div>
           </div>
+          <div
+            v-if="internal"
+            class="status-flash__alert status-flash__alert--warning mb-4"
+          >
+            You are editing an internal shape. This action might break the FDP.
+            <br>
+            Make sure you know what you are doing before saving.
+          </div>
           <div>
             <button
               class="btn btn-primary btn-rounded"
               :disabled="status.isPending()"
               data-cy="create-shape"
             >
-              Create shape
+              Save shape
             </button>
           </div>
         </form>
@@ -133,19 +144,19 @@ import PrismEditor from 'vue-prism-editor'
 import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
 import Page from '../../components/Page/index.vue'
-import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
+import StatusFlash from '../../components/StatusFlash/index.vue'
 import { SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLFormParser'
 import FormRenderer from '@/components/ShaclForm/FormRenderer.vue'
 
 export default {
-  name: 'ShapeCreate',
+  name: 'ShaclEdit',
   components: {
     Breadcrumbs,
     FormRenderer,
+    StatusFlash,
     Page,
     PrismEditor,
-    StatusFlash,
   },
 
   validations() {
@@ -160,12 +171,16 @@ export default {
 
   data() {
     return {
-      shape: {
+      title: null,
+      shape: null,
+      internal: false,
+      shapeForm: {
         name: null,
         definition: null,
         published: false,
       },
       status: new Status(),
+      submitStatus: new Status(),
       breadcrumbs: [{
         label: 'Shapes',
         to: '/shapes',
@@ -177,19 +192,46 @@ export default {
     }
   },
 
+  watch: {
+    $route: 'fetchData',
+  },
+
+  created() {
+    this.fetchData()
+  },
+
   methods: {
+    async fetchData() {
+      try {
+        this.status.setPending()
+
+        const response = await api.shapes.getShape(this.$route.params.id)
+        this.shape = response.data
+        this.internal = this.shape.type === 'INTERNAL'
+        this.setTitle()
+        this.status.setDone()
+      } catch (error) {
+        this.status.setError('Unable to get shape.')
+      }
+    },
+
     async submit() {
       this.$v.shape.$touch()
 
       if (!this.$v.shape.$invalid) {
-        this.status.setPending()
         try {
-          await api.shapes.postShape(this.shape)
-          await this.$router.replace('/shapes')
+          this.submitStatus.setPending()
+          await api.shapes.putShape(this.shape)
+          this.setTitle()
+          this.submitStatus.setDone('Shape was successfully updated!')
         } catch (error) {
-          this.status.setErrorFromResponse(error, 'Shape could not be created.')
+          this.submitStatus.setErrorFromResponse(error, 'Shape could not be updated.')
         }
       }
+    },
+
+    setTitle() {
+      this.title = this.shape.name
     },
 
     showPreview(preview) {

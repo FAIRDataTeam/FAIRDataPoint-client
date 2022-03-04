@@ -31,6 +31,7 @@
                 v-if="item.uri"
                 :uri="item.uri"
                 :label="item.label"
+                :label-resolved="item.labelResolved"
               />
               <template v-else>
                 {{ item.label }}
@@ -59,6 +60,7 @@
             v-if="data.uri"
             :uri="data.uri"
             :label="data.value"
+            :label-resolved="data.labelResolved"
           />
           <template v-else>
             {{ data.value }}

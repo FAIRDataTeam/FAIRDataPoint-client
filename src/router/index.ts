@@ -17,7 +17,7 @@ import ResourceDefinitions from '@/views/ResourceDefinitions/index.vue'
 import ResourceDefinitionDetail from '@/views/ResourceDefinitionDetail/index.vue'
 import Shapes from '@/views/Shapes/index.vue'
 import ShapeCreate from '@/views/ShapeCreate/index.vue'
-import ShapeDetail from '@/views/ShapeDetail/index.vue'
+import ShapeEdit from '@/views/ShapeEdit/index.vue'
 import ShapesImport from '@/views/ShapesImport/index.vue'
 import Index from '@/views/Index/index.vue'
 import IndexDetail from '@/views/IndexDetail/index.vue'
@@ -26,6 +26,8 @@ import SearchResults from '@/views/SearchResults/index.vue'
 import IndexSettings from '@/views/IndexSettings/index.vue'
 import IndexPing from '@/views/IndexPing/index.vue'
 import FdpSettings from '@/views/FdpSettings/index.vue'
+import Profile from '@/views/Profile/index.vue'
+import ShapeView from '@/views/ShapeView/index.vue'
 
 Vue.use(VueRouter)
 
@@ -62,9 +64,11 @@ export function createRouter(store) {
     { path: '/shapes', component: Shapes, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/shapes/create', component: ShapeCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/shapes/import', component: ShapesImport, meta: { requiresAuth: true, roles: ['ADMIN'] } },
-    { path: '/shapes/:id', component: ShapeDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
+    { path: '/shapes/:id', component: ShapeView },
+    { path: '/shapes/:id/edit', component: ShapeEdit, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/api-keys', component: ApiKeys, meta: { requiresAuth: true } },
     { path: '/settings', component: FdpSettings, meta: { requiresAuth: true } },
+    { path: '/profile/:id', component: Profile },
     { path: '/:entity/:id', component: EntityViewPage },
     { path: '/:entity/:id/edit', component: EntityEditPage, meta: { requiresAuth: true } },
     { path: '/:entity/:id/settings', component: EntitySettingsPage, meta: { requiresAuth: true } },

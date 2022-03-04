@@ -63,6 +63,13 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
       .reduce(this.mergeShapes)
   }
 
+  public parseAll(): S {
+    return this.store
+      .match(null, RDF('type'), SHACL('NodeShape'), null)
+      .map(s => this.loadShapeForm(s.subject))
+      .reduce(this.mergeShapes)
+  }
+
   protected abstract createEmptyShape(): S;
 
   protected abstract createShape(properties: F[], shape: $rdf.ValueType): S;

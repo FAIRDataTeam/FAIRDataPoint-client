@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.13.0]
+
+- Add form preview to shape edit
+
 ## [1.12.0]
 
 ### Added
@@ -210,3 +214,4 @@ Initial version of client application for [FAIR Data Point] providing user inter
 [1.10.0]: /../../tree/v1.10.0
 [1.11.0]: /../../tree/v1.11.0
 [1.12.0]: /../../tree/v1.12.0
+[1.13.0]: /../../tree/v1.13.0

@@ -35,5 +35,11 @@
       background: $color-danger-light;
       border-left-color: $color-danger;
     }
+
+    &--warning {
+      color: $color-warning;
+      background: $color-warning-light;
+      border-left-color: $color-warning;
+    }
   }
 }

@@ -83,7 +83,8 @@ function commonMetadata(graph: Graph) {
 
       return {
         label: label || rdfUtils.pathTerm(`${uri}`),
-        uri,
+        uri: uri.replace(config.persistentURL(), config.clientURL),
+        resolved: true,
       }
     })
     metadata.push(field('Conforms to', data))
