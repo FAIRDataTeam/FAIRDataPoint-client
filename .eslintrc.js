@@ -28,6 +28,13 @@ module.exports = {
       registeredComponentsOnly: false,
       ignores: [],
     }],
+    'vuejs-accessibility/click-events-have-key-events': 'off',
+    'vuejs-accessibility/form-control-has-label': 'off',
+    'vuejs-accessibility/label-has-for': 'off',
+    'vuejs-accessibility/anchor-has-content': 'off',
+    'max-classes-per-file': 'off',
+    'no-use-before-define': 'off',
+    'vue/multi-word-component-names': 'off'
   },
   parserOptions: {
     parser: '@typescript-eslint/parser',

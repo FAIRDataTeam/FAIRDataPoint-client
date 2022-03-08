@@ -1,6 +1,5 @@
 import request from '../request'
 
-
 export default {
   getShapes() {
     return request.get('/shapes')

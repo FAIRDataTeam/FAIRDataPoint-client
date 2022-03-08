@@ -1,6 +1,5 @@
 import request from '../request'
 
-
 export default {
   getApiKeys() {
     return request.get('/api-keys')

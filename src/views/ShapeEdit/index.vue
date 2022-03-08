@@ -10,7 +10,7 @@
       content-only
       small
     >
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <status-flash
           :status="submitStatus"
@@ -141,13 +141,13 @@
 <script lang="ts">
 import { required } from 'vuelidate/lib/validators'
 import PrismEditor from 'vue-prism-editor'
+import { SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLFormParser'
+import FormRenderer from '@/components/ShaclForm/FormRenderer.vue'
 import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
 import Page from '../../components/Page/index.vue'
 import Status from '../../utils/Status'
 import StatusFlash from '../../components/StatusFlash/index.vue'
-import { SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLFormParser'
-import FormRenderer from '@/components/ShaclForm/FormRenderer.vue'
 
 export default {
   name: 'ShaclEdit',

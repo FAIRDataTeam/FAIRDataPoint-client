@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         app: [fairdatapoint-index, fairdatapoint]
-        node-version: [8]
+        node-version: [16]
 
     env:
       PUBLIC_IMAGE: fairdata/${{ matrix.app }}-client

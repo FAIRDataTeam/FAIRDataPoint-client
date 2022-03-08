@@ -10,7 +10,7 @@
       content-only
       small
     >
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <div v-if="user">
           <form

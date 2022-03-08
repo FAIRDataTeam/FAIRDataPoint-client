@@ -5,7 +5,7 @@
       content-only
       small
     >
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <div v-if="settings">
           <form
@@ -206,8 +206,8 @@
 <script lang="ts">
 import { required, url } from 'vuelidate/lib/validators'
 import api from '@/api'
-import Page from '../../components/Page/index.vue'
 import Status from '@/utils/Status'
+import Page from '../../components/Page/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 
 export default {
@@ -311,14 +311,14 @@ export default {
         metadataMetrics: formData.metadataMetrics,
         ping: {
           enabled: formData.ping.enabled,
-          endpoints: formData.ping.endpoints.map(e => e.endpoint),
+          endpoints: formData.ping.endpoints.map((e) => e.endpoint),
         },
       }
     },
 
     requestDataToFormData(requestData) {
       const formData = { ...requestData }
-      formData.ping.endpoints = formData.ping.endpoints.map(endpoint => ({ endpoint }))
+      formData.ping.endpoints = formData.ping.endpoints.map((endpoint) => ({ endpoint }))
       return formData
     },
   },

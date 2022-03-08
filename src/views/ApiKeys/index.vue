@@ -4,7 +4,7 @@
       title="API Keys"
       content-only
     >
-      <template v-slot:actions>
+      <template #actions>
         <btn
           class="btn btn-link"
           @click="generateApiKey()"
@@ -12,7 +12,7 @@
           + Generate API Key
         </btn>
       </template>
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <div class="item-list">
           <div
@@ -43,10 +43,10 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import api from '../../api'
-import ItemSimple from '../../components/ItemSimple/index.vue'
 import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
+import api from '../../api'
+import ItemSimple from '../../components/ItemSimple/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 
 @Component({ components: { Page, StatusFlash, ItemSimple } })

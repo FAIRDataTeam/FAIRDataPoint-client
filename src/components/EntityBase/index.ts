@@ -7,7 +7,6 @@ import { BreadcrumbItem } from '@/utils/breadcrumbs'
 import Graph from '@/rdf/Graph'
 import { DCT } from '@/rdf/namespaces'
 
-
 @Component({})
 export default class EntityBase extends Vue {
   @Prop({ required: true })

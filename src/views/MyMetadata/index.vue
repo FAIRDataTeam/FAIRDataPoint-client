@@ -4,7 +4,7 @@
       title="My Metadata"
       content-only
     >
-      <template v-slot:actions>
+      <template #actions>
         <a
           href="#"
           class="btn btn-link"
@@ -22,7 +22,7 @@
           Collapse all
         </a>
       </template>
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <item-tree
           v-if="dashboard && dashboard.length > 0"
@@ -39,11 +39,11 @@
 </template>
 <script lang="ts">
 import _ from 'lodash'
+import ItemTree from '@/views/MyMetadata/ItemTree.vue'
 import api from '../../api'
 import Page from '../../components/Page/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
-import ItemTree from '@/views/MyMetadata/ItemTree.vue'
 
 export default {
   name: 'Dashboard',
@@ -81,7 +81,7 @@ export default {
     },
 
     toggleOpen(entity) {
-      this.changeOpen(current => (
+      this.changeOpen((current) => (
         current.uri === entity.uri ? !current.open : current.open
       ))
     },
@@ -95,10 +95,10 @@ export default {
     },
 
     changeOpen(f) {
-      this.dashboard = this.dashboard.map(c => ({
+      this.dashboard = this.dashboard.map((c) => ({
         ...c,
         open: f(c),
-        children: c.children.map(d => ({
+        children: c.children.map((d) => ({
           ...d,
           open: f(d),
         })),

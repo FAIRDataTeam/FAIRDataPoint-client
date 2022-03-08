@@ -34,9 +34,9 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import api from '@/api'
 import Separator from '../Separator/index.vue'
 import VersionInfoTable from '../VersionInfoTable/index.vue'
-import api from '@/api'
 
 @Component({ components: { Separator, VersionInfoTable } })
 export default class FdpFooter extends Vue {

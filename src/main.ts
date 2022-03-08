@@ -5,24 +5,22 @@ import Vuelidate from 'vuelidate'
 import vSelect from 'vue-select'
 import 'prismjs'
 import 'prismjs/components/prism-turtle'
+import { createEntityConfigs } from '@/entity/entityConfigs'
 import App from './App.vue'
 import { createRouter } from './router'
 import { createStore } from './store'
 import api from './api'
 import './filters'
 import './font-awesome'
-import { createEntityConfigs } from '@/entity/entityConfigs'
 
 Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
 // @ts-ignore
 Vue.use(Vuelidate)
-Vue.component('v-select', vSelect)
-
+Vue.component('VSelect', vSelect)
 
 let entitySpecs = []
-
 
 api.configs.getBootstrap()
   .then((config) => {
@@ -37,6 +35,6 @@ api.configs.getBootstrap()
     new Vue({
       router,
       store,
-      render: h => h(App),
+      render: (h) => h(App),
     }).$mount('#app')
   })

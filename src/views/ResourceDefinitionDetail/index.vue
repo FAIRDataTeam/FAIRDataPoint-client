@@ -12,7 +12,7 @@
       small
     >
       <status-flash :status="status" />
-      <template v-slot:content>
+      <template #content>
         <form
           class="form"
           @submit.prevent="submit"
@@ -315,7 +315,6 @@
             </button>
           </div>
 
-
           <div
             class="form__group"
             :class="{'form__group--error': $v.resourceDefinition.externalLinks.$error}"
@@ -398,12 +397,12 @@
 import { required, url } from 'vuelidate/lib/validators'
 import axios from 'axios'
 import _ from 'lodash'
+import config from '@/config'
 import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
 import Page from '../../components/Page/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
-import config from '@/config'
 
 export default {
   name: 'ResourceDefinitionCreate',
@@ -452,7 +451,7 @@ export default {
         name: { required },
         urlPrefix: {
           uniqueness: (value) => {
-            const error = this.errors.find(e => e.field === 'urlPrefix')
+            const error = this.errors.find((e) => e.field === 'urlPrefix')
             const code = _.get(error, 'code')
             const rejectedValue = _.get(error, 'rejectedValue')
             return !(code === 'Uniqueness' && rejectedValue === value)
@@ -505,16 +504,16 @@ export default {
         const [resourceDefinitions, shapes] = await this.loadData()
 
         this.resourceOptions = _.orderBy(resourceDefinitions.data, ['name'], ['asc'])
-          .map(resource => ({ key: resource.uuid, value: resource.name }))
+          .map((resource) => ({ key: resource.uuid, value: resource.name }))
         this.resourceOptions.unshift({ key: null, value: '- select -' })
 
         this.shapeOptions = _.orderBy(shapes.data, ['name'], ['asc'])
-          .map(shape => ({ key: shape.uuid, value: shape.name }))
+          .map((shape) => ({ key: shape.uuid, value: shape.name }))
         this.shapeOptions.unshift({ key: null, value: '- select -' })
 
         if (this.isEdit) {
           const resourceDefinition = _.first(
-            resourceDefinitions.data.filter(r => r.uuid === this.$route.params.uuid),
+            resourceDefinitions.data.filter((r) => r.uuid === this.$route.params.uuid),
           )
           if (resourceDefinition) {
             this.resourceDefinition = this.requestDataToFormData(resourceDefinition)
@@ -564,13 +563,13 @@ export default {
 
     formDataToRequestData(formData) {
       const data = { ...formData }
-      data.shapeUuids = _.uniq(formData.shapeUuids.map(u => u.uuid))
+      data.shapeUuids = _.uniq(formData.shapeUuids.map((u) => u.uuid))
       return data
     },
 
     requestDataToFormData(requestData) {
       const formData = { ...requestData }
-      formData.shapeUuids = requestData.shapeUuids.map(uuid => ({ uuid }))
+      formData.shapeUuids = requestData.shapeUuids.map((uuid) => ({ uuid }))
       return formData
     },
 

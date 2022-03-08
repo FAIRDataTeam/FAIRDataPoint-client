@@ -136,7 +136,6 @@
 <script lang="ts">
 import * as validation from 'vuelidate/lib/validators'
 
-
 export default {
   name: 'FormGenerator',
 
@@ -201,7 +200,7 @@ export default {
 
   methods: {
     hasError(fieldId) {
-      const isXor = this.spec.fields.filter(f => f.id === fieldId && f.type === 'xor').length > 0
+      const isXor = this.spec.fields.filter((f) => f.id === fieldId && f.type === 'xor').length > 0
       const optionError = isXor ? this.$v.model[this.model[fieldId]].$error : false
       return this.$v.model[fieldId].$error || optionError
     },
@@ -216,7 +215,7 @@ export default {
 
     createModel() {
       const model = { ...this.entity }
-      this.spec.fields.filter(f => f.type === 'xor').forEach((field) => {
+      this.spec.fields.filter((f) => f.type === 'xor').forEach((field) => {
         model[field.id] = field.options.reduce(
           (selected, option) => (model[option.id] ? option.id : selected),
           field.options[0].id,
@@ -227,7 +226,7 @@ export default {
 
     getSanitizedModel() {
       const model = { ...this.model }
-      this.spec.fields.filter(f => f.type === 'xor').forEach((field) => {
+      this.spec.fields.filter((f) => f.type === 'xor').forEach((field) => {
         const value = model[field.id]
 
         field.options.forEach((option) => {

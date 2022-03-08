@@ -32,7 +32,6 @@ import { RepositoryConfig } from '@/entity/RepositoryConfig'
 //   return getConfigFor(parentEntity)
 // }
 
-
 export function createEntityConfigs(specs: EntitySpec[]) {
   const specsByUuid = specs.reduce((acc, spec) => {
     acc[spec.uuid] = spec

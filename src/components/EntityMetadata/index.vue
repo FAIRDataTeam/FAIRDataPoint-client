@@ -85,7 +85,7 @@ export default class EntityMetadata extends Vue {
 
   get filteredMetadata() {
     if (!this.metadata) return []
-    return this.metadata.filter(data => !data.items || data.items.length > 0)
+    return this.metadata.filter((data) => !data.items || data.items.length > 0)
   }
 
   viewItems(key, items) {
@@ -112,7 +112,7 @@ export default class EntityMetadata extends Vue {
   }
 
   removeViewAll(key) {
-    this.viewAll = this.viewAll.filter(i => i !== key)
+    this.viewAll = this.viewAll.filter((i) => i !== key)
   }
 }
 </script>

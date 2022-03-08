@@ -9,7 +9,7 @@
       content-only
       small
     >
-      <template v-slot:content>
+      <template #content>
         <form
           class="form"
           @submit.prevent="submit"

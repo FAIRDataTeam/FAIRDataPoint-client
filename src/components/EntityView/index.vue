@@ -10,7 +10,7 @@
       v-if="entity !== null"
       :title="title"
     >
-      <template v-slot:actions>
+      <template #actions>
         <membership-badge :entity="meta" />
         <button
           v-if="actionEnabled('publish') && isDraft && (isAdmin || permissions.hasWrite(meta))"
@@ -49,7 +49,7 @@
           Delete
         </a>
       </template>
-      <template v-slot:column>
+      <template #column>
         <p>
           <a
             v-for="link in extraLinks"
@@ -65,7 +65,7 @@
         </p>
         <entity-metadata :metadata="metadata" />
       </template>
-      <template v-slot:content>
+      <template #content>
         <p class="description">
           {{ entity.description }}
         </p>
@@ -117,7 +117,6 @@ import metadata from '@/utils/metadata'
 import permissions from '@/utils/permissions'
 import { parseSHACLView } from '@/components/ShaclForm/Parser/SHACLViewParser'
 import EntityBase from '@/components/EntityBase'
-
 
 @Component({
   components: {
@@ -225,8 +224,8 @@ export default class EntityView extends EntityBase {
 
   createLocalMetadata() {
     return this.shape.fields
-      .map(field => metadata.fromShaclField(this.graph, field))
-      .filter(field => field !== null)
+      .map((field) => metadata.fromShaclField(this.graph, field))
+      .filter((field) => field !== null)
   }
 
   async deleteEntity() {

@@ -27,7 +27,7 @@
             variant="link"
             data-cy="user-menu"
           >
-            <template v-slot:button-content>
+            <template #button-content>
               <user-avatar
                 :user="user"
                 smaller
@@ -108,12 +108,11 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import SearchField from '@/components/SearchField/index.vue'
+import config from '@/config'
 import Separator from '../Separator/index.vue'
 import UserAvatar from '../UserAvatar/index.vue'
 import VersionInfoTable from '../VersionInfoTable/index.vue'
-import SearchField from '@/components/SearchField/index.vue'
-import config from '@/config'
-
 
 @Component({
   components: {

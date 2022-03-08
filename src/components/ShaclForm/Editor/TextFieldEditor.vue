@@ -12,7 +12,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import rdfUtils from '@/rdf/utils'
 
-
 @Component
 export default class TextFieldEditor extends Vue {
   @Prop({ required: true })

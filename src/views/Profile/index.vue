@@ -5,14 +5,14 @@
       v-if="profile"
       :title="title"
     >
-      <template v-slot:content>
+      <template #content>
         <prism-editor
           v-model="profile"
           language="turtle"
           :readonly="true"
         />
       </template>
-      <template v-slot:column>
+      <template #column>
         <entity-metadata :metadata="metadata" />
       </template>
     </page>

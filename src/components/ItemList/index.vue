@@ -48,11 +48,11 @@ import {
   Component, Prop, Vue, Watch,
 } from 'vue-property-decorator'
 import parseLinkHeader from 'parse-link-header'
-import Item from '../Item/index.vue'
 import { ChildSpec, EntityConfig, EntitySpec } from '@/entity/EntityConfig'
 import Status from '@/utils/Status'
 import Graph from '@/rdf/Graph'
 import Pagination from '@/components/Pagination/index.vue'
+import Item from '../Item/index.vue'
 
 @Component({
   components: { Item, Pagination },
@@ -116,7 +116,9 @@ export default class ItemList extends Vue {
     try {
       this.status.setPending()
       const response = await this.config.api.getChildren(
-        this.entityId, this.childUrlPrefix, pageNumber,
+        this.entityId,
+        this.childUrlPrefix,
+        pageNumber,
       )
       const graph = new Graph(response.data, this.config.subject(this.entityId))
 
@@ -134,10 +136,13 @@ export default class ItemList extends Vue {
       this.prevPage = parsePage('prev')
       this.nextPage = parsePage('next')
 
-
-      const childEntityConfig = this.$store.getters['entities/configByUuid'](this.childSpec.resourceDefinitionUuid)
+      const { resourceDefinitionUuid } = this.childSpec
+      const childEntityConfig = this.$store.getters['entities/configByUuid'](resourceDefinitionUuid)
       this.items = this.config.createChildrenList(
-        childEntityConfig.spec, this.childSpec, graph, this.meta,
+        childEntityConfig.spec,
+        this.childSpec,
+        graph,
+        this.meta,
       )
 
       this.status.setDone()
