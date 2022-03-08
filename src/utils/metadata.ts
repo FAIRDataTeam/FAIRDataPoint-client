@@ -9,7 +9,6 @@ import rdfUtils from '@/rdf/utils'
 import config from '@/config'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 
-
 function field(label, input, extra = {}) {
   if (typeof input !== 'object') {
     return {
@@ -35,11 +34,9 @@ function field(label, input, extra = {}) {
   }
 }
 
-
 function dateField(label, input, extra = {}) {
   return field(label, moment(input).format(config.dateFormat), extra)
 }
-
 
 function rdfLinks(url) {
   return {
@@ -57,7 +54,6 @@ function rdfLinks(url) {
   }
 }
 
-
 function itemFromPath(path) {
   if (!path) return null
 
@@ -66,7 +62,6 @@ function itemFromPath(path) {
     uri: path,
   }
 }
-
 
 function commonMetadata(graph: Graph) {
   const metadata = [
@@ -92,7 +87,6 @@ function commonMetadata(graph: Graph) {
   return metadata
 }
 
-
 function wrapShaclValue(fieldConfig, value) {
   if (!value) {
     return null
@@ -111,7 +105,6 @@ function wrapShaclValue(fieldConfig, value) {
   }
 }
 
-
 function getShaclValue(graph: Graph, fieldConfig) {
   if (fieldConfig.maxCount === 1) {
     const value = graph.findOne($rdf.namedNode(fieldConfig.path))
@@ -119,9 +112,8 @@ function getShaclValue(graph: Graph, fieldConfig) {
   }
 
   const values = graph.findAll($rdf.namedNode(fieldConfig.path))
-  return values.map(v => wrapShaclValue(fieldConfig, v)).filter(v => v !== null)
+  return values.map((v) => wrapShaclValue(fieldConfig, v)).filter((v) => v !== null)
 }
-
 
 function fromShaclField(graph: Graph, fieldConfig) {
   const name = fieldUtils.getName(fieldConfig)
@@ -133,7 +125,6 @@ function fromShaclField(graph: Graph, fieldConfig) {
 
   return field(name, getShaclValue(graph, fieldConfig))
 }
-
 
 export default {
   field,

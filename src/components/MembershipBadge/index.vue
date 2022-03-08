@@ -11,7 +11,6 @@
 import _ from 'lodash'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-
 @Component
 export default class MembershipBadge extends Vue {
   @Prop({ required: true })

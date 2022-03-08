@@ -13,7 +13,6 @@
 import _ from 'lodash'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-
 @Component
 export default class Avatar extends Vue {
   @Prop({ type: String, required: true })
@@ -25,10 +24,9 @@ export default class Avatar extends Vue {
   @Prop({ type: Boolean, default: false })
   readonly smaller: boolean
 
-
   get color(): string {
     if (this.value === null) return '#ddd'
-    const hash = _.sum(this.value.split('').map(a => 43 * a.charCodeAt(0)))
+    const hash = _.sum(this.value.split('').map((a) => 43 * a.charCodeAt(0)))
     const h1 = hash % 360
     const s1 = 125 + (hash % 71)
     const l1 = 85 + (hash % 11)

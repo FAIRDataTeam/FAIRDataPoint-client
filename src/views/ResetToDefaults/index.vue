@@ -5,7 +5,7 @@
       content-only
       small
     >
-      <template v-slot:content>
+      <template #content>
         <form
           class="form"
           @submit.prevent="submit"
@@ -73,10 +73,10 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import Status from '@/utils/Status'
 import api from '../../api'
 import Page from '../../components/Page/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
-import Status from '@/utils/Status'
 
 @Component({ components: { Page, StatusFlash } })
 export default class ResetToDefaults extends Vue {
@@ -97,7 +97,6 @@ export default class ResetToDefaults extends Vue {
   async submit() {
     if (!this.anySelected) return
     if (!window.confirm('This action cannot be undone, are you sure you want to continue?')) return
-
 
     try {
       await api.reset.postReset(this.reset)

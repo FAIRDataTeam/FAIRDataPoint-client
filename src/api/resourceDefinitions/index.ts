@@ -1,6 +1,5 @@
 import request from '../request'
 
-
 export default {
   getResourceDefinitions() {
     return request.get('/resource-definitions')

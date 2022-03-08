@@ -5,7 +5,7 @@
       content-only
       small
     >
-      <template v-slot:content>
+      <template #content>
         <form
           v-if="!shapes"
           class="form"
@@ -106,12 +106,11 @@
 import _ from 'lodash'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import PrismEditor from 'vue-prism-editor'
-import api from '../../api'
-import ItemSimple from '../../components/ItemSimple/index.vue'
 import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
+import api from '../../api'
+import ItemSimple from '../../components/ItemSimple/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
-
 
 @Component({ components: { Page, PrismEditor, StatusFlash } })
 export default class ShapesImport extends Vue {
@@ -130,11 +129,11 @@ export default class ShapesImport extends Vue {
   }
 
   get someShapeSelected() {
-    return this.shapes && this.shapes.some(shape => shape.selected)
+    return this.shapes && this.shapes.some((shape) => shape.selected)
   }
 
   isDefinitionVisible(uuid) {
-    return this.showDefinition.some(u => u === uuid)
+    return this.showDefinition.some((u) => u === uuid)
   }
 
   showShape(uuid) {
@@ -142,7 +141,7 @@ export default class ShapesImport extends Vue {
   }
 
   hideShape(uuid) {
-    this.showDefinition = this.showDefinition.filter(u => u !== uuid)
+    this.showDefinition = this.showDefinition.filter((u) => u !== uuid)
   }
 
   async loadShapes() {
@@ -162,7 +161,7 @@ export default class ShapesImport extends Vue {
     if (this.someShapeSelected) {
       try {
         this.importStatus.setPending()
-        const shapes = this.shapes.filter(shape => shape.selected)
+        const shapes = this.shapes.filter((shape) => shape.selected)
         await api.shapes.postImport(shapes)
         this.importStatus.setDone('Shapes were successfully imported')
       } catch (err) {

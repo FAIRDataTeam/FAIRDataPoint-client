@@ -9,7 +9,7 @@
       content-only
       small
     >
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <template v-if="fdp">
           <div class="entry-header">
@@ -108,13 +108,13 @@
 import _ from 'lodash'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import moment from 'moment'
-import api from '../../api'
-import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
 import Page from '@/components/Page/index.vue'
 import config from '@/config'
 import Status from '@/utils/Status'
 import StatusFlash from '@/components/StatusFlash/index.vue'
 import { stateClass } from '@/utils/fdpIndex'
+import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
+import api from '../../api'
 
 @Component({ components: { Breadcrumbs, Page, StatusFlash } })
 export default class IndexDetail extends Vue {

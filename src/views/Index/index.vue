@@ -4,7 +4,7 @@
       :title="'FAIR Data Points'"
       content-only
     >
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <template v-if="data">
           <status-flash :status="actionStatus" />

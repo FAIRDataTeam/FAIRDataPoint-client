@@ -34,7 +34,6 @@ export type EntitySpec = {
   }[],
 }
 
-
 export class EntityConfig {
   protected spec: EntitySpec
 
@@ -130,8 +129,10 @@ export class EntityConfig {
   }
 
   public createChildrenLists(canCreateChild = false, entityId = null) {
-    return this.spec.children.map(child => this.createChildrenListSpec(
-      child, canCreateChild, entityId,
+    return this.spec.children.map((child) => this.createChildrenListSpec(
+      child,
+      canCreateChild,
+      entityId,
     ))
   }
 
@@ -191,7 +192,6 @@ export class EntityConfig {
         }
       })
   }
-
 
   // BREADCRUMBS --
 

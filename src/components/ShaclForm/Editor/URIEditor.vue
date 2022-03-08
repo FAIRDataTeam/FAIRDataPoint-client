@@ -13,7 +13,6 @@ import _ from 'lodash'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import rdfUtils from '@/rdf/utils'
 
-
 @Component
 export default class URIEditor extends Vue {
   @Prop({ required: true })

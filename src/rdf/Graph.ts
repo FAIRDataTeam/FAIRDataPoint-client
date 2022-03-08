@@ -31,6 +31,6 @@ export default class Graph {
     const subject = _.get(options, 'subject', this.defaultSubject)
     const value = _.get(options, 'value', true)
     const statements = this.store.match(subject, term)
-    return statements.map(s => _.get(s, `object${value ? '.value' : ''}`))
+    return statements.map((s) => _.get(s, `object${value ? '.value' : ''}`))
   }
 }

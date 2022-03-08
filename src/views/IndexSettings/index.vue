@@ -5,7 +5,7 @@
       content-only
       small
     >
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <div v-if="settings">
           <form
@@ -168,8 +168,8 @@
 import _ from 'lodash'
 import { required } from 'vuelidate/lib/validators'
 import api from '@/api'
-import Page from '../../components/Page/index.vue'
 import Status from '@/utils/Status'
+import Page from '../../components/Page/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 
 export default {
@@ -256,19 +256,19 @@ export default {
     },
 
     sanitizeDenyList() {
-      const filter = i => !_.isEmpty(i.item)
+      const filter = (i) => !_.isEmpty(i.item)
       this.settings.ping.denyList = this.settings.ping.denyList.filter(filter)
     },
 
     fromDataToRequestData(formData) {
       const data = { ping: { ...formData.ping }, retrieval: { ...formData.retrieval } }
-      data.ping.denyList = data.ping.denyList.map(i => i.item)
+      data.ping.denyList = data.ping.denyList.map((i) => i.item)
       return data
     },
 
     requestDataToFormData(requestData) {
       const formData = { ...requestData }
-      formData.ping.denyList = formData.ping.denyList.map(item => ({ item }))
+      formData.ping.denyList = formData.ping.denyList.map((item) => ({ item }))
       return formData
     },
 

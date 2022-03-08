@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { createEntitiesModule } from '@/store/modules/entities'
 import auth from './modules/auth'
 import apiPlugin from '../api/plugin'
 import vuexLocal from './vuexLocal'
-import { createEntitiesModule } from '@/store/modules/entities'
 
 Vue.use(Vuex)
 

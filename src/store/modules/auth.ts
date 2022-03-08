@@ -9,11 +9,11 @@ export default {
   },
 
   getters: {
-    authenticated: state => state.session !== null,
-    user: state => _.get(state.session, 'user'),
-    role: state => _.get(state.session, 'user.role'),
-    isAdmin: state => _.get(state.session, 'user.role') === 'ADMIN',
-    token: state => _.get(state, 'session.token'),
+    authenticated: (state) => state.session !== null,
+    user: (state) => _.get(state.session, 'user'),
+    role: (state) => _.get(state.session, 'user.role'),
+    isAdmin: (state) => _.get(state.session, 'user.role') === 'ADMIN',
+    token: (state) => _.get(state, 'session.token'),
   },
 
   actions: {

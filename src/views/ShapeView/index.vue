@@ -6,7 +6,7 @@
       :title="shape.name"
       :content-only="true"
     >
-      <template v-slot:content>
+      <template #content>
         <prism-editor
           v-model="shape.definition"
           language="turtle"

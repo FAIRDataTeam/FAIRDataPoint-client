@@ -4,7 +4,7 @@
       title="Shapes"
       content-only
     >
-      <template v-slot:actions>
+      <template #actions>
         <router-link
           to="/shapes/create"
           data-cy="create-shape"
@@ -17,7 +17,7 @@
           Import shapes
         </router-link>
       </template>
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <div class="item-list">
           <item-simple
@@ -26,7 +26,7 @@
             :avatar-initials="shape.name[0]"
             :avatar-value="shape.uuid"
           >
-            <template v-slot:name>
+            <template #name>
               <router-link
                 :to="`/shapes/${shape.uuid}/edit`"
                 data-cy="shape-link"
@@ -48,14 +48,14 @@
                 </b-badge>
               </router-link>
             </template>
-            <template v-slot:actions>
+            <template #actions>
               <b-dropdown
                 text="Actions"
                 right
                 variant="link"
                 no-caret
               >
-                <template v-slot:button-content>
+                <template #button-content>
                   <fa :icon="['fas', 'ellipsis-v']" />
                 </template>
                 <b-dropdown-item
@@ -84,10 +84,10 @@
 <script lang="ts">
 import _ from 'lodash'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import api from '../../api'
-import ItemSimple from '../../components/ItemSimple/index.vue'
 import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
+import api from '../../api'
+import ItemSimple from '../../components/ItemSimple/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 
 @Component({ components: { Page, StatusFlash, ItemSimple } })

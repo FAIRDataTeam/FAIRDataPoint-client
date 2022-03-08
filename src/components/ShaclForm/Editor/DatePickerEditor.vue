@@ -14,7 +14,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import Datepicker from 'vuejs-datepicker'
 import rdfUtils from '@/rdf/utils'
 
-
 @Component({ components: { Datepicker } })
 export default class DatePickerEditor extends Vue {
   @Prop({ required: true })
