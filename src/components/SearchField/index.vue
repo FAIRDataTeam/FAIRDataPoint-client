@@ -19,9 +19,15 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 export default class SearchField extends Vue {
   q: string = ''
 
+  routeQ: string = null
+
   submit() {
     if (this.q.length > 0) {
-      this.$router.push(`/search?q=${this.q}`)
+      if (this.routeQ === this.q) {
+        this.$router.go(0)
+      } else {
+        this.$router.push(`/search?q=${this.q}`)
+      }
     }
   }
 
@@ -31,7 +37,8 @@ export default class SearchField extends Vue {
 
   @Watch('$route')
   setQ() {
-    this.q = _.get(this.$route, 'query.q', '')
+    this.routeQ = _.get(this.$route, 'query.q', '')
+    this.q = this.routeQ
   }
 }
 </script>
