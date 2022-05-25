@@ -41,6 +41,12 @@ $font-size-base: 16;
   font-size: 14rem / $font-size-base;
 }
 
+@mixin typography-mono-14 {
+  color: $color-text-default;
+  font-size: 14rem / $font-size-base;
+  font-family: $font-family-mono;
+}
+
 @mixin typography-default-16 {
   color: $color-text-default;
   font-size: 16rem / $font-size-base;

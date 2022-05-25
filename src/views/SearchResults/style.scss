@@ -1,0 +1,25 @@
+@import "../../scss/variables";
+@import "../../scss/mixins";
+@import "../../scss/typography";
+
+.sparql {
+  @include border-radius($border-radius-default);
+  background: $color-background-highlighted;
+  padding: $space-md;
+  margin-bottom: $space-md;
+
+  textarea {
+    @include typography-mono-14;
+    border-color: $color-separator;
+
+    &.graph-patterns {
+      margin-left: 2rem;
+      width: calc(100% - 2rem)
+    }
+  }
+
+
+  pre {
+    margin: 0;
+  }
+}
