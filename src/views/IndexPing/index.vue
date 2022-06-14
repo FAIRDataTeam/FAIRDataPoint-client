@@ -5,7 +5,7 @@
       content-only
       small
     >
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="submitStatus" />
         <form
           class="form"

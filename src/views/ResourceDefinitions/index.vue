@@ -4,7 +4,7 @@
       title="Resource definitions"
       content-only
     >
-      <template v-slot:actions>
+      <template #actions>
         <router-link
           to="/resource-definitions/create"
           data-cy="create-resourceDefinition"
@@ -12,7 +12,7 @@
           + Create resource definition
         </router-link>
       </template>
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <div class="item-list">
           <item-simple
@@ -21,7 +21,7 @@
             :avatar-initials="resourceDefinition.name[0]"
             :avatar-value="resourceDefinition.uuid"
           >
-            <template v-slot:name>
+            <template #name>
               <router-link
                 :to="`/resource-definitions/${resourceDefinition.uuid}`"
                 data-cy="resource-definition-link"
@@ -29,14 +29,14 @@
                 {{ resourceDefinition.name }}
               </router-link>
             </template>
-            <template v-slot:actions>
+            <template #actions>
               <b-dropdown
                 text="Actions"
                 right
                 variant="link"
                 no-caret
               >
-                <template v-slot:button-content>
+                <template #button-content>
                   <fa :icon="['fas', 'ellipsis-v']" />
                 </template>
                 <b-dropdown-item
@@ -64,10 +64,10 @@
 <script lang="ts">
 import _ from 'lodash'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import api from '../../api'
-import ItemSimple from '../../components/ItemSimple/index.vue'
 import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
+import api from '../../api'
+import ItemSimple from '../../components/ItemSimple/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 
 @Component({ components: { Page, StatusFlash, ItemSimple } })
@@ -93,10 +93,10 @@ export default class ResourceDefinitions extends Vue {
   }
 
   async deleteResourceDefinition(resourceDefinition) {
-    if (window.confirm(`Are you sure you want to delete ${resourceDefinition.name}?`)) {
+    if (window.confirm(`Are you sure you want to remove ${resourceDefinition.name}?`)) {
       try {
         await api.resourceDefinition.deleteResourceDefinition(resourceDefinition)
-        this.fetchData()
+        await this.fetchData()
       } catch (error) {
         this.status.setError('Unable to delete resource definition')
       }

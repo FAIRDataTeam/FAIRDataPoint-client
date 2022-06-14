@@ -18,7 +18,6 @@ export class ViewField extends Field<Shape<ViewField>> {
   }
 }
 
-
 export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
   protected createEmptyShape(): Shape<ViewField> {
     return new Shape<ViewField>([])
@@ -53,7 +52,6 @@ export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
     return [new ViewField(name, path, datatype, minCount, maxCount, nodeShape, viewer)]
   }
 }
-
 
 export function parseSHACLView(shacl: string, targetClasses: $rdf.ValueType[]): Shape<ViewField> {
   const parser = new SHACLViewParser(shacl)

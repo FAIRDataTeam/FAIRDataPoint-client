@@ -1,6 +1,5 @@
 import _ from 'lodash'
 
-
 export default class Status {
   static readonly PENDING = 'PENDING'
 

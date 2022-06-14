@@ -40,5 +40,4 @@ library.add(fas.faUserFriends)
 library.add(fas.faUserPlus)
 library.add(fas.faUserSlash)
 
-
-Vue.component('fa', FontAwesomeIcon)
+Vue.component('Fa', FontAwesomeIcon)

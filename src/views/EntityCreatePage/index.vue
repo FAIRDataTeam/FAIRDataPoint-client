@@ -9,7 +9,6 @@ import _ from 'lodash'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import EntityCreate from '@/components/EntityCreate/index.vue'
 
-
 @Component({ components: { EntityCreate } })
 export default class EntityCreatePage extends Vue {
   config = null
@@ -28,7 +27,7 @@ export default class EntityCreatePage extends Vue {
     this.parentConfig = this.$store.getters['entities/config'](parentEntity)
 
     const containsChild = this.parentConfig.children.some(
-      child => child.resourceDefinitionUuid === this.config.uuid,
+      (child) => child.resourceDefinitionUuid === this.config.uuid,
     )
 
     if (!containsChild) {

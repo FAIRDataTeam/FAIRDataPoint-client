@@ -11,8 +11,8 @@
       content-only
       small
     >
-      <status-flash :status="status" />
-      <template v-slot:content>
+      <template #content>
+        <status-flash :status="status" />
         <form
           class="form"
           @submit.prevent="submit"
@@ -39,6 +39,20 @@
               name="name"
             >
             <p
+              v-if="!isEdit && suggestedResourceNames.length > 0"
+              class="form__group__suggestions"
+            >
+              Suggestions:
+              <a
+                v-for="suggestedResourceName in suggestedResourceNames"
+                :key="suggestedResourceName"
+                class="link"
+                @click.prevent="setName(suggestedResourceName)"
+              >
+                {{ suggestedResourceName }}
+              </a>
+            </p>
+            <p
               v-if="!$v.resourceDefinition.name.required"
               class="invalid-feedback"
             >
@@ -59,6 +73,20 @@
               :disabled="isEdit"
             >
             <p
+              v-if="!isEdit && suggestedUrlPrefixes.length > 0"
+              class="form__group__suggestions"
+            >
+              Suggestions:
+              <a
+                v-for="suggestedUrlPrefix in suggestedUrlPrefixes"
+                :key="suggestedUrlPrefix"
+                class="link"
+                @click.prevent="setUrlPrefix(suggestedUrlPrefix)"
+              >
+                {{ suggestedUrlPrefix }}
+              </a>
+            </p>
+            <p
               v-if="!$v.resourceDefinition.urlPrefix.uniqueness"
               class="invalid-feedback"
             >
@@ -68,17 +96,17 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.resourceDefinition.shapeUuids.$error}"
+            :class="{'form__group--error': $v.resourceDefinition.metadataSchemaUuids.$error}"
           >
             <label
               for="urlPrefix"
               class="required"
             >
-              Shapes
+              Metadata Schemas
             </label>
             <ul>
               <li
-                v-for="(v, index) in $v.resourceDefinition.shapeUuids.$each.$iter"
+                v-for="(v, index) in $v.resourceDefinition.metadataSchemaUuids.$each.$iter"
                 :key="`target-class-${index}`"
                 data-cy="target-class"
               >
@@ -88,15 +116,15 @@
                     :class="{'form__group--error': v.uuid.$error}"
                   >
                     <select
-                      v-model="resourceDefinition.shapeUuids[index].uuid"
-                      :name="`shapeUuids.${index}.uuid`"
+                      v-model="resourceDefinition.metadataSchemaUuids[index].uuid"
+                      :name="`metadataSchemaUuids.${index}.uuid`"
                     >
                       <option
-                        v-for="shape in shapeOptions"
-                        :key="shape.key"
-                        :value="shape.key"
+                        v-for="metadataSchema in metadataSchemaOptions"
+                        :key="metadataSchema.key"
+                        :value="metadataSchema.key"
                       >
-                        {{ shape.value }}
+                        {{ metadataSchema.value }}
                       </option>
                     </select>
                     <p
@@ -108,8 +136,8 @@
                   </div>
                   <a
                     class="text-danger ml-3 p-1"
-                    :data-cy="`shapeUuids.${index}.remove`"
-                    @click.prevent="removeShapeUuid(index)"
+                    :data-cy="`metadataSchemaUuids.${index}.remove`"
+                    @click.prevent="removeMetadataSchemaUuid(index)"
                   >
                     <fa :icon="['fas', 'times']" />
                   </a>
@@ -117,15 +145,15 @@
               </li>
             </ul>
             <p
-              v-if="!$v.resourceDefinition.shapeUuids.required"
+              v-if="!$v.resourceDefinition.metadataSchemaUuids.required"
               class="invalid-feedback"
             >
-              You should specify at least one shape
+              You should specify at least one metadata schema
             </p>
             <button
               class="btn btn-link"
-              data-cy="add-shape"
-              @click.prevent="addShapeUuid()"
+              data-cy="add-metadata-schema"
+              @click.prevent="addMetadataSchemaUuid()"
             >
               <fa :icon="['fas', 'plus']" />
               Add
@@ -315,7 +343,6 @@
             </button>
           </div>
 
-
           <div
             class="form__group"
             :class="{'form__group--error': $v.resourceDefinition.externalLinks.$error}"
@@ -398,12 +425,12 @@
 import { required, url } from 'vuelidate/lib/validators'
 import axios from 'axios'
 import _ from 'lodash'
+import config from '@/config'
 import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
 import Page from '../../components/Page/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 import Status from '../../utils/Status'
-import config from '@/config'
 
 export default {
   name: 'ResourceDefinitionCreate',
@@ -419,7 +446,7 @@ export default {
       resourceDefinition: {
         name: null,
         urlPrefix: null,
-        shapeUuids: [],
+        metadataSchemaUuids: [],
         children: [],
         externalLinks: [],
       },
@@ -444,6 +471,18 @@ export default {
         ? `Edit ${this.currentResourceDefinition.name}`
         : 'Create resource definition'
     },
+
+    suggestedResourceNames() {
+      return this.resourceDefinition.metadataSchemaUuids
+        .map((ms) => this.findSchema(ms.uuid)?.latest?.suggestedResourceName)
+        .filter((suggestedName) => !!suggestedName)
+    },
+
+    suggestedUrlPrefixes() {
+      return this.resourceDefinition.metadataSchemaUuids
+        .map((ms) => this.findSchema(ms.uuid)?.latest?.suggestedUrlPrefix)
+        .filter((suggestedUrlPrefix) => !!suggestedUrlPrefix)
+    },
   },
 
   validations() {
@@ -452,13 +491,13 @@ export default {
         name: { required },
         urlPrefix: {
           uniqueness: (value) => {
-            const error = this.errors.find(e => e.field === 'urlPrefix')
+            const error = this.errors.find((e) => e.field === 'urlPrefix')
             const code = _.get(error, 'code')
             const rejectedValue = _.get(error, 'rejectedValue')
             return !(code === 'Uniqueness' && rejectedValue === value)
           },
         },
-        shapeUuids: {
+        metadataSchemaUuids: {
           required,
           $each: {
             uuid: { required },
@@ -502,19 +541,20 @@ export default {
     async fetchData() {
       try {
         this.status.setPending()
-        const [resourceDefinitions, shapes] = await this.loadData()
+        const [resourceDefinitions, metadataSchemas] = await this.loadData()
 
         this.resourceOptions = _.orderBy(resourceDefinitions.data, ['name'], ['asc'])
-          .map(resource => ({ key: resource.uuid, value: resource.name }))
+          .map((resource) => ({ key: resource.uuid, value: resource.name }))
         this.resourceOptions.unshift({ key: null, value: '- select -' })
 
-        this.shapeOptions = _.orderBy(shapes.data, ['name'], ['asc'])
-          .map(shape => ({ key: shape.uuid, value: shape.name }))
-        this.shapeOptions.unshift({ key: null, value: '- select -' })
+        this.metadataSchemas = metadataSchemas.data
+        this.metadataSchemaOptions = _.orderBy(metadataSchemas.data, ['name'], ['asc'])
+          .map((metadataSchema) => ({ key: metadataSchema.uuid, value: metadataSchema.name }))
+        this.metadataSchemaOptions.unshift({ key: null, value: '- select -' })
 
         if (this.isEdit) {
           const resourceDefinition = _.first(
-            resourceDefinitions.data.filter(r => r.uuid === this.$route.params.uuid),
+            resourceDefinitions.data.filter((r) => r.uuid === this.$route.params.uuid),
           )
           if (resourceDefinition) {
             this.resourceDefinition = this.requestDataToFormData(resourceDefinition)
@@ -524,14 +564,14 @@ export default {
 
         this.status.setDone()
       } catch (error) {
-        this.status.setError('Unable to get shapes')
+        this.status.setError('Unable to get metadata schemas')
       }
     },
 
     async loadData() {
       return axios.all([
         api.resourceDefinition.getResourceDefinitions(),
-        api.shapes.getShapes(),
+        api.metadataSchemas.getForResource(),
       ])
     },
 
@@ -564,14 +604,22 @@ export default {
 
     formDataToRequestData(formData) {
       const data = { ...formData }
-      data.shapeUuids = _.uniq(formData.shapeUuids.map(u => u.uuid))
+      data.metadataSchemaUuids = _.uniq(formData.metadataSchemaUuids.map((u) => u.uuid))
       return data
     },
 
     requestDataToFormData(requestData) {
       const formData = { ...requestData }
-      formData.shapeUuids = requestData.shapeUuids.map(uuid => ({ uuid }))
+      formData.metadataSchemaUuids = requestData.metadataSchemaUuids.map((uuid) => ({ uuid }))
       return formData
+    },
+
+    setName(name) {
+      this.resourceDefinition.name = name
+    },
+
+    setUrlPrefix(urlPrefix) {
+      this.resourceDefinition.urlPrefix = urlPrefix
     },
 
     addChild() {
@@ -590,12 +638,12 @@ export default {
       this.resourceDefinition.children.splice(index, 1)
     },
 
-    addShapeUuid() {
-      this.resourceDefinition.shapeUuids.push({ uuid: null })
+    addMetadataSchemaUuid() {
+      this.resourceDefinition.metadataSchemaUuids.push({ uuid: null })
     },
 
-    removeShapeUuid(index) {
-      this.resourceDefinition.shapeUuids.splice(index, 1)
+    removeMetadataSchemaUuid(index) {
+      this.resourceDefinition.metadataSchemaUuids.splice(index, 1)
     },
 
     addMetadata(childIndex) {
@@ -615,6 +663,10 @@ export default {
 
     removeExternalLink(index) {
       this.resourceDefinition.externalLinks.splice(index, 1)
+    },
+
+    findSchema(uuid) {
+      return this.metadataSchemas.find((schema) => schema.uuid === uuid)
     },
   },
 }

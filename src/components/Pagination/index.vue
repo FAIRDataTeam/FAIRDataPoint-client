@@ -89,7 +89,7 @@ export default class Pagination extends Vue {
   @Prop({ type: Number, required: true })
   readonly currentPage: number
 
-  readonly pageSelectionCount = 3;
+  readonly pageSelectionCount = 3
 
   get pageRange() {
     const start = Math.max(this.currentPage - this.pageSelectionCount, 0)

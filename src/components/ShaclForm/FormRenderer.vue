@@ -80,7 +80,7 @@ export default class FormRenderer extends Vue {
   readonly validationReport : ValidationReport
 
   @Prop({ required: true })
-  value: any
+    value: any
 
   data: any
 

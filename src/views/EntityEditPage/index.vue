@@ -6,7 +6,6 @@ import _ from 'lodash'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import EntityEdit from '@/components/EntityEdit/index.vue'
 
-
 @Component({ components: { EntityEdit } })
 export default class EntityEditPage extends Vue {
   config = null

@@ -5,7 +5,6 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import EntitySettings from '@/components/EntitySettings/index.vue'
 
-
 @Component({ components: { EntitySettings } })
 export default class EntitySettingsPage extends Vue {
   config = null

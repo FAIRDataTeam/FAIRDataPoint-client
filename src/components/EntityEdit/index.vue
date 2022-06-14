@@ -13,7 +13,7 @@
       content-only
       small
     >
-      <template v-slot:content>
+      <template #content>
         <shacl-form
           :rdf="simpleGraph.store"
           :shacl="shacl"
@@ -39,7 +39,6 @@ import permissions from '@/utils/permissions'
 import { parseValidationReport, ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
 import EntityBase from '@/components/EntityBase'
 import Status from '@/utils/Status'
-
 
 @Component({
   components: {

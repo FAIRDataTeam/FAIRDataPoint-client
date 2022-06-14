@@ -1,5 +1,5 @@
-import request from '../request'
 import config from '@/config'
+import request from '../request'
 
 export default {
   get() {

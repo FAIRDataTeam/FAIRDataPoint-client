@@ -2,9 +2,7 @@ import _ from 'lodash'
 import { DEFAULT_URI, SHACL } from '@/rdf/namespaces'
 import Graph from '@/rdf/Graph'
 
-
 export type ValidationReport = Record<string, Record<string, any>>
-
 
 function parseResult(result, graph) {
   const resultPath = graph.findOne(SHACL('resultPath'), { subject: result }) as string
@@ -21,7 +19,6 @@ function parseResult(result, graph) {
 
   return {}
 }
-
 
 export function parseValidationReport(rdf: string) {
   const graph = new Graph(rdf, DEFAULT_URI)

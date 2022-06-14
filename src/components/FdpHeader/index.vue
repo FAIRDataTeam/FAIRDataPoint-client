@@ -27,7 +27,7 @@
             variant="link"
             data-cy="user-menu"
           >
-            <template v-slot:button-content>
+            <template #button-content>
               <user-avatar
                 :user="user"
                 smaller
@@ -57,10 +57,10 @@
               </b-dropdown-item>
               <b-dropdown-item
                 v-if="!isIndex"
-                @click="$router.push('/shapes')"
+                @click="$router.push('/schemas')"
               >
                 <fa :icon="['fas', 'shapes']" />
-                SHACL shapes
+                Metadata schemas
               </b-dropdown-item>
               <b-dropdown-item
                 @click="$router.push('/settings')"
@@ -108,12 +108,11 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import SearchField from '@/components/SearchField/index.vue'
+import config from '@/config'
 import Separator from '../Separator/index.vue'
 import UserAvatar from '../UserAvatar/index.vue'
 import VersionInfoTable from '../VersionInfoTable/index.vue'
-import SearchField from '@/components/SearchField/index.vue'
-import config from '@/config'
-
 
 @Component({
   components: {

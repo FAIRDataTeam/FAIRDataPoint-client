@@ -59,7 +59,6 @@ import { FormShape, SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLF
 import * as formData from '@/components/ShaclForm/formData'
 import { ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
 
-
 @Component({
   components: {
     FormRenderer,
@@ -92,7 +91,7 @@ export default class ShaclForm extends Vue {
   form: FormShape
 
   data: any = {
-    subject: this.subject,
+    subject: '',
     data: {},
   }
 

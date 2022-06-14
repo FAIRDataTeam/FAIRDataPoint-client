@@ -9,9 +9,9 @@ import memberships from './memberships'
 import profiles from './profiles'
 import reset from './reset'
 import resourceDefinition from './resourceDefinitions'
+import metadataSchemas from './metadataSchemas'
 import search from './search'
 import settings from './settings'
-import shapes from './shapes'
 import tokens from './tokens'
 import users from './users'
 
@@ -27,9 +27,9 @@ export default {
   repository,
   reset,
   resourceDefinition,
+  metadataSchemas,
   search,
   settings,
-  shapes,
   tokens,
   users,
 }

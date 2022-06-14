@@ -1,7 +1,7 @@
 <template>
   <div>
     <page>
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <template v-if="results">
           <h2>Search Results for &quot;{{ query }}&quot;</h2>

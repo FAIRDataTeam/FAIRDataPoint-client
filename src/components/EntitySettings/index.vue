@@ -11,7 +11,7 @@
       :title="`${entity.title} Settings`"
       content-only
     >
-      <template v-slot:content>
+      <template #content>
         <h2>Users</h2>
 
         <div class="entity-settings__section">
@@ -33,7 +33,7 @@
                 label="fullName"
                 placeholder="Search for users"
               >
-                <template v-slot:option="option">
+                <template #option="option">
                   <user-item
                     :user="option"
                     frameless
@@ -85,7 +85,7 @@
               :key="member.user.uuid"
               :user="member.user"
             >
-              <template v-slot:actions>
+              <template #actions>
                 <b-dropdown
                   variant="outline-secondary btn-rounded"
                   :text="member.membership.name"
@@ -117,14 +117,13 @@
 import _ from 'lodash'
 import axios from 'axios'
 import { Component } from 'vue-property-decorator'
+import EntityBase from '@/components/EntityBase'
 import api from '../../api'
 import Breadcrumbs from '../Breadcrumbs/index.vue'
 import Page from '../Page/index.vue'
 import StatusFlash from '../StatusFlash/index.vue'
 import UserItem from '../UserItem/index.vue'
 import Status from '../../utils/Status'
-import EntityBase from '@/components/EntityBase'
-
 
 @Component({
   components: {
@@ -181,15 +180,15 @@ export default class EntitySettings extends EntityBase {
 
   createUsers(users: Array<any>, members: Array<any>): Array<any> {
     return _.orderBy(users
-      .filter(u => members.filter(m => m.user.uuid === u.uuid).length === 0)
-      .map(u => ({
+      .filter((u) => members.filter((m) => m.user.uuid === u.uuid).length === 0)
+      .map((u) => ({
         ...u,
         fullName: `${u.firstName} ${u.lastName}`,
       })), ['firstName', 'lastName'], ['asc'])
   }
 
   createMemberships(memberships: Array<any>): Array<any> {
-    return memberships.filter(m => _.includes(m.allowedEntities, this.config.uuid))
+    return memberships.filter((m) => _.includes(m.allowedEntities, this.config.uuid))
   }
 
   async submitInvite(): Promise<void> {

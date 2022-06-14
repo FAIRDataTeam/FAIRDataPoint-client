@@ -1,10 +1,15 @@
 @import "../../scss/variables";
 @import "../../scss/typography";
 
-.shapes-import {
+.metadata-schemas-import {
+  .item-indented {
+    margin-left: 2rem
+  }
+
   .item__title {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     &:hover {
       color: $color-primary;
@@ -21,6 +26,10 @@
 
     a {
       @include typography-primary-14;
+    }
+
+    .badge {
+      margin-left: $space-xs;
     }
   }
 

@@ -4,14 +4,12 @@ import { PREFIXES, RDF } from '@/rdf/namespaces'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import { FormShape } from '@/components/ShaclForm/Parser/SHACLFormParser'
 
-
 export type FormData = {
   subject: $rdf.Node,
   data: Record<string, FormDataValue>
 }
 
 export type FormDataValue = FormData | $rdf.NamedNode | string
-
 
 export function fromRdf(
   form: FormShape,
@@ -66,18 +64,15 @@ export function fromRdf(
   return { subject, data }
 }
 
-
 function isFormData(value: object): value is FormData {
   return _.isObject(value) && _.get(value, 'data', false)
 }
 
-
 function createQuads(data: FormData, originalRdf: $rdf.IndexedFormula): $rdf.Statement[] {
   // Add RDF type statements only if they are not present in original RDF
   const targetClasses = _.get(data, 'targetClasses', [])
-    .filter(tc => originalRdf.statementsMatching(data.subject, RDF('type'), tc).length === 0)
-    .map(tc => $rdf.quad(data.subject, RDF('type'), tc, null))
-
+    .filter((tc) => originalRdf.statementsMatching(data.subject, RDF('type'), tc).length === 0)
+    .map((tc) => $rdf.quad(data.subject, RDF('type'), tc, null))
 
   const quads = Object.entries(data.data).flatMap(([key, values]) => {
     if (_.isArray(values)) {
@@ -105,7 +100,6 @@ function createQuads(data: FormData, originalRdf: $rdf.IndexedFormula): $rdf.Sta
   return targetClasses.concat(quads)
 }
 
-
 export function toRdf(
   rdf: $rdf.IndexedFormula,
   data: FormData,
@@ -120,7 +114,7 @@ export function toRdf(
       if (field.nodeShape) {
         store
           .statementsMatching(subject, $rdf.namedNode(field.path))
-          .forEach(statement => clear(statement.object, field.nodeShape.fields))
+          .forEach((statement) => clear(statement.object, field.nodeShape.fields))
       }
       store.removeMany(subject, $rdf.namedNode(field.path))
     })

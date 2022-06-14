@@ -2,7 +2,6 @@ import * as $rdf from 'rdflib'
 import { Field, SHACLParser, Shape } from '@/components/ShaclForm/Parser/SHACLParser'
 import { SHACL } from '@/rdf/namespaces'
 
-
 export class FormShape extends Shape<FormField> {
   targetClasses: $rdf.Node[]
 
@@ -11,7 +10,6 @@ export class FormShape extends Shape<FormField> {
     this.targetClasses = targetClasses
   }
 }
-
 
 export class FormField extends Field<FormShape> {
   nodeKind: string | null
@@ -44,7 +42,6 @@ export class FormField extends Field<FormShape> {
   }
 }
 
-
 export class SHACLFormParser extends SHACLParser<FormField, FormShape> {
   protected createEmptyShape(): FormShape {
     return new FormShape()
@@ -53,7 +50,7 @@ export class SHACLFormParser extends SHACLParser<FormField, FormShape> {
   protected createShape(properties: FormField[], shape: $rdf.ValueType): FormShape {
     const targetClasses = this.store
       .match(shape, SHACL('targetClass'), null, null)
-      .map(s => s.object)
+      .map((s) => s.object)
 
     return new FormShape(properties, targetClasses)
   }

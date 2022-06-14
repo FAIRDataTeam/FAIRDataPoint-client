@@ -72,16 +72,16 @@ export default class ItemTree extends Vue {
   }
 
   toggleOpen(entity) {
-    this.changeOpen(current => (
+    this.changeOpen((current) => (
       current.uri === entity.uri ? !current.open : current.open
     ))
   }
 
   changeOpen(f) {
-    this.$emit('input', this.value.map(c => ({
+    this.$emit('input', this.value.map((c) => ({
       ...c,
       open: f(c),
-      children: c.children.map(d => ({
+      children: c.children.map((d) => ({
         ...d,
         open: f(d),
       })),

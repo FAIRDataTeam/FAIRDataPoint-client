@@ -4,7 +4,6 @@ import {
   DASH, DEFAULT_URI, RDF, SHACL,
 } from '@/rdf/namespaces'
 
-
 export class Shape<F> {
   fields: F[]
 
@@ -12,7 +11,6 @@ export class Shape<F> {
     this.fields = fields
   }
 }
-
 
 export class Field<S> {
   name: string
@@ -44,7 +42,6 @@ export class Field<S> {
   }
 }
 
-
 export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
   store: $rdf.IndexedFormula
 
@@ -58,15 +55,15 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
 
   public parse(targetClasses: $rdf.ValueType[]): S {
     return targetClasses
-      .flatMap(tc => this.loadShapes(tc))
-      .map(s => this.loadShapeForm(s))
+      .flatMap((tc) => this.loadShapes(tc))
+      .map((s) => this.loadShapeForm(s))
       .reduce(this.mergeShapes)
   }
 
   public parseAll(): S {
     return this.store
       .match(null, RDF('type'), SHACL('NodeShape'), null)
-      .map(s => this.loadShapeForm(s.subject))
+      .map((s) => this.loadShapeForm(s.subject))
       .reduce(this.mergeShapes)
   }
 
@@ -89,7 +86,7 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
   protected loadShapes(targetClass: $rdf.ValueType): $rdf.ValueType[] {
     return this.store
       .match(null, SHACL('targetClass'), targetClass, null)
-      .map(s => s.subject)
+      .map((s) => s.subject)
   }
 
   protected loadShapeForm(shape: $rdf.ValueType, level: number = 0): S {
@@ -103,7 +100,7 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
     const andProperties = ands.flatMap((and) => {
       const elements = _.get(and, 'object.elements')
       if (elements) {
-        return elements.flatMap(e => this.loadElement(e, level))
+        return elements.flatMap((e) => this.loadElement(e, level))
       }
       return []
     })
@@ -113,7 +110,7 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
 
   protected loadProps(node: $rdf.ValueType, level: number): F[] {
     return this.store.match(node, SHACL('property'), null, null)
-      .flatMap(statement => this.parseShaclProp(statement.object, level))
+      .flatMap((statement) => this.parseShaclProp(statement.object, level))
   }
 
   protected loadElement(node: $rdf.ValueType, level: number): F[] {

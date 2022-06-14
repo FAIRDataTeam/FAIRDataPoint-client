@@ -4,7 +4,7 @@
       title="Users"
       content-only
     >
-      <template v-slot:actions>
+      <template #actions>
         <router-link
           to="/users/create"
           data-cy="create-user"
@@ -12,7 +12,7 @@
           + Create user
         </router-link>
       </template>
-      <template v-slot:content>
+      <template #content>
         <status-flash :status="status" />
         <div class="item-list">
           <user-item
@@ -20,7 +20,7 @@
             :key="user.uuid"
             :user="user"
           >
-            <template v-slot:name>
+            <template #name>
               <router-link
                 :to="`/users/${user.uuid}`"
                 data-cy="user-link"
@@ -34,14 +34,14 @@
                 {{ user.role }}
               </b-badge>
             </template>
-            <template v-slot:actions>
+            <template #actions>
               <b-dropdown
                 text="Actions"
                 right
                 variant="link"
                 no-caret
               >
-                <template v-slot:button-content>
+                <template #button-content>
                   <fa :icon="['fas', 'ellipsis-v']" />
                 </template>
                 <b-dropdown-item

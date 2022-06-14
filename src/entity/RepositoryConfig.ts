@@ -3,7 +3,6 @@ import api from '@/api'
 import Graph from '@/rdf/Graph'
 import config from '@/config'
 
-
 export class RepositoryConfig extends EntityConfig {
   protected buildApi(): any {
     return api.repository
