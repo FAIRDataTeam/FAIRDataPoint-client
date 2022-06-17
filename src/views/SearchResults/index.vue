@@ -4,37 +4,179 @@
       <template #content>
         <status-flash :status="status" />
         <template v-if="results">
-          <h2>Search</h2>
+          <!-- Search header -->
+          <div class="d-flex justify-content-between align-items-baseline">
+            <h2>Search</h2>
+            <div>
+              <a
+                v-if="isSparql && savedQueries.length > 0"
+                class="link"
+                @click.prevent="toggleSavedQueries()"
+              >Saved queries</a>
+            </div>
+          </div>
+
           <div class="mb-2">
-            <div v-if="isSparql">
-              <div class="sparql">
-                <pre>{{ sparqlParts.prefixes }}</pre>
-                <textarea
-                  v-model="sparqlQuery.prefixes"
-                  class="w-100"
-                  :rows="textareaRows(sparqlQuery.prefixes)"
-                />
-                <pre>{{ sparqlParts.selectStart }}</pre>
-                <textarea
-                  v-model="sparqlQuery.graphPattern"
-                  class="graph-patterns"
-                  :rows="textareaRows(sparqlQuery.graphPattern)"
-                />
-                <pre>{{ sparqlParts.selectEnd }}</pre>
-                <textarea
-                  v-model="sparqlQuery.ordering"
-                  class="w-100"
-                  :rows="textareaRows(sparqlQuery.ordering)"
-                />
+            <!-- Search SPARQL -->
+            <div
+              v-if="isSparql"
+              class="row"
+            >
+              <!-- Saved query details -->
+              <div :class="savedQueriesVisible ? 'col-9' : 'col-12'">
+                <div
+                  v-if="selectedSavedQuery"
+                  class="alert-info selected-query"
+                >
+                  <p class="d-flex justify-content-between">
+                    <strong>{{ selectedSavedQuery.name }}</strong>
+                    <a
+                      v-if="canDeleteSavedQuery(selectedSavedQuery)"
+                      class="link text-danger"
+                      @click.prevent="deleteQuery(selectedSavedQuery)"
+                    >
+                      <small>Delete</small>
+                    </a>
+                  </p>
+                  <p>{{ selectedSavedQuery.description }}</p>
+                  <p>
+                    <small>
+                      Created by:
+                      {{ selectedSavedQuery.user.firstName }}
+                      {{ selectedSavedQuery.user.lastName }}
+                    </small>
+                  </p>
+                </div>
+
+                <!-- SPARQL input -->
+                <div class="sparql">
+                  <pre>{{ sparqlParts.prefixes }}</pre>
+                  <textarea
+                    v-model="sparqlQuery.prefixes"
+                    class="w-100"
+                    :rows="textareaRows(sparqlQuery.prefixes)"
+                    @input="clearSelectedSavedQuery"
+                  />
+                  <pre>{{ sparqlParts.selectStart }}</pre>
+                  <textarea
+                    v-model="sparqlQuery.graphPattern"
+                    class="graph-patterns"
+                    :rows="textareaRows(sparqlQuery.graphPattern)"
+                    @input="clearSelectedSavedQuery"
+                  />
+                  <pre>{{ sparqlParts.selectEnd }}</pre>
+                  <textarea
+                    v-model="sparqlQuery.ordering"
+                    class="w-100"
+                    :rows="textareaRows(sparqlQuery.ordering)"
+                    @input="clearSelectedSavedQuery"
+                  />
+                </div>
+
+                <!-- SPARQL search controls -->
+                <button
+                  class="btn btn-primary"
+                  @click.prevent="searchSparql()"
+                >
+                  Search
+                </button>
+                <button
+                  v-if="canCreateSavedQuery()"
+                  v-b-modal.save-query-modal
+                  class="btn btn-link"
+                  @click="initNewQuery"
+                >
+                  Save query
+                </button>
+
+                <!-- Save query modal -->
+                <b-modal
+                  id="save-query-modal"
+                  title="Save query"
+                  ok-title="Save"
+                  :ok-disabled="!saveQueryValid()"
+                  @ok="saveQuery"
+                >
+                  <div class="form__group">
+                    <label for="query-name">Name</label>
+                    <input
+                      id="query-name"
+                      v-model.trim="newQuery.name"
+                      type="text"
+                    >
+                  </div>
+                  <div class="form__group">
+                    <label for="query-description">Description</label>
+                    <textarea
+                      id="query-description"
+                      v-model.trim="newQuery.description"
+                    />
+                  </div>
+                  <div class="form__group">
+                    <label>Type</label>
+
+                    <label class="mb-2">
+                      <input
+                        id="private"
+                        v-model="newQuery.type"
+                        type="radio"
+                        value="PRIVATE"
+                        class="mr-1"
+                      >
+                      Private.
+                      <span class="font-weight-normal">Visible only to you.</span>
+                    </label>
+                    <label class="mb-2">
+                      <input
+                        id="internal"
+                        v-model="newQuery.type"
+                        type="radio"
+                        value="INTERNAL"
+                        class="mr-1"
+                      >
+                      Internal.
+                      <span class="font-weight-normal">Visible only to logged-in users.</span>
+                    </label>
+                    <label>
+                      <input
+                        id="public"
+                        v-model="newQuery.type"
+                        type="radio"
+                        value="PUBLIC"
+                        class="mr-1"
+                      >
+                      Public.
+                      <span class="font-weight-normal">Visible to everyone.</span>
+                    </label>
+                  </div>
+                </b-modal>
               </div>
 
-              <button
-                class="btn btn-primary"
-                @click.prevent="searchSparql()"
+              <!-- Saved queries list -->
+              <div
+                v-if="savedQueriesVisible"
+                class="col-3"
               >
-                Search
-              </button>
+                <div class="card">
+                  <div class="card-header">
+                    <strong>Saved queries</strong>
+                  </div>
+                  <div class="card-body card-body-saved-queries">
+                    <ul class="saved-queries-list">
+                      <li
+                        v-for="query in savedQueries"
+                        :key="query.uuid"
+                        @click="setQuery(query)"
+                      >
+                        {{ query.name }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <!-- Search simple -->
             <form
               v-else
               class="form--search"
@@ -101,6 +243,8 @@
             </form>
           </div>
           <hr>
+
+          <!-- Search results -->
           <div class="item-list">
             <div
               v-if="results.length === 0"
@@ -160,19 +304,37 @@ import StatusFlash from '@/components/StatusFlash/index.vue'
 export default class SearchResults extends Vue {
   query: string = null
 
-  sparqlParts: any = null
-
   status: Status = new Status()
 
   results: any = null
 
+  // SPARQL search
+
   isSparql: boolean = false
 
-  filterData: any = []
+  sparqlParts: any = null
 
   sparqlTemplate: any = null
 
   sparqlQuery: any = null
+
+  // Simple search
+
+  filterData: any = []
+
+  // Saved queries
+
+  savedQueries: any = []
+
+  savedQueriesVisible: boolean = false
+
+  selectedSavedQuery: any = null
+
+  newQuery = {
+    name: '',
+    description: '',
+    type: '',
+  }
 
   // Simple search
 
@@ -282,9 +444,10 @@ export default class SearchResults extends Vue {
     try {
       this.status.setPending()
       this.results = null
-      const [search, query, filters] = await this.loadData()
+      const [search, query, filters, savedQueries] = await this.loadData()
       this.results = search.data
       this.sparqlTemplate = query.data.template
+      this.savedQueries = savedQueries.data
 
       const [prefixes, rest1] = this.sparqlTemplate.split('{{prefixes}}\n')
       const [selectStart, rest2] = rest1.split('{{graphPattern}}\n')
@@ -308,6 +471,7 @@ export default class SearchResults extends Vue {
       api.search.search({ q: this.query }),
       api.search.getQuery(),
       api.search.getFilters(),
+      api.search.getSavedQueries(),
     ])
   }
 
@@ -330,6 +494,70 @@ export default class SearchResults extends Vue {
       this.status.setDone()
     } catch (error) {
       this.status.setError('Unable to get search results')
+    }
+  }
+
+  // Saved queries
+
+  canCreateSavedQuery() {
+    return this.$store.getters['auth/authenticated']
+  }
+
+  canDeleteSavedQuery(query) {
+    const user = this.$store.getters['auth/user']
+    return user?.uuid === query.uuid || user?.role === 'ADMIN'
+  }
+
+  toggleSavedQueries() {
+    this.savedQueriesVisible = !this.savedQueriesVisible
+  }
+
+  initNewQuery() {
+    this.newQuery = {
+      name: '',
+      description: '',
+      type: 'PRIVATE',
+    }
+  }
+
+  setQuery(query) {
+    this.selectedSavedQuery = query
+    this.sparqlQuery.prefixes = query.variables.prefixes
+    this.sparqlQuery.graphPattern = query.variables.graphPattern
+    this.sparqlQuery.ordering = query.variables.ordering
+  }
+
+  saveQueryValid() {
+    return this.newQuery.name.length > 0
+  }
+
+  async saveQuery() {
+    const data = {
+      ...this.newQuery,
+      variables: this.sparqlQuery,
+    }
+
+    try {
+      const savedQuery = await api.search.postSavedQuery(data)
+      this.savedQueries.push(savedQuery.data)
+    } catch (error) {
+      this.status.setError('Unable to save the search query')
+    }
+  }
+
+  clearSelectedSavedQuery() {
+    this.selectedSavedQuery = null
+  }
+
+  async deleteQuery(query) {
+    if (window.confirm(`Are you sure you want to delete ${query.name}?`)) {
+      try {
+        await api.search.deleteSavedQuery(query.uuid)
+        this.savedQueries = this.savedQueries.filter((q) => q.uuid !== query.uuid)
+        this.selectedSavedQuery = null
+      } catch (error) {
+        this.status.setError('Unable to delete the search query')
+      }
     }
   }
 }
