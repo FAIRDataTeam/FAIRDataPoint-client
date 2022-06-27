@@ -166,7 +166,7 @@
                       <li
                         v-for="query in savedQueries"
                         :key="query.uuid"
-                        @click="setQuery(query)"
+                        @click="openSavedQuery(query.uuid)"
                       >
                         {{ query.name }}
                       </li>
@@ -229,7 +229,7 @@
 
               <button
                 class="btn btn-primary mr-2 mb-2"
-                @click.prevent="searchSimple()"
+                @click.prevent="searchWithFilters()"
               >
                 Search
               </button>
@@ -336,6 +336,47 @@ export default class SearchResults extends Vue {
     type: '',
   }
 
+  // Navigation
+
+  createUrl(query, isSparql, savedQueryUuid = null, filterData = null) {
+    const url = []
+
+    if (query) {
+      url.push(`q=${this.query}`)
+    }
+
+    if (isSparql) {
+      url.push('isSparql=true')
+    }
+
+    if (savedQueryUuid) {
+      url.push(`savedQuery=${savedQueryUuid}`)
+    }
+
+    if (filterData) {
+      const filterValues = filterData.reduce((acc, filter) => {
+        const checkedValues = filter.values.filter((v) => v.isChecked)
+        if (checkedValues.length > 0) {
+          const value = checkedValues.map((v) => encodeURIComponent(v.value)).join(',')
+          acc.push(`${encodeURIComponent(filter.predicate)}=${value}`)
+        }
+        return acc
+      }, [])
+      url.push(...filterValues)
+    }
+
+    return `?${url.join('&')}`
+  }
+
+  openSavedQuery(savedQueryUuid) {
+    this.$router.push(this.createUrl(null, true, savedQueryUuid)).catch(() => {
+    })
+  }
+
+  searchWithFilters() {
+    this.$router.push(this.createUrl(this.query, false, null, this.filterData))
+  }
+
   // Simple search
 
   get queryGraphPatterns() {
@@ -368,8 +409,8 @@ export default class SearchResults extends Vue {
   }
 
   switchToSparql() {
-    this.sparqlQuery = this.createSparqlQuery()
     this.isSparql = true
+    this.$router.push(this.createUrl(this.query, true, null, this.filterData))
   }
 
   mapFilterValueIsChecked(filterData, mapIsChecked) {
@@ -395,7 +436,7 @@ export default class SearchResults extends Vue {
   createSparqlQuery() {
     const sparqlQuery = {
       prefixes: '',
-      graphPattern: this.query.length > 0 ? `${this.queryGraphPatterns}` : '',
+      graphPattern: this.query && this.query.length > 0 ? `${this.queryGraphPatterns}` : '',
       ordering: 'ASC(?title)',
     }
 
@@ -440,12 +481,12 @@ export default class SearchResults extends Vue {
   @Watch('$route')
   async init() {
     this.query = this.$route.query.q as string
+    this.isSparql = this.$route.query.isSparql === 'true'
 
     try {
       this.status.setPending()
       this.results = null
-      const [search, query, filters, savedQueries] = await this.loadData()
-      this.results = search.data
+      const [query, filters, savedQueries] = await this.loadData()
       this.sparqlTemplate = query.data.template
       this.savedQueries = savedQueries.data
 
@@ -459,8 +500,23 @@ export default class SearchResults extends Vue {
         selectEnd,
       }
 
-      this.filterData = this.mapFilterValueIsChecked(filters.data, () => false)
-      this.status.setDone()
+      this.initializeFilterData(filters.data)
+
+      if (this.isSparql) {
+        this.selectedSavedQuery = null
+        this.sparqlQuery = this.createSparqlQuery()
+        this.isSparql = true
+
+        const savedQueryUuid = this.$route.query.savedQuery
+        const savedQuery = this.savedQueries.find((q) => q.uuid === savedQueryUuid)
+        if (savedQuery) {
+          this.setQuery(savedQuery)
+        }
+
+        await this.searchSparql()
+      } else {
+        await this.searchSimple()
+      }
     } catch (error) {
       this.status.setError('Unable to get search results')
     }
@@ -468,11 +524,21 @@ export default class SearchResults extends Vue {
 
   async loadData() {
     return axios.all([
-      api.search.search({ q: this.query }),
       api.search.getQuery(),
       api.search.getFilters(),
       api.search.getSavedQueries(),
     ])
+  }
+
+  initializeFilterData(filterData) {
+    const checkedValues = filterData.reduce((acc, filter) => {
+      const queryValues = this.$route.query[filter.predicate]
+      const values = queryValues ? `${queryValues}`.split(',') : []
+      acc[filter.predicate] = values.reduce((a, v) => ({ ...a, [v]: true }), {})
+      return acc
+    }, {})
+    const mapIsChecked = (value, isChecked, filter) => checkedValues[filter.predicate][value]
+    this.filterData = this.mapFilterValueIsChecked(filterData, mapIsChecked)
   }
 
   async searchSimple() {
