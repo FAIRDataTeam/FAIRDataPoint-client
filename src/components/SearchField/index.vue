@@ -23,11 +23,7 @@ export default class SearchField extends Vue {
 
   submit() {
     if (this.q.length > 0) {
-      if (this.routeQ === this.q) {
-        this.$router.go(0)
-      } else {
-        this.$router.push(`/search?q=${this.q}`)
-      }
+      this.$router.push({ path: '/search', query: { q: this.q } }).catch(() => {})
     }
   }
 
