@@ -246,12 +246,7 @@
           <!-- Search results -->
           <status-flash :status="status" />
           <div class="item-list" v-if="results">
-            <div
-              v-if="results.length === 0"
-              class="item-list__empty"
-            >
-              Nothing was found.
-            </div>
+            <p class="text-muted mb-4">Found <strong>{{results.length}}</strong> results.</p>
             <div
               v-for="item in results"
               :key="item.uri"
