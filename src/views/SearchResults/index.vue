@@ -2,8 +2,7 @@
   <div>
     <page :content-only="true">
       <template #content>
-        <status-flash :status="status" />
-        <template v-if="results">
+        <template>
           <!-- Search header -->
           <div class="d-flex justify-content-between align-items-baseline">
             <h2>Search</h2>
@@ -245,7 +244,8 @@
           <hr>
 
           <!-- Search results -->
-          <div class="item-list">
+          <status-flash :status="status" />
+          <div class="item-list" v-if="results">
             <div
               v-if="results.length === 0"
               class="item-list__empty"
@@ -502,6 +502,8 @@ export default class SearchResults extends Vue {
 
       this.initializeFilterData(filters.data)
 
+      let search
+
       if (this.isSparql) {
         this.selectedSavedQuery = null
         this.sparqlQuery = this.createSparqlQuery()
@@ -513,9 +515,15 @@ export default class SearchResults extends Vue {
           this.setQuery(savedQuery)
         }
 
-        await this.searchSparql()
+        search = this.searchSparql
       } else {
-        await this.searchSimple()
+        search = this.searchSimple
+      }
+
+      if (this.query) {
+        await search()
+      } else {
+        this.status.setDone()
       }
     } catch (error) {
       this.status.setError('Unable to get search results')

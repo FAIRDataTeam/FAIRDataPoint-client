@@ -9,6 +9,7 @@
       type="text"
       placeholder="Search FAIR Data Point..."
     >
+    <small><router-link to="/search">Advanced</router-link></small>
   </form>
 </template>
 <script lang="ts">

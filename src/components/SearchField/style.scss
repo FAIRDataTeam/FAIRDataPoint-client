@@ -36,4 +36,10 @@
       @include typography-light-16;
     }
   }
+
+  small {
+    position: absolute;
+    right: 1.125rem;
+    top: 100%;
+  }
 }
