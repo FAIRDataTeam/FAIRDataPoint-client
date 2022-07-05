@@ -40,7 +40,7 @@ function dateField(label, input, extra = {}) {
 
 function rdfLinks(url) {
   return {
-    label: 'Download RDF',
+    label: 'RDF metadata for machines',
     links: [{
       label: 'ttl',
       uri: `${url}?format=ttl`,
