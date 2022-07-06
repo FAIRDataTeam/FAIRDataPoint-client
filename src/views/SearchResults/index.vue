@@ -7,10 +7,14 @@
           <!-- Search header -->
           <div class="d-flex justify-content-between align-items-baseline">
             <h2>Search</h2>
-            <div>
+            <div v-if="isSparql">
               <a
-                v-if="isSparql && savedQueries.length > 0"
                 class="link"
+                @click.prevent="switchToSimple()"
+              >Switch to simple</a>
+              <a
+                v-if="savedQueries.length > 0"
+                class="link ml-5"
                 @click.prevent="toggleSavedQueries()"
               >Saved queries</a>
             </div>
@@ -384,7 +388,7 @@ export default class SearchResults extends Vue {
   // Simple search
 
   get queryGraphPatterns() {
-    return `?entity ?relationPredicate ?relationObject .\nFILTER isLiteral(?relationObject)\nFILTER CONTAINS(LCASE(str(?relationObject)), LCASE("${this.query}"))`
+    return `?entity ?relationPredicate ?relationObject .\nFILTER isLiteral(?relationObject)\nFILTER CONTAINS(LCASE(str(?relationObject)), LCASE("${this.query}"))\n\n`
   }
 
   pathTerm(term): string {
@@ -415,6 +419,10 @@ export default class SearchResults extends Vue {
   switchToSparql() {
     this.isSparql = true
     this.$router.push(this.createUrl(this.query, true, null, this.filterData))
+  }
+
+  switchToSimple() {
+    this.$router.push(this.createUrl(this.query, false, null, this.filterData))
   }
 
   mapFilterValueIsChecked(filterData, mapIsChecked) {
@@ -456,16 +464,17 @@ export default class SearchResults extends Vue {
           : filterValues.map((v) => `<${v}>`)
         ).join(', ')
 
-        let f = `\n\n# Filter ${filter.label}\n`
+        let f = `# Filter ${filter.label}\n`
         f += `?entity <${filter.predicate}> ?o${i} .\n`
         f += `FILTER (?o${i} IN ( ${values} ))`
         i += 1
-        return acc + f
+        acc.push(f)
+        return acc
       }
       return acc
-    }, '')
+    }, [])
 
-    sparqlQuery.graphPattern += filters
+    sparqlQuery.graphPattern += filters.join('\n\n')
 
     return sparqlQuery
   }
