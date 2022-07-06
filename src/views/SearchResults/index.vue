@@ -2,7 +2,8 @@
   <div>
     <page :content-only="true">
       <template #content>
-        <template>
+        <status-flash :status="status" />
+        <template v-if="status.isDefault()">
           <!-- Search header -->
           <div class="d-flex justify-content-between align-items-baseline">
             <h2>Search</h2>
@@ -244,9 +245,13 @@
           <hr>
 
           <!-- Search results -->
-          <status-flash :status="status" />
-          <div class="item-list" v-if="results">
-            <p class="text-muted mb-4">Found <strong>{{results.length}}</strong> results.</p>
+          <div
+            v-if="results"
+            class="item-list"
+          >
+            <p class="text-muted mb-4">
+              Found <strong>{{ results.length }}</strong> results.
+            </p>
             <div
               v-for="item in results"
               :key="item.uri"
@@ -368,8 +373,12 @@ export default class SearchResults extends Vue {
     })
   }
 
-  searchWithFilters() {
-    this.$router.push(this.createUrl(this.query, false, null, this.filterData))
+  async searchWithFilters() {
+    try {
+      await this.$router.push(this.createUrl(this.query, false, null, this.filterData))
+    } catch (error) {
+      await this.searchSimple()
+    }
   }
 
   // Simple search
@@ -515,11 +524,7 @@ export default class SearchResults extends Vue {
         search = this.searchSimple
       }
 
-      if (this.query) {
-        await search()
-      } else {
-        this.status.setDone()
-      }
+      await search()
     } catch (error) {
       this.status.setError('Unable to get search results')
     }
