@@ -54,27 +54,70 @@
 
                 <!-- SPARQL input -->
                 <div class="sparql">
-                  <pre>{{ sparqlParts.prefixes }}</pre>
-                  <textarea
-                    v-model="sparqlQuery.prefixes"
-                    class="w-100"
-                    :rows="textareaRows(sparqlQuery.prefixes)"
-                    @input="clearSelectedSavedQuery"
-                  />
-                  <pre>{{ sparqlParts.selectStart }}</pre>
-                  <textarea
-                    v-model="sparqlQuery.graphPattern"
-                    class="graph-patterns"
-                    :rows="textareaRows(sparqlQuery.graphPattern)"
-                    @input="clearSelectedSavedQuery"
-                  />
-                  <pre>{{ sparqlParts.selectEnd }}</pre>
-                  <textarea
-                    v-model="sparqlQuery.ordering"
-                    class="w-100"
-                    :rows="textareaRows(sparqlQuery.ordering)"
-                    @input="clearSelectedSavedQuery"
-                  />
+                  <div class="sparql-block">
+                    <line-numbers
+                      from="1"
+                      :to="lineNumbersPrefixes"
+                    />
+                    <pre>{{ sparqlParts.prefixes }}</pre>
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersPrefixes"
+                      :to="lineNumbersPrefixesInput"
+                    />
+                    <textarea
+                      v-model="sparqlQuery.prefixes"
+                      class="w-100"
+                      :rows="textareaRows(sparqlQuery.prefixes)"
+                      @input="clearSelectedSavedQuery"
+                    />
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersPrefixesInput"
+                      :to="lineNumbersSelectStart"
+                    />
+                    <pre>{{ sparqlParts.selectStart }}</pre>
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersSelectStart"
+                      :to="lineNumbersGraphPatterns"
+                    />
+                    <textarea
+                      v-model="sparqlQuery.graphPattern"
+                      class="graph-patterns"
+                      :rows="textareaRows(sparqlQuery.graphPattern)"
+                      @input="clearSelectedSavedQuery"
+                    />
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersGraphPatterns"
+                      :to="lineNumbersSelectEnd"
+                    />
+                    <pre>{{ sparqlParts.selectEnd }}</pre>
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersSelectEnd"
+                      :to="lineNumbersOrdering"
+                    />
+                    <textarea
+                      v-model="sparqlQuery.ordering"
+                      class="w-100"
+                      :rows="textareaRows(sparqlQuery.ordering)"
+                      @input="clearSelectedSavedQuery"
+                    />
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersOrdering"
+                      :to="lineNumbersAfterOrdering"
+                    />
+                    <pre>{{ sparqlParts.afterOrdering }}</pre>
+                  </div>
                 </div>
 
                 <!-- SPARQL search controls -->
@@ -305,8 +348,9 @@ import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
 import StatusFlash from '@/components/StatusFlash/index.vue'
 import _ from 'lodash'
+import LineNumbers from '@/views/SearchResults/LineNumbers.vue'
 
-@Component({ components: { Page, StatusFlash } })
+@Component({ components: { LineNumbers, Page, StatusFlash } })
 export default class SearchResults extends Vue {
   query: string = null
 
@@ -342,6 +386,40 @@ export default class SearchResults extends Vue {
     name: '',
     description: '',
     type: '',
+  }
+
+  // Line numbers
+
+  get lineNumbersPrefixes() {
+    return this.lineCount(this.sparqlParts.prefixes)
+  }
+
+  get lineNumbersPrefixesInput() {
+    return this.lineNumbersPrefixes + this.lineCount(this.sparqlQuery.prefixes)
+  }
+
+  get lineNumbersSelectStart() {
+    return this.lineNumbersPrefixesInput + this.lineCount(this.sparqlParts.selectStart)
+  }
+
+  get lineNumbersGraphPatterns() {
+    return this.lineNumbersSelectStart + this.lineCount(this.sparqlQuery.graphPattern)
+  }
+
+  get lineNumbersSelectEnd() {
+    return this.lineNumbersGraphPatterns + this.lineCount(this.sparqlParts.selectEnd)
+  }
+
+  get lineNumbersOrdering() {
+    return this.lineNumbersSelectEnd + this.lineCount(this.sparqlQuery.ordering)
+  }
+
+  get lineNumbersAfterOrdering() {
+    return this.lineNumbersOrdering + this.lineCount(this.sparqlParts.afterOrdering)
+  }
+
+  lineCount(str) {
+    return str.split('\n').length
   }
 
   // Navigation
@@ -486,7 +564,7 @@ export default class SearchResults extends Vue {
   // SPARQL search
 
   textareaRows(content) {
-    return Math.max(2, content.split('\n').length)
+    return content.split('\n').length
   }
 
   // Component
@@ -509,12 +587,13 @@ export default class SearchResults extends Vue {
 
       const [prefixes, rest1] = this.sparqlTemplate.split('{{prefixes}}\n')
       const [selectStart, rest2] = rest1.split('{{graphPattern}}\n')
-      const [selectEnd] = rest2.split('{{ordering}}\n')
+      const [selectEnd, afterOrdering] = rest2.split('{{ordering}}\n')
 
       this.sparqlParts = {
         prefixes,
         selectStart,
         selectEnd,
+        afterOrdering,
       }
 
       this.initializeFilterData(filters.data)
