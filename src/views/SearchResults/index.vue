@@ -249,6 +249,7 @@
           <hr>
 
           <!-- Search results -->
+          <status-flash :status="searchStatus" />
           <div
             v-if="results"
             class="item-list"
@@ -303,12 +304,15 @@ import rdfUtils from '@/rdf/utils'
 import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
 import StatusFlash from '@/components/StatusFlash/index.vue'
+import _ from 'lodash'
 
 @Component({ components: { Page, StatusFlash } })
 export default class SearchResults extends Vue {
   query: string = null
 
   status: Status = new Status()
+
+  searchStatus: Status = new Status()
 
   results: any = null
 
@@ -533,6 +537,7 @@ export default class SearchResults extends Vue {
         search = this.searchSimple
       }
 
+      this.status.setDone()
       await search()
     } catch (error) {
       this.status.setError('Unable to get search results')
@@ -560,23 +565,26 @@ export default class SearchResults extends Vue {
 
   async searchSimple() {
     try {
-      this.status.setPending()
+      this.searchStatus.setPending()
+      this.results = null
       const search = await api.search.postQuery(this.createSparqlQuery())
       this.results = search.data
-      this.status.setDone()
+      this.searchStatus.setDone()
     } catch (error) {
-      this.status.setError('Unable to get search results')
+      this.searchStatus.setError('Unable to get search results')
     }
   }
 
   async searchSparql() {
     try {
-      this.status.setPending()
+      this.searchStatus.setPending()
+      this.results = null
       const search = await api.search.postQuery(this.sparqlQuery)
       this.results = search.data
-      this.status.setDone()
+      this.searchStatus.setDone()
     } catch (error) {
-      this.status.setError('Unable to get search results')
+      const defaultMsg = 'Unable to get search results'
+      this.searchStatus.setError(_.get(error, 'response.data.errors.sparql', defaultMsg))
     }
   }
 
