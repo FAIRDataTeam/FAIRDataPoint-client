@@ -7,6 +7,7 @@
       >
         <span class="header__repository-name__title--full">
           FAIR Data Point
+          <small>Metadata for machines</small>
         </span>
         <span class="header__repository-name__title--short">
           FDP

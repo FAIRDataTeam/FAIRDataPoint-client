@@ -1,0 +1,74 @@
+@import "../../scss/variables";
+@import "../../scss/mixins";
+@import "../../scss/typography";
+
+.selected-query {
+  @include border-radius($border-radius-default);
+  padding: $space-md;
+  margin-bottom: $space-md;
+
+  p {
+    margin-bottom: $space-xs;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.sparql {
+  @include border-radius($border-radius-default);
+  background: $color-background-highlighted;
+  padding: $space-md;
+  margin-bottom: $space-md;
+
+  &-block {
+    display: flex;
+
+    .line-numbers {
+      @include typography-mono-14;
+      flex: 0 0 2rem;
+      text-align: right;
+      margin-right: 1rem;
+      margin-left: -1rem;
+      color: $cyan;
+    }
+  }
+
+  textarea {
+    @include typography-mono-14;
+    padding-top: 0;
+    padding-bottom: 0;
+    border: none;
+    outline: none;
+
+    &.graph-patterns {
+      margin-left: 2rem;
+      width: calc(100% - 2rem)
+    }
+  }
+
+
+  pre {
+    margin: 0;
+  }
+}
+
+.card-body-saved-queries {
+  padding: 0;
+
+  ul {
+    padding: 0;
+    margin: 0;
+
+    li {
+      list-style: none;
+      cursor: pointer;
+      padding: .5rem $space-md;
+
+      &:hover {
+        background: $color-background-highlighted;
+      }
+    }
+  }
+}

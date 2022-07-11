@@ -36,6 +36,12 @@
         display: none;
         @media (min-width: $breakpoint-small) {
           display: inline;
+
+          small {
+            display: block;
+            font-size: 1rem;
+            margin-top: -0.5rem;
+          }
         }
       }
 
@@ -52,6 +58,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 1rem;
   }
 
   &__menu {

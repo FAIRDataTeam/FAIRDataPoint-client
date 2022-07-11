@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.15.0]
+
+### Added
+
+- Extended search functionality
+- Add saved search queries
+
 ## [1.14.0]
 
 ### Changed
@@ -224,3 +231,4 @@ Initial version of client application for [FAIR Data Point] providing user inter
 [1.12.0]: /../../tree/v1.12.0
 [1.13.0]: /../../tree/v1.13.0
 [1.14.0]: /../../tree/v1.14.0
+[1.15.0]: /../../tree/v1.15.0
