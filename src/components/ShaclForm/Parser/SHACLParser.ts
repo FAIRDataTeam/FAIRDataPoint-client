@@ -167,6 +167,16 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
     return _.get(statement, '0.object.value')
   }
 
+  protected getShaclCollectionValues(prop: $rdf.ValueType, term: string): string[] | null {
+    const statement = this.store.match(prop, SHACL(term), null, null)
+    const elements = _.get(statement, '0.object.elements')
+    if (!elements) {
+      return null
+    }
+
+    return _.map(elements, (el) => _.get(el, 'value'))
+  }
+
   protected parseIntNumber(number: string | null): number | null {
     return number ? parseInt(number, 10) : null
   }
