@@ -15,6 +15,8 @@ export class Shape<F> {
 export class Field<S> {
   name: string
 
+  description : string | null
+
   path: string
 
   datatype: string
@@ -29,6 +31,7 @@ export class Field<S> {
 
   constructor(
     name: string,
+    description: string | null,
     path: string,
     datatype: string,
     order: number | null,
@@ -37,6 +40,7 @@ export class Field<S> {
     nodeShape: S | null,
   ) {
     this.name = name
+    this.description = description
     this.path = path
     this.datatype = datatype
     this.order = order
@@ -85,6 +89,7 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
 
   protected abstract createField(
     name: string,
+    description : string | null,
     path: string,
     datatype: string,
     order: number | null,
@@ -141,6 +146,7 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
 
     return this.createField(
       this.getShaclValue(prop, 'name'),
+      this.getShaclValue(prop, 'description'),
       this.getShaclValue(prop, 'path'),
       this.getShaclValue(prop, 'datatype'),
       this.parseIntNumber(this.getShaclValue(prop, 'order')),

@@ -159,4 +159,10 @@
       flex-grow: 1;
     }
   }
+
+  .field-description {
+    @include typography-lighter-14;
+    margin-top: .25rem;
+    margin-bottom: 0;
+  }
 }

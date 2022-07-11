@@ -6,6 +6,7 @@ export class ViewField extends Field<Shape<ViewField>> {
 
   constructor(
     name: string,
+    description: string | null,
     path: string,
     datatype: string,
     order: number | null,
@@ -14,7 +15,7 @@ export class ViewField extends Field<Shape<ViewField>> {
     nodeShape: Shape<ViewField> | null,
     viewer: string | null,
   ) {
-    super(name, path, datatype, order, minCount, maxCount, nodeShape)
+    super(name, description, path, datatype, order, minCount, maxCount, nodeShape)
     this.viewer = viewer
   }
 }
@@ -37,6 +38,7 @@ export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
 
   protected createField(
     name: string,
+    description: string | null,
     path: string,
     datatype: string,
     order: number,
@@ -51,7 +53,17 @@ export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
       return []
     }
 
-    return [new ViewField(name, path, datatype, order, minCount, maxCount, nodeShape, viewer)]
+    return [new ViewField(
+      name,
+      description,
+      path,
+      datatype,
+      order,
+      minCount,
+      maxCount,
+      nodeShape,
+      viewer,
+    )]
   }
 }
 
