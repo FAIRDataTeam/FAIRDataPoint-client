@@ -1,9 +1,11 @@
 <template>
   <div class="line-numbers">
     <div
-v-for="number in numbers"
-:key="number"
->{{ number }}</div>
+      v-for="number in numbers"
+      :key="number"
+    >
+      {{ number }}
+    </div>
   </div>
 </template>
 <script lang="ts">
