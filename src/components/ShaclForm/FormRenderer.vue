@@ -178,7 +178,7 @@ export default class FormRenderer extends Vue {
   }
 
   getLocalError(field) {
-    const value = `${this.data[field.path]}`
+    const value = _.get(this.data[field.path], '0.value', `${this.data[field.path]}`)
 
     if (field.minLength && value.length < field.minLength) {
       return `${this.getName(field)} should be at least ${field.minLength} characters.`
@@ -186,6 +186,10 @@ export default class FormRenderer extends Vue {
 
     if (field.maxLength && value.length > field.maxLength) {
       return `${this.getName(field)} should be at most ${field.maxLength} characters.`
+    }
+
+    if (field.in && field.in.indexOf(value) === -1) {
+      return `${this.getName(field)} should contain one of the values: ${field.in.join(', ')}.`
     }
 
     return null
@@ -204,6 +208,9 @@ export default class FormRenderer extends Vue {
 
       case SHACL('MaxLengthConstraintComponent').value:
         return `${this.getName(field)} should be at most ${field.maxLength} characters.`
+
+      case SHACL('InConstraintComponent').value:
+        return `${this.getName(field)} should contain one of the values: ${field.in.join(', ')}.`
 
       default:
         return originalError
