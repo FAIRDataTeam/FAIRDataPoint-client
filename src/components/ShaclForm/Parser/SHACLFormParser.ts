@@ -20,6 +20,10 @@ export class FormField extends Field<FormShape> {
 
   defaultValue: string | null
 
+  minLength: number | null
+
+  maxLength: number | null
+
   constructor(
     name: string,
     description : string | null,
@@ -33,6 +37,8 @@ export class FormField extends Field<FormShape> {
     clazz: string | null,
     editor: string | null,
     defaultValue: string | null,
+    minLength: number | null,
+    maxLength: number | null,
   ) {
     super(name, description, path, datatype, order, minCount, maxCount, nodeShape)
     this.nodeKind = nodeKind
@@ -41,6 +47,8 @@ export class FormField extends Field<FormShape> {
     this.maxCount = maxCount
     this.editor = editor
     this.defaultValue = defaultValue
+    this.minLength = minLength
+    this.maxLength = maxLength
   }
 }
 
@@ -94,6 +102,8 @@ export class SHACLFormParser extends SHACLParser<FormField, FormShape> {
       this.getShaclValue(prop, 'class'),
       editor,
       this.getShaclValue(prop, 'defaultValue'),
+      this.parseIntNumber(this.getShaclValue(prop, 'minLength')),
+      this.parseIntNumber(this.getShaclValue(prop, 'maxLength')),
     )]
   }
 }

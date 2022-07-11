@@ -7,6 +7,7 @@
     >
       <form-renderer
         v-if="form"
+        ref="formRenderer"
         v-model="data"
         :subject="subject"
         :definition="form"
@@ -49,6 +50,7 @@
   </div>
 </template>
 <script lang="ts">
+import _ from 'lodash'
 import * as $rdf from 'rdflib'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import PrismEditor from 'vue-prism-editor'
@@ -122,6 +124,7 @@ export default class ShaclForm extends Vue {
   }
 
   onSubmit() {
+    _.get(this, '$refs.formRenderer.cleanDirty')()
     this.$emit('submit', this.turtle)
   }
 }

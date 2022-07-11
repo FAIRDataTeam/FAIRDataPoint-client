@@ -9,7 +9,10 @@
       :class="{'form__group': true, 'form__group--error': getError(field)}"
     >
       <label :class="{required: isRequired(field)}">{{ getName(field) }}</label>
-      <p v-if="isList(field) && field.description" class="field-description">
+      <p
+        v-if="isList(field) && field.description"
+        class="field-description"
+      >
         {{ field.description }}
       </p>
       <component :is="isList(field) ? 'ul' : 'div'">
@@ -24,13 +27,13 @@
               v-model="data[field.path][i]"
               :definition="field.nodeShape"
               :validation-report="validationReport"
-              @input="onInput"
+              @input="onInput(field)"
             />
             <form-input
               v-else
               v-model="data[field.path][i]"
               :field="field"
-              @input="onInput"
+              @input="onInput(field)"
             />
             <a
               v-if="canBeRemoved(field)"
@@ -42,7 +45,10 @@
           </div>
         </component>
       </component>
-      <p v-if="!isList(field) && field.description" class="field-description">
+      <p
+        v-if="!isList(field) && field.description"
+        class="field-description"
+      >
         {{ field.description }}
       </p>
       <button
@@ -92,6 +98,8 @@ export default class FormRenderer extends Vue {
 
   componentKey: number = 0
 
+  dirtyFields : Set<string>
+
   createDefaultValue(field) {
     if (field.nodeShape) {
       return {
@@ -112,6 +120,7 @@ export default class FormRenderer extends Vue {
   }
 
   created(): void {
+    this.dirtyFields = new Set<string>()
     this.data = this.definition.fields.reduce((acc, field) => {
       acc[field.path] = _.get(this.value.data, field.path, this.createDefaultValueArray(field))
       return acc
@@ -139,20 +148,46 @@ export default class FormRenderer extends Vue {
 
   addValue(field) {
     this.data[field.path].push(this.createDefaultValue(field))
-    this.onInput()
+    this.onInput(field)
   }
 
   removeValue(field, index) {
     this.data[field.path].splice(index, 1)
     this.componentKey += 1
-    this.onInput()
+    this.onInput(field)
+  }
+
+  isDirty(field) {
+    return this.dirtyFields.has(field.path)
+  }
+
+  cleanDirty() {
+    this.dirtyFields = new Set<string>()
   }
 
   getError(field) {
+    if (this.isDirty(field)) {
+      return this.getLocalError(field)
+    }
     const subject = `${this.subject}`
     if (_.has(this.validationReport, subject)) {
       return this.humanReadableError(field, this.validationReport[subject][field.path])
     }
+
+    return null
+  }
+
+  getLocalError(field) {
+    const value = `${this.data[field.path]}`
+
+    if (field.minLength && value.length < field.minLength) {
+      return `${this.getName(field)} should be at least ${field.minLength} characters.`
+    }
+
+    if (field.maxLength && value.length > field.maxLength) {
+      return `${this.getName(field)} should be at most ${field.maxLength} characters.`
+    }
+
     return null
   }
 
@@ -164,12 +199,22 @@ export default class FormRenderer extends Vue {
       case SHACL('NodeKindConstraintComponent').value:
         return `${this.getName(field)} requires a valid IRI.`
 
+      case SHACL('MinLengthConstraintComponent').value:
+        return `${this.getName(field)} should be at least ${field.minLength} characters.`
+
+      case SHACL('MaxLengthConstraintComponent').value:
+        return `${this.getName(field)} should be at most ${field.maxLength} characters.`
+
       default:
         return originalError
     }
   }
 
-  onInput() {
+  onInput(field = null) {
+    if (field) {
+      this.dirtyFields.add(field.path)
+    }
+
     this.$emit('input', {
       subject: this.value.subject,
       data: this.data,
