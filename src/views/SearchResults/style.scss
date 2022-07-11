@@ -22,9 +22,25 @@
   padding: $space-md;
   margin-bottom: $space-md;
 
+  &-block {
+    display: flex;
+
+    .line-numbers {
+      @include typography-mono-14;
+      flex: 0 0 2rem;
+      text-align: right;
+      margin-right: 1rem;
+      margin-left: -1rem;
+      color: $cyan;
+    }
+  }
+
   textarea {
     @include typography-mono-14;
-    border-color: $color-separator;
+    padding-top: 0;
+    padding-bottom: 0;
+    border: none;
+    outline: none;
 
     &.graph-patterns {
       margin-left: 2rem;

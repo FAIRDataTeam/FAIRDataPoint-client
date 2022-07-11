@@ -2,14 +2,19 @@
   <div>
     <page :content-only="true">
       <template #content>
-        <template>
+        <status-flash :status="status" />
+        <template v-if="status.isDefault()">
           <!-- Search header -->
           <div class="d-flex justify-content-between align-items-baseline">
             <h2>Search</h2>
-            <div>
+            <div v-if="isSparql">
               <a
-                v-if="isSparql && savedQueries.length > 0"
                 class="link"
+                @click.prevent="switchToSimple()"
+              >Switch to simple</a>
+              <a
+                v-if="savedQueries.length > 0"
+                class="link ml-5"
                 @click.prevent="toggleSavedQueries()"
               >Saved queries</a>
             </div>
@@ -49,27 +54,70 @@
 
                 <!-- SPARQL input -->
                 <div class="sparql">
-                  <pre>{{ sparqlParts.prefixes }}</pre>
-                  <textarea
-                    v-model="sparqlQuery.prefixes"
-                    class="w-100"
-                    :rows="textareaRows(sparqlQuery.prefixes)"
-                    @input="clearSelectedSavedQuery"
-                  />
-                  <pre>{{ sparqlParts.selectStart }}</pre>
-                  <textarea
-                    v-model="sparqlQuery.graphPattern"
-                    class="graph-patterns"
-                    :rows="textareaRows(sparqlQuery.graphPattern)"
-                    @input="clearSelectedSavedQuery"
-                  />
-                  <pre>{{ sparqlParts.selectEnd }}</pre>
-                  <textarea
-                    v-model="sparqlQuery.ordering"
-                    class="w-100"
-                    :rows="textareaRows(sparqlQuery.ordering)"
-                    @input="clearSelectedSavedQuery"
-                  />
+                  <div class="sparql-block">
+                    <line-numbers
+                      from="1"
+                      :to="lineNumbersPrefixes"
+                    />
+                    <pre>{{ sparqlParts.prefixes }}</pre>
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersPrefixes"
+                      :to="lineNumbersPrefixesInput"
+                    />
+                    <textarea
+                      v-model="sparqlQuery.prefixes"
+                      class="w-100"
+                      :rows="textareaRows(sparqlQuery.prefixes)"
+                      @input="clearSelectedSavedQuery"
+                    />
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersPrefixesInput"
+                      :to="lineNumbersSelectStart"
+                    />
+                    <pre>{{ sparqlParts.selectStart }}</pre>
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersSelectStart"
+                      :to="lineNumbersGraphPatterns"
+                    />
+                    <textarea
+                      v-model="sparqlQuery.graphPattern"
+                      class="graph-patterns"
+                      :rows="textareaRows(sparqlQuery.graphPattern)"
+                      @input="clearSelectedSavedQuery"
+                    />
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersGraphPatterns"
+                      :to="lineNumbersSelectEnd"
+                    />
+                    <pre>{{ sparqlParts.selectEnd }}</pre>
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersSelectEnd"
+                      :to="lineNumbersOrdering"
+                    />
+                    <textarea
+                      v-model="sparqlQuery.ordering"
+                      class="w-100"
+                      :rows="textareaRows(sparqlQuery.ordering)"
+                      @input="clearSelectedSavedQuery"
+                    />
+                  </div>
+                  <div class="sparql-block">
+                    <line-numbers
+                      :from="lineNumbersOrdering"
+                      :to="lineNumbersAfterOrdering"
+                    />
+                    <pre>{{ sparqlParts.afterOrdering }}</pre>
+                  </div>
                 </div>
 
                 <!-- SPARQL search controls -->
@@ -244,9 +292,14 @@
           <hr>
 
           <!-- Search results -->
-          <status-flash :status="status" />
-          <div class="item-list" v-if="results">
-            <p class="text-muted mb-4">Found <strong>{{results.length}}</strong> results.</p>
+          <status-flash :status="searchStatus" />
+          <div
+            v-if="results"
+            class="item-list"
+          >
+            <p class="text-muted mb-4">
+              Found <strong>{{ results.length }}</strong> results.
+            </p>
             <div
               v-for="item in results"
               :key="item.uri"
@@ -294,12 +347,16 @@ import rdfUtils from '@/rdf/utils'
 import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
 import StatusFlash from '@/components/StatusFlash/index.vue'
+import _ from 'lodash'
+import LineNumbers from '@/views/SearchResults/LineNumbers.vue'
 
-@Component({ components: { Page, StatusFlash } })
+@Component({ components: { LineNumbers, Page, StatusFlash } })
 export default class SearchResults extends Vue {
   query: string = null
 
   status: Status = new Status()
+
+  searchStatus: Status = new Status()
 
   results: any = null
 
@@ -329,6 +386,40 @@ export default class SearchResults extends Vue {
     name: '',
     description: '',
     type: '',
+  }
+
+  // Line numbers
+
+  get lineNumbersPrefixes() {
+    return this.lineCount(this.sparqlParts.prefixes)
+  }
+
+  get lineNumbersPrefixesInput() {
+    return this.lineNumbersPrefixes + this.lineCount(this.sparqlQuery.prefixes)
+  }
+
+  get lineNumbersSelectStart() {
+    return this.lineNumbersPrefixesInput + this.lineCount(this.sparqlParts.selectStart)
+  }
+
+  get lineNumbersGraphPatterns() {
+    return this.lineNumbersSelectStart + this.lineCount(this.sparqlQuery.graphPattern)
+  }
+
+  get lineNumbersSelectEnd() {
+    return this.lineNumbersGraphPatterns + this.lineCount(this.sparqlParts.selectEnd)
+  }
+
+  get lineNumbersOrdering() {
+    return this.lineNumbersSelectEnd + this.lineCount(this.sparqlQuery.ordering)
+  }
+
+  get lineNumbersAfterOrdering() {
+    return this.lineNumbersOrdering + this.lineCount(this.sparqlParts.afterOrdering)
+  }
+
+  lineCount(str) {
+    return str.split('\n').length
   }
 
   // Navigation
@@ -368,14 +459,18 @@ export default class SearchResults extends Vue {
     })
   }
 
-  searchWithFilters() {
-    this.$router.push(this.createUrl(this.query, false, null, this.filterData))
+  async searchWithFilters() {
+    try {
+      await this.$router.push(this.createUrl(this.query, false, null, this.filterData))
+    } catch (error) {
+      await this.searchSimple()
+    }
   }
 
   // Simple search
 
   get queryGraphPatterns() {
-    return `?entity ?relationPredicate ?relationObject .\nFILTER isLiteral(?relationObject)\nFILTER CONTAINS(LCASE(str(?relationObject)), LCASE("${this.query}"))`
+    return `?entity ?relationPredicate ?relationObject .\nFILTER isLiteral(?relationObject)\nFILTER CONTAINS(LCASE(str(?relationObject)), LCASE("${this.query}"))\n\n`
   }
 
   pathTerm(term): string {
@@ -406,6 +501,10 @@ export default class SearchResults extends Vue {
   switchToSparql() {
     this.isSparql = true
     this.$router.push(this.createUrl(this.query, true, null, this.filterData))
+  }
+
+  switchToSimple() {
+    this.$router.push(this.createUrl(this.query, false, null, this.filterData))
   }
 
   mapFilterValueIsChecked(filterData, mapIsChecked) {
@@ -447,16 +546,17 @@ export default class SearchResults extends Vue {
           : filterValues.map((v) => `<${v}>`)
         ).join(', ')
 
-        let f = `\n\n# Filter ${filter.label}\n`
+        let f = `# Filter ${filter.label}\n`
         f += `?entity <${filter.predicate}> ?o${i} .\n`
         f += `FILTER (?o${i} IN ( ${values} ))`
         i += 1
-        return acc + f
+        acc.push(f)
+        return acc
       }
       return acc
-    }, '')
+    }, [])
 
-    sparqlQuery.graphPattern += filters
+    sparqlQuery.graphPattern += filters.join('\n\n')
 
     return sparqlQuery
   }
@@ -464,7 +564,7 @@ export default class SearchResults extends Vue {
   // SPARQL search
 
   textareaRows(content) {
-    return Math.max(2, content.split('\n').length)
+    return content.split('\n').length
   }
 
   // Component
@@ -487,12 +587,13 @@ export default class SearchResults extends Vue {
 
       const [prefixes, rest1] = this.sparqlTemplate.split('{{prefixes}}\n')
       const [selectStart, rest2] = rest1.split('{{graphPattern}}\n')
-      const [selectEnd] = rest2.split('{{ordering}}\n')
+      const [selectEnd, afterOrdering] = rest2.split('{{ordering}}\n')
 
       this.sparqlParts = {
         prefixes,
         selectStart,
         selectEnd,
+        afterOrdering,
       }
 
       this.initializeFilterData(filters.data)
@@ -515,11 +616,8 @@ export default class SearchResults extends Vue {
         search = this.searchSimple
       }
 
-      if (this.query) {
-        await search()
-      } else {
-        this.status.setDone()
-      }
+      this.status.setDone()
+      await search()
     } catch (error) {
       this.status.setError('Unable to get search results')
     }
@@ -546,23 +644,26 @@ export default class SearchResults extends Vue {
 
   async searchSimple() {
     try {
-      this.status.setPending()
+      this.searchStatus.setPending()
+      this.results = null
       const search = await api.search.postQuery(this.createSparqlQuery())
       this.results = search.data
-      this.status.setDone()
+      this.searchStatus.setDone()
     } catch (error) {
-      this.status.setError('Unable to get search results')
+      this.searchStatus.setError('Unable to get search results')
     }
   }
 
   async searchSparql() {
     try {
-      this.status.setPending()
+      this.searchStatus.setPending()
+      this.results = null
       const search = await api.search.postQuery(this.sparqlQuery)
       this.results = search.data
-      this.status.setDone()
+      this.searchStatus.setDone()
     } catch (error) {
-      this.status.setError('Unable to get search results')
+      const defaultMsg = 'Unable to get search results'
+      this.searchStatus.setError(_.get(error, 'response.data.errors.sparql', defaultMsg))
     }
   }
 
