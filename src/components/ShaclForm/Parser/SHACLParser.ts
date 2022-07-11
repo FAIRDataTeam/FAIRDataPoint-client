@@ -19,6 +19,8 @@ export class Field<S> {
 
   datatype: string
 
+  order: number | null
+
   minCount: number | null
 
   maxCount: number | null
@@ -29,13 +31,15 @@ export class Field<S> {
     name: string,
     path: string,
     datatype: string,
-    minCount: number,
-    maxCount: number,
+    order: number | null,
+    minCount: number | null,
+    maxCount: number | null,
     nodeShape: S | null,
   ) {
     this.name = name
     this.path = path
     this.datatype = datatype
+    this.order = order
     this.minCount = minCount
     this.maxCount = maxCount
     this.nodeShape = nodeShape
@@ -54,10 +58,10 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
   }
 
   public parse(targetClasses: $rdf.ValueType[]): S {
-    return targetClasses
+    return this.sortFields(targetClasses
       .flatMap((tc) => this.loadShapes(tc))
       .map((s) => this.loadShapeForm(s))
-      .reduce(this.mergeShapes)
+      .reduce(this.mergeShapes))
   }
 
   public parseAll(): S {
@@ -73,10 +77,17 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
 
   protected abstract mergeShapes(shape1: S, shape2: S): S;
 
+  protected sortFields(shape: S): S {
+    const compareFields = (field1: F, field2: F) => (field1.order > field2.order ? 1 : -1)
+    shape.fields.sort(compareFields)
+    return shape
+  }
+
   protected abstract createField(
     name: string,
     path: string,
     datatype: string,
+    order: number | null,
     minCount: number | null,
     maxCount: number | null,
     nodeShape: Shape<F> | null,
@@ -132,6 +143,7 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
       this.getShaclValue(prop, 'name'),
       this.getShaclValue(prop, 'path'),
       this.getShaclValue(prop, 'datatype'),
+      this.parseIntNumber(this.getShaclValue(prop, 'order')),
       this.parseIntNumber(this.getShaclValue(prop, 'minCount')),
       this.parseIntNumber(this.getShaclValue(prop, 'maxCount')),
       nodeShape,
