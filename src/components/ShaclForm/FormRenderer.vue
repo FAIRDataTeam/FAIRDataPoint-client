@@ -9,6 +9,9 @@
       :class="{'form__group': true, 'form__group--error': getError(field)}"
     >
       <label :class="{required: isRequired(field)}">{{ getName(field) }}</label>
+      <p v-if="isList(field) && field.description" class="field-description">
+        {{ field.description }}
+      </p>
       <component :is="isList(field) ? 'ul' : 'div'">
         <component
           :is="isList(field) ? 'li' : 'div'"
@@ -39,6 +42,9 @@
           </div>
         </component>
       </component>
+      <p v-if="!isList(field) && field.description" class="field-description">
+        {{ field.description }}
+      </p>
       <button
         v-if="isList(field)"
         class="btn btn-link"
