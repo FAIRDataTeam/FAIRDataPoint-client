@@ -4,7 +4,7 @@
     :placeholder="placeholder"
     :type="type"
     :format="format"
-    valueType="format"
+    value-type="format"
     :name="name"
     @input="onInput"
   />

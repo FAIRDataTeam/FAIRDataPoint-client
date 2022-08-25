@@ -15,6 +15,12 @@
       type="datetime"
       @input="onInput"
     />
+    <enum-select-editor
+      v-else-if="isEnumSelectEditor"
+      :field="field"
+      :value="value"
+      @input="onInput"
+    />
     <uri-editor
       v-else-if="isURIEditor"
       :field="field"
@@ -43,9 +49,11 @@ import TextAreaEditor from '@/components/ShaclForm/Editor/TextAreaEditor.vue'
 import URIEditor from '@/components/ShaclForm/Editor/URIEditor.vue'
 import DatePickerEditor from '@/components/ShaclForm/Editor/DatePickerEditor.vue'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
+import EnumSelectEditor from '@/components/ShaclForm/Editor/EnumSelectEditor.vue'
 
 @Component({
   components: {
+    EnumSelectEditor,
     DatePickerEditor,
     TextAreaEditor,
     TextFieldEditor,
@@ -65,6 +73,10 @@ export default class FormInput extends Vue {
 
   get isDateTimePickerEditor() {
     return this.field.editor === DASH('DateTimePickerEditor').value
+  }
+
+  get isEnumSelectEditor() {
+    return this.field.editor === DASH('EnumSelectEditor').value
   }
 
   get isTextAreaEditor() {
