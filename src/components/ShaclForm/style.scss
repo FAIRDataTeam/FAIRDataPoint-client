@@ -1,6 +1,21 @@
 @import "../../scss/variables";
 
 .form-renderer {
+  .shacl-group {
+    margin-top: 2rem;
+    padding-bottom: 1rem;
+
+    & > .form__group {
+      border-left: 4px solid $color-separator;
+      padding: 0.5rem 0 2.25rem 1rem;
+      margin-bottom: 0;
+
+      &:last-child {
+        padding-bottom: 0.5rem;
+      }
+    }
+  }
+
   .form-renderer {
     border-left: 4px solid $color-separator;
     padding: 0.5rem 0 0.5rem 1rem;

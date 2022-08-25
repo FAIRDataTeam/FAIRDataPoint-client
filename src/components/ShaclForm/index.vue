@@ -2,15 +2,15 @@
   <div>
     <status-flash :status="status" />
     <form
-      v-if="!status.isError() && form"
+      v-if="!status.isError() && formDefinition"
       @submit.prevent="onSubmit"
     >
       <form-renderer
-        v-if="form"
+        v-if="formDefinition"
         ref="formRenderer"
         v-model="data"
         :subject="subject"
-        :definition="form"
+        :definition="formDefinition"
         :validation-report="validationReport"
         @input="onInput"
       />
@@ -103,10 +103,19 @@ export default class ShaclForm extends Vue {
 
   status: Status = new Status()
 
+  formDefinition : any = null
+
   created() {
     try {
       const parser = new SHACLFormParser(this.shacl)
       this.form = parser.parse(this.targetClasses)
+      const groups = parser.parseAndGroup(this.targetClasses)
+
+      this.formDefinition = {
+        targetClasses: this.targetClasses,
+        groups,
+      }
+
       this.data = formData.fromRdf(
         this.form,
         $rdf.namedNode(this.subject),

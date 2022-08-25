@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as $rdf from 'rdflib'
 import {
-  DASH, DEFAULT_URI, RDF, SHACL,
+  DASH, DEFAULT_URI, RDF, RDFS, SHACL,
 } from '@/rdf/namespaces'
 
 export class Shape<F> {
@@ -12,10 +12,43 @@ export class Shape<F> {
   }
 }
 
+export class Group<F> {
+  iri: string | null
+
+  label: string | null
+
+  comment: string | null
+
+  order: number | null
+
+  fields: F[]
+
+  isReal: boolean
+
+  constructor(
+    iri: string | null,
+    label: string | null,
+    comment: string | null,
+    order: number | null,
+    isReal: boolean = true,
+  ) {
+    this.iri = iri
+    this.label = label
+    this.comment = comment
+    this.order = order
+    this.fields = []
+    this.isReal = isReal
+  }
+
+  compare(other: Group<F>): number {
+    return this.order > other.order ? 1 : -1
+  }
+}
+
 export class Field<S> {
   name: string
 
-  description : string | null
+  description: string | null
 
   path: string
 
@@ -29,6 +62,8 @@ export class Field<S> {
 
   nodeShape: S | null
 
+  group: string | null
+
   constructor(
     name: string,
     description: string | null,
@@ -38,6 +73,7 @@ export class Field<S> {
     minCount: number | null,
     maxCount: number | null,
     nodeShape: S | null,
+    group: string | null,
   ) {
     this.name = name
     this.description = description
@@ -47,6 +83,11 @@ export class Field<S> {
     this.minCount = minCount
     this.maxCount = maxCount
     this.nodeShape = nodeShape
+    this.group = group
+  }
+
+  compare(other: Field<S>): number {
+    return this.order > other.order ? 1 : -1
   }
 }
 
@@ -55,9 +96,12 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
 
   maxDepth: number
 
+  groups: Map<string, Group<F>>
+
   constructor(shacl: string, maxDepth: number = 2) {
-    this.maxDepth = maxDepth
     this.store = $rdf.graph()
+    this.maxDepth = maxDepth
+    this.groups = new Map<string, Group<F>>()
     $rdf.parse(shacl, this.store, DEFAULT_URI, 'text/turtle', null)
   }
 
@@ -66,6 +110,35 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
       .flatMap((tc) => this.loadShapes(tc))
       .map((s) => this.loadShapeForm(s))
       .reduce(this.mergeShapes))
+  }
+
+  public parseAndGroup(targetClasses: $rdf.ValueType[]) {
+    const shape = targetClasses
+      .flatMap((tc) => this.loadShapes(tc))
+      .map((s) => this.loadShapeForm(s))
+      .reduce(this.mergeShapes)
+
+    const groupMap = shape.fields
+      .reduce<Map<string, Group<F>>>((
+        groups: Map<string, Group<F>>,
+        field: F,
+      ): Map<string, Group<F>> => {
+        if (field.group) {
+          groups.get(field.group).fields.push(field)
+        } else {
+          const group = new Group<F>(field.path, null, null, field.order, false)
+          group.fields.push(field)
+          groups.set(field.path, group)
+        }
+        return groups
+      }, this.groups)
+
+    return Array.from(groupMap.values())
+      .map((group) => {
+        group.fields.sort((a, b) => a.compare(b))
+        return group
+      })
+      .sort((a, b) => a.compare(b))
   }
 
   public parseAll(): S {
@@ -89,13 +162,14 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
 
   protected abstract createField(
     name: string,
-    description : string | null,
+    description: string | null,
     path: string,
     datatype: string,
     order: number | null,
     minCount: number | null,
     maxCount: number | null,
     nodeShape: Shape<F> | null,
+    group: string | null,
     prop: $rdf.ValueType
   ): F[];
 
@@ -144,6 +218,14 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
     const nodeObject = _.get(nodeStatement, '0.object')
     const nodeShape = nodeObject ? this.loadShapeForm(nodeObject, level + 1) : null
 
+    const groupIri = _.get(this.store.match(prop, SHACL('group')), '0.object')
+    const groupIriValue = groupIri ? _.get(groupIri, 'value') : null
+
+    if (groupIriValue && !this.groups.has(groupIriValue)) {
+      const group = this.parseShaclGroup(groupIri)
+      this.groups.set(groupIriValue, group)
+    }
+
     return this.createField(
       this.getShaclValue(prop, 'name'),
       this.getShaclValue(prop, 'description'),
@@ -153,17 +235,30 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
       this.parseIntNumber(this.getShaclValue(prop, 'minCount')),
       this.parseIntNumber(this.getShaclValue(prop, 'maxCount')),
       nodeShape,
+      groupIriValue,
       prop,
     )
   }
 
+  protected parseShaclGroup(group: $rdf.ValueType): Group<F> {
+    return new Group<F>(
+      _.get(group, 'value'),
+      this.getValue(group, RDFS('label')),
+      this.getValue(group, RDFS('comment')),
+      this.parseIntNumber(this.getShaclValue(group, 'order')),
+    )
+  }
+
   protected getShaclValue(prop: $rdf.ValueType, term: string): string | null {
-    const statement = this.store.match(prop, SHACL(term), null, null)
-    return _.get(statement, '0.object.value')
+    return this.getValue(prop, SHACL(term))
   }
 
   protected getDashValue(prop: $rdf.ValueType, term: string): string | null {
-    const statement = this.store.match(prop, DASH(term), null, null)
+    return this.getValue(prop, DASH(term))
+  }
+
+  protected getValue(subject: $rdf.ValueType, predicate): string | null {
+    const statement = this.store.match(subject, predicate, null, null)
     return _.get(statement, '0.object.value')
   }
 

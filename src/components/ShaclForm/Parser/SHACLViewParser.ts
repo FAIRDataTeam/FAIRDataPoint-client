@@ -13,9 +13,10 @@ export class ViewField extends Field<Shape<ViewField>> {
     minCount: number | null,
     maxCount: number | null,
     nodeShape: Shape<ViewField> | null,
+    group: string | null,
     viewer: string | null,
   ) {
-    super(name, description, path, datatype, order, minCount, maxCount, nodeShape)
+    super(name, description, path, datatype, order, minCount, maxCount, nodeShape, group)
     this.viewer = viewer
   }
 }
@@ -45,6 +46,7 @@ export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
     minCount: number,
     maxCount: number,
     nodeShape: Shape<ViewField> | null,
+    group: string | null,
     prop: $rdf.ValueType,
   ): ViewField[] {
     const viewer = this.getDashValue(prop, 'viewer')
@@ -62,6 +64,7 @@ export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
       minCount,
       maxCount,
       nodeShape,
+      group,
       viewer,
     )]
   }

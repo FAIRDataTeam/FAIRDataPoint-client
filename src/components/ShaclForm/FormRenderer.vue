@@ -4,67 +4,79 @@
     class="form form-renderer"
   >
     <div
-      v-for="field in definition.fields"
-      :key="`${field.path}`"
-      :class="{'form__group': true, 'form__group--error': getError(field)}"
+      v-for="group in definition.groups"
+      :key="`${group.iri}`"
+      :class="{'shacl-group' : !!group.label }"
     >
-      <label :class="{required: isRequired(field)}">{{ getName(field) }}</label>
-      <p
-        v-if="isList(field) && field.description"
-        class="field-description"
-      >
-        {{ field.description }}
+      <h2 v-if="group.label">
+        {{ group.label }}
+      </h2>
+      <p v-if="group.comment">
+        {{ group.comment }}
       </p>
-      <component :is="isList(field) ? 'ul' : 'div'">
-        <component
-          :is="isList(field) ? 'li' : 'div'"
-          v-for="(_, i) in data[field.path]"
-          :key="`${field.path}.${i}`"
+      <div
+        v-for="field in group.fields"
+        :key="`${field.path}`"
+        :class="{'form__group': true, 'form__group--error': getError(field)}"
+      >
+        <label :class="{required: isRequired(field)}">{{ getName(field) }}</label>
+        <p
+          v-if="isList(field) && field.description"
+          class="field-description"
         >
-          <div class="d-flex">
-            <form-renderer
-              v-if="field.nodeShape"
-              v-model="data[field.path][i]"
-              :definition="field.nodeShape"
-              :validation-report="validationReport"
-              @input="onInput(field)"
-            />
-            <form-input
-              v-else
-              v-model="data[field.path][i]"
-              :field="field"
-              @input="onInput(field)"
-            />
-            <a
-              v-if="canBeRemoved(field)"
-              class="text-danger ml-3 p-1"
-              @click="removeValue(field, i)"
-            >
-              <fa :icon="['fas', 'times']" />
-            </a>
-          </div>
+          {{ field.description }}
+        </p>
+        <component :is="isList(field) ? 'ul' : 'div'">
+          <component
+            :is="isList(field) ? 'li' : 'div'"
+            v-for="(_, i) in data[field.path]"
+            :key="`${field.path}.${i}`"
+          >
+            <div class="d-flex">
+              <form-renderer
+                v-if="field.nodeShape"
+                v-model="data[field.path][i]"
+                :definition="wrapNodeShape(field.nodeShape)"
+                :validation-report="validationReport"
+                @input="onInput(field)"
+              />
+              <form-input
+                v-else
+                v-model="data[field.path][i]"
+                :field="field"
+                @input="onInput(field)"
+              />
+              <a
+                v-if="canBeRemoved(field)"
+                class="text-danger ml-3 p-1"
+                @click="removeValue(field, i)"
+              >
+                <fa :icon="['fas', 'times']" />
+              </a>
+            </div>
+          </component>
         </component>
-      </component>
-      <p
-        v-if="!isList(field) && field.description"
-        class="field-description"
-      >
-        {{ field.description }}
-      </p>
-      <button
-        v-if="isList(field)"
-        class="btn btn-link"
-        @click.prevent="addValue(field)"
-      >
-        <fa :icon="['fas', 'plus']" />
-        Add
-      </button>
-      <p
-        v-if="getError(field)"
-        class="invalid-feedback"
-      >
-        {{ getError(field) }}
-      </p>
+        <p
+          v-if="!isList(field) && field.description"
+          class="field-description"
+        >
+          {{ field.description }}
+        </p>
+        <button
+          v-if="isList(field)"
+          class="btn btn-link"
+          @click.prevent="addValue(field)"
+        >
+          <fa :icon="['fas', 'plus']" />
+          Add
+        </button>
+        <p
+          v-if="getError(field)"
+          class="invalid-feedback"
+        >
+          {{ getError(field) }}
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -100,6 +112,16 @@ export default class FormRenderer extends Vue {
 
   dirtyFields : Set<string>
 
+  wrapNodeShape(nodeShape) {
+    return {
+      groups: [{
+        fields: nodeShape.fields,
+        isReal: false,
+      }],
+      targetClasses: nodeShape.targetClasses,
+    }
+  }
+
   createDefaultValue(field) {
     if (field.nodeShape) {
       return {
@@ -121,8 +143,10 @@ export default class FormRenderer extends Vue {
 
   created(): void {
     this.dirtyFields = new Set<string>()
-    this.data = this.definition.fields.reduce((acc, field) => {
-      acc[field.path] = _.get(this.value.data, field.path, this.createDefaultValueArray(field))
+    this.data = this.definition.groups.reduce((acc, group) => {
+      group.fields.forEach((field) => {
+        acc[field.path] = _.get(this.value.data, field.path, this.createDefaultValueArray(field))
+      })
       return acc
     }, {})
     this.onInput()
