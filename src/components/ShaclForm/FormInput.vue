@@ -4,6 +4,15 @@
       v-if="isDatePickerEditor"
       :field="field"
       :value="value"
+      format="YYYY-MM-DD"
+      @input="onInput"
+    />
+    <date-picker-editor
+      v-else-if="isDateTimePickerEditor"
+      :field="field"
+      :value="value"
+      format="YYYY-MM-DD HH:mm"
+      type="datetime"
       @input="onInput"
     />
     <uri-editor
@@ -52,6 +61,10 @@ export default class FormInput extends Vue {
 
   get isDatePickerEditor() {
     return this.field.editor === DASH('DatePickerEditor').value
+  }
+
+  get isDateTimePickerEditor() {
+    return this.field.editor === DASH('DateTimePickerEditor').value
   }
 
   get isTextAreaEditor() {

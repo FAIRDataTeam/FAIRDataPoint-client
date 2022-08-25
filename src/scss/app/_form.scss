@@ -64,7 +64,8 @@
     & > textarea,
     .input-field,
     .vdp-datepicker input,
-    .version-input input
+    .version-input input,
+    .mx-datepicker .mx-input
     {
       @include typography-default-18;
       padding: $space-xs 0;

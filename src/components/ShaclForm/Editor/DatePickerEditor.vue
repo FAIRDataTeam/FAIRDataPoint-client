@@ -1,26 +1,33 @@
 <template>
-  <datepicker
-    :value="value"
+  <date-picker
+    :value="convert(value)"
     :placeholder="placeholder"
+    :type="type"
+    :format="format"
+    valueType="format"
     :name="name"
-    format="dd-MM-yyyy"
-    :clear-button="true"
-    :monday-first="true"
     @input="onInput"
   />
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import Datepicker from 'vuejs-datepicker'
+import DatePicker from 'vue2-datepicker'
 import rdfUtils from '@/rdf/utils'
+import moment from 'moment'
 
-@Component({ components: { Datepicker } })
+@Component({ components: { DatePicker } })
 export default class DatePickerEditor extends Vue {
   @Prop({ required: true })
   readonly field: any
 
   @Prop({ required: true })
   readonly value: any
+
+  @Prop({ required: true })
+  readonly format: any
+
+  @Prop({ required: false, default: 'date' })
+  readonly type: any
 
   get name() {
     return rdfUtils.pathTerm(this.field.path)
@@ -30,9 +37,12 @@ export default class DatePickerEditor extends Vue {
     return 'Enter date'
   }
 
-  onInput(value) {
-    value.setUTCHours(0, 0, 0, 0)
-    this.$emit('input', value)
+  convert(val) {
+    return val ? moment(val).format(this.format) : null
+  }
+
+  onInput(val) {
+    this.$emit('input', moment(val).toDate())
   }
 }
 </script>
