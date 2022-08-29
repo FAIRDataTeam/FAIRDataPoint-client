@@ -25,6 +25,22 @@
               >
             </div>
 
+            <div class="form__group">
+              <label for="appTitle">App Title</label>
+              <input
+                id="appTitle"
+                v-model="$v.settings.appTitle.$model"
+              >
+            </div>
+
+            <div class="form__group">
+              <label for="appSubtitle">App Subtitle</label>
+              <input
+                id="appSubtitle"
+                v-model="$v.settings.appSubtitle.$model"
+              >
+            </div>
+
             <h2>Metadata</h2>
 
             <div class="form__group">
@@ -118,6 +134,25 @@
                   type="checkbox"
                 > Enabled
               </label>
+            </div>
+            <div
+              v-if="endpointsFromConfigVisible()"
+              class="form__group"
+            >
+              <label>Endpoints from config</label>
+              <ul>
+                <li
+                  v-for="(e, index) in settings.ping.endpointsFromConfig"
+                  :key="`endpoint-from-config-${index}`"
+                >
+                  <div class="form__group">
+                    <input
+                      :value="e"
+                      disabled
+                    >
+                  </div>
+                </li>
+              </ul>
             </div>
 
             <div class="form__group">
@@ -381,6 +416,8 @@ export default {
   validations() {
     return {
       settings: {
+        appTitle: {},
+        appSubtitle: {},
         metadataMetrics: {
           $each: {
             metricUri: { required, url },
@@ -488,6 +525,11 @@ export default {
       this.settings.search.filters[filterIndex].values.splice(valueIndex, 1)
     },
 
+    endpointsFromConfigVisible() {
+      return this.settings.ping.endpointsFromConfig
+        && this.settings.ping.endpointsFromConfig.length > 0
+    },
+
     async submitSettings() {
       this.$v.settings.$touch()
 
@@ -507,6 +549,8 @@ export default {
 
     formDataToRequestData(formData) {
       return {
+        appTitle: formData.appTitle,
+        appSubtitle: formData.appSubtitle,
         metadataMetrics: formData.metadataMetrics,
         ping: {
           enabled: formData.ping.enabled,
