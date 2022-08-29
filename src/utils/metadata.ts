@@ -64,10 +64,7 @@ function itemFromPath(path) {
 }
 
 function commonMetadata(graph: Graph) {
-  const metadata = [
-    dateField('Metadata Issued', graph.findOne(FDPO('metadataIssued')), { sm: true }),
-    dateField('Metadata Modified', graph.findOne(FDPO('metadataModified')), { sm: true }),
-  ]
+  const metadata = []
 
   const conformsTo = graph.findAll(DCT('conformsTo'))
   if (conformsTo.length > 0) {
