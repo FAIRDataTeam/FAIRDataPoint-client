@@ -72,3 +72,10 @@
     }
   }
 }
+
+.dropdown-filter {
+  ul {
+    max-height: calc(100vh / 2);
+    overflow-y: auto;
+  }
+}
