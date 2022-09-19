@@ -112,12 +112,32 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
       .reduce(this.mergeShapes))
   }
 
-  public parseAndGroup(targetClasses: $rdf.ValueType[]) {
+  public parseAndGroup(targetClasses: $rdf.ValueType[]): Group<F>[] {
     const shape = targetClasses
       .flatMap((tc) => this.loadShapes(tc))
       .map((s) => this.loadShapeForm(s))
       .reduce(this.mergeShapes)
 
+    return this.group(shape)
+  }
+
+  public parseAll(): S {
+    return this.store
+      .match(null, RDF('type'), SHACL('NodeShape'), null)
+      .map((s) => this.loadShapeForm(s.subject))
+      .reduce(this.mergeShapes)
+  }
+
+  public parseAllAndGroup(): Group<F>[] {
+    const shape = this.store
+      .match(null, RDF('type'), SHACL('NodeShape'), null)
+      .map((s) => this.loadShapeForm(s.subject))
+      .reduce(this.mergeShapes)
+
+    return this.group(shape)
+  }
+
+  group(shape: S): Group<F>[] {
     const groupMap = shape.fields
       .reduce<Map<string, Group<F>>>((
         groups: Map<string, Group<F>>,
@@ -139,13 +159,6 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
         return group
       })
       .sort((a, b) => a.compare(b))
-  }
-
-  public parseAll(): S {
-    return this.store
-      .match(null, RDF('type'), SHACL('NodeShape'), null)
-      .map((s) => this.loadShapeForm(s.subject))
-      .reduce(this.mergeShapes)
   }
 
   protected abstract createEmptyShape(): S;
