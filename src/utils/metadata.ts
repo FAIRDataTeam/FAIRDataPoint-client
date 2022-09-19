@@ -40,16 +40,18 @@ function dateField(label, input, extra = {}) {
 
 function rdfLinks(url) {
   return {
-    label: 'RDF metadata for machines',
-    links: [{
-      label: 'ttl',
-      uri: `${url}?format=ttl`,
-    }, {
-      label: 'rdf+xml',
-      uri: `${url}?format=rdf`,
-    }, {
-      label: 'json-ld',
-      uri: `${url}?format=jsonld`,
+    fields: [{
+      label: 'RDF metadata for machines',
+      links: [{
+        label: 'ttl',
+        uri: `${url}?format=ttl`,
+      }, {
+        label: 'rdf+xml',
+        uri: `${url}?format=rdf`,
+      }, {
+        label: 'json-ld',
+        uri: `${url}?format=jsonld`,
+      }],
     }],
   }
 }
@@ -64,7 +66,7 @@ function itemFromPath(path) {
 }
 
 function commonMetadata(graph: Graph) {
-  const metadata = []
+  const metadataGroups = []
 
   const conformsTo = graph.findAll(DCT('conformsTo'))
   if (conformsTo.length > 0) {
@@ -79,9 +81,9 @@ function commonMetadata(graph: Graph) {
         resolved: true,
       }
     })
-    metadata.push(field('Conforms to', data))
+    metadataGroups.push({ fields: [field('Conforms to', data)] })
   }
-  return metadata
+  return metadataGroups
 }
 
 function wrapShaclValue(fieldConfig, value) {
