@@ -4,7 +4,9 @@
     :value="value"
     @input="onInput"
   >
-    <option :value="null">- select -</option>
+    <option :value="null">
+      - select -
+    </option>
     <option
       v-for="option in createOptions()"
       :key="option.key"

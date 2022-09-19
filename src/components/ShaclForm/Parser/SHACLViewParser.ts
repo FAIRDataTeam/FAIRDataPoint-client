@@ -1,5 +1,7 @@
 import * as $rdf from 'rdflib'
-import { Shape, SHACLParser, Field } from '@/components/ShaclForm/Parser/SHACLParser'
+import {
+  Shape, SHACLParser, Field, Group,
+} from '@/components/ShaclForm/Parser/SHACLParser'
 
 export class ViewField extends Field<Shape<ViewField>> {
   viewer: string | null
@@ -70,7 +72,7 @@ export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
   }
 }
 
-export function parseSHACLView(shacl: string, targetClasses: $rdf.ValueType[]): Shape<ViewField> {
+export function parseSHACLView(shacl: string, targetClasses: $rdf.ValueType[]): Group<ViewField>[] {
   const parser = new SHACLViewParser(shacl)
-  return parser.parse(targetClasses)
+  return parser.parseAndGroup(targetClasses)
 }

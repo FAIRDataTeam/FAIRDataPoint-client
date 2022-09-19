@@ -1,72 +1,88 @@
 <template>
   <div class="entity-metadata">
     <div
-      v-for="(data, index) in filteredMetadata"
-      :key="index"
-      class="entity-metadata__item"
-      :class="{
-        'entity-metadata__item--sm': data.sm,
-      }"
+      v-for="(group, groupIndex) in filteredMetadata"
+      :key="groupIndex"
+      class="entity-metadata__group"
     >
-      <h3>{{ data.label }}</h3>
-      <p>
-        <template v-if="data.links">
-          <a
-            v-for="(link, linkIndex) in data.links"
-            :key="linkIndex"
-            :href="link.uri"
-            target="_blank"
-            class="link"
-          >
-            {{ link.label }}
-          </a>
-        </template>
-        <template v-else-if="data.items">
-          <ul>
-            <li
-              v-for="(item, itemIndex) in viewItems(index, data.items)"
-              :key="itemIndex"
+      <div
+        v-if="group.label"
+        class="entity-metadata__group__title"
+      >
+        <h3>{{ group.label }}</h3>
+        <p v-if="group.comment">
+          {{ group.comment }}
+        </p>
+      </div>
+
+      <div
+        v-for="(data, dataIndex) in group.fields"
+        :key="`${groupIndex}-${dataIndex}`"
+        class="entity-metadata__item"
+        :class="{
+          'entity-metadata__item--sm': data.sm,
+        }"
+      >
+        <h3>{{ data.label }}</h3>
+        <p>
+          <template v-if="data.links">
+            <a
+              v-for="(link, linkIndex) in data.links"
+              :key="linkIndex"
+              :href="link.uri"
+              target="_blank"
+              class="link"
             >
-              <rdf-link
-                v-if="item.uri"
-                :uri="item.uri"
-                :label="item.label"
-                :label-resolved="item.labelResolved"
-              />
-              <template v-else>
-                {{ item.label }}
-              </template>
-            </li>
-          </ul>
-          <a
-            v-if="showMoreActive(index, data.items)"
-            class="show-more-link"
-            @click.prevent="addViewAll(index)"
-          >
-            <fa :icon="['fas', 'chevron-down']" />
-            Show more
-          </a>
-          <a
-            v-if="showLessActive(index, data.items)"
-            class="show-more-link"
-            @click.prevent="removeViewAll(index)"
-          >
-            <fa :icon="['fas', 'chevron-up']" />
-            Show less
-          </a>
-        </template>
-        <template v-else>
-          <rdf-link
-            v-if="data.uri"
-            :uri="data.uri"
-            :label="data.value"
-            :label-resolved="data.labelResolved"
-          />
-          <template v-else>
-            {{ data.value }}
+              {{ link.label }}
+            </a>
           </template>
-        </template>
-      </p>
+          <template v-else-if="data.items">
+            <ul>
+              <li
+                v-for="(item, itemIndex) in viewItems(`${groupIndex}-${dataIndex}`, data.items)"
+                :key="itemIndex"
+              >
+                <rdf-link
+                  v-if="item.uri"
+                  :uri="item.uri"
+                  :label="item.label"
+                  :label-resolved="item.labelResolved"
+                />
+                <template v-else>
+                  {{ item.label }}
+                </template>
+              </li>
+            </ul>
+            <a
+              v-if="showMoreActive(`${groupIndex}-${dataIndex}`, data.items)"
+              class="show-more-link"
+              @click.prevent="addViewAll(`${groupIndex}-${dataIndex}`)"
+            >
+              <fa :icon="['fas', 'chevron-down']" />
+              Show more
+            </a>
+            <a
+              v-if="showLessActive(`${groupIndex}-${dataIndex}`, data.items)"
+              class="show-more-link"
+              @click.prevent="removeViewAll(`${groupIndex}-${dataIndex}`)"
+            >
+              <fa :icon="['fas', 'chevron-up']" />
+              Show less
+            </a>
+          </template>
+          <template v-else>
+            <rdf-link
+              v-if="data.uri"
+              :uri="data.uri"
+              :label="data.value"
+              :label-resolved="data.labelResolved"
+            />
+            <template v-else>
+              {{ data.value }}
+            </template>
+          </template>
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -85,7 +101,7 @@ export default class EntityMetadata extends Vue {
 
   get filteredMetadata() {
     if (!this.metadata) return []
-    return this.metadata.filter((data) => !data.items || data.items.length > 0)
+    return this.metadata.filter((group) => group.fields.length > 0)
   }
 
   viewItems(key, items) {

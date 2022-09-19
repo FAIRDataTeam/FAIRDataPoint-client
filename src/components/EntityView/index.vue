@@ -141,7 +141,7 @@ export default class EntityView extends EntityBase {
 
   metadata: any = null
 
-  shape: any = null
+  groups: any = null
 
   get permissions() {
     return permissions
@@ -180,7 +180,7 @@ export default class EntityView extends EntityBase {
     this.meta = null
     this.extraLinks = []
     this.createLink = null
-    this.shape = null
+    this.groups = null
   }
 
   async fetchData(): Promise<void> {
@@ -189,7 +189,8 @@ export default class EntityView extends EntityBase {
       const [entity, spec, meta] = await this.loadData()
 
       this.buildGraph(entity.data)
-      this.shape = parseSHACLView(spec.data, this.config.targetClasses)
+      this.groups = parseSHACLView(spec.data, this.config.targetClasses)
+
       this.meta = meta.data
       this.metadata = this.createMetadata()
       this.extraLinks = this.config.getLinks(this.graph)
@@ -223,9 +224,14 @@ export default class EntityView extends EntityBase {
   }
 
   createLocalMetadata() {
-    return this.shape.fields
-      .map((field) => metadata.fromShaclField(this.graph, field))
-      .filter((field) => field !== null)
+    return this.groups
+      .map((group) => ({
+        fields: group.fields
+          .map((field) => metadata.fromShaclField(this.graph, field))
+          .filter((field) => field !== null),
+        label: group.label,
+        comment: group.comment,
+      }))
   }
 
   async deleteEntity() {
