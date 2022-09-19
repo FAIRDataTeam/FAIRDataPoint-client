@@ -13,7 +13,52 @@
     >
       <status-flash :status="status" />
       <template #content>
+        <ul
+          class="nav nav-tabs mb-4"
+        >
+          <li
+            class="nav-item"
+          >
+            <a
+              class="nav-link"
+              :class="{'active': !viewPreview}"
+              @click.prevent="setViewPreview(false)"
+            >
+              Definition
+            </a>
+          </li>
+          <li
+            class="nav-item"
+          >
+            <a
+              class="nav-link"
+              :class="{'active': viewPreview}"
+              @click.prevent="setViewPreview(true)"
+            >
+              Form Preview
+            </a>
+          </li>
+        </ul>
+        <div
+          v-if="viewPreview"
+        >
+          <form-renderer
+            v-if="!previewError"
+            v-model="data"
+            :definition="form"
+            :validation-report="null"
+          />
+          <div
+            v-else
+            class="status-flash__alert status-flash__alert--danger"
+          >
+            Error while parsing the form definition:
+            <br>
+            {{ previewError }}
+          </div>
+        </div>
         <form
+          v-else
           class="form"
         >
           <status-flash
@@ -226,6 +271,8 @@
 import { required } from 'vuelidate/lib/validators'
 import PrismEditor from 'vue-prism-editor'
 import _ from 'lodash'
+import { SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLFormParser'
+import FormRenderer from '@/components/ShaclForm/FormRenderer.vue'
 import api from '../../api'
 import Status from '../../utils/Status'
 import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
@@ -235,6 +282,7 @@ import StatusFlash from '../../components/StatusFlash/index.vue'
 export default {
   name: 'SchemaDetail',
   components: {
+    FormRenderer,
     Breadcrumbs,
     Page,
     PrismEditor,
@@ -262,6 +310,10 @@ export default {
         to: '/schemas',
       }],
       currentSchema: null,
+      viewPreview: false,
+      form: null,
+      previewError: null,
+      data: { subject: null, data: {} },
     }
   },
 
@@ -389,6 +441,25 @@ export default {
 
     removeExtends(index) {
       this.schema.extendsSchemaUuids.splice(index, 1)
+    },
+
+    setViewPreview(viewPreview) {
+      if (viewPreview) {
+        try {
+          this.previewError = null
+          this.data = { subject: null, data: {} }
+
+          const parser = new SHACLFormParser(this.schema.definition)
+          this.form = {
+            targetClasses: [],
+            groups: parser.parseAllAndGroup(),
+          }
+        } catch (error) {
+          this.previewError = error
+        }
+      }
+
+      this.viewPreview = viewPreview
     },
   },
 }
