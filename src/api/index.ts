@@ -2,6 +2,7 @@ import apiKeys from './apiKeys'
 import builder from './builder'
 import configs from './configs'
 import fdpIndex from './fdpIndex'
+import forms from './forms'
 import info from './info'
 import label from './label'
 import repository from './repository'
@@ -20,6 +21,7 @@ export default {
   builder,
   configs,
   fdpIndex,
+  forms,
   info,
   label,
   memberships,

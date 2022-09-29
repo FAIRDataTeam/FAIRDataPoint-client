@@ -107,6 +107,11 @@ $font-size-base: 16;
   font-weight: $font-weight-bold;
 }
 
+@mixin typography-lighter-18 {
+  color: $color-text-lighter;
+  font-size: 18rem / $font-size-base;
+}
+
 @mixin typography-dark-18-semibold {
   color: $color-text-dark;
   font-size: 18rem / $font-size-base;
