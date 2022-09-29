@@ -3,6 +3,7 @@ import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import Vuelidate from 'vuelidate'
 import vSelect from 'vue-select'
+import vueDebounce from 'vue-debounce'
 import 'prismjs'
 import 'prismjs/components/prism-turtle'
 import { createEntityConfigs } from '@/entity/entityConfigs'
@@ -18,6 +19,7 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 // @ts-ignore
 Vue.use(Vuelidate)
+Vue.use(vueDebounce)
 Vue.component('VSelect', vSelect)
 
 let entitySpecs = []

@@ -1,7 +1,13 @@
 <template>
   <div class="input-wrapper">
+    <auto-complete-editor
+      v-if="isAutoCompleteEditor"
+      :field="field"
+      :value="value"
+      @input="onInput"
+    />
     <date-picker-editor
-      v-if="isDatePickerEditor"
+      v-else-if="isDatePickerEditor"
       :field="field"
       :value="value"
       format="YYYY-MM-DD"
@@ -50,9 +56,11 @@ import URIEditor from '@/components/ShaclForm/Editor/URIEditor.vue'
 import DatePickerEditor from '@/components/ShaclForm/Editor/DatePickerEditor.vue'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import EnumSelectEditor from '@/components/ShaclForm/Editor/EnumSelectEditor.vue'
+import AutoCompleteEditor from '@/components/ShaclForm/Editor/AutoCompleteEditor.vue'
 
 @Component({
   components: {
+    AutoCompleteEditor,
     EnumSelectEditor,
     DatePickerEditor,
     TextAreaEditor,
@@ -66,6 +74,10 @@ export default class FormInput extends Vue {
 
   @Prop({ required: true })
   readonly value: any
+
+  get isAutoCompleteEditor() {
+    return this.field.editor === DASH('AutoCompleteEditor').value
+  }
 
   get isDatePickerEditor() {
     return this.field.editor === DASH('DatePickerEditor').value
