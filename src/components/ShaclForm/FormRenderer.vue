@@ -101,7 +101,7 @@ export default class FormRenderer extends Vue {
   readonly subject: any
 
   @Prop({ required: true })
-  readonly validationReport : ValidationReport
+  readonly validationReport: ValidationReport
 
   @Prop({ required: true })
     value: any
@@ -110,7 +110,7 @@ export default class FormRenderer extends Vue {
 
   componentKey: number = 0
 
-  dirtyFields : Set<string>
+  dirtyFields: Set<string>
 
   wrapNodeShape(nodeShape) {
     return {
@@ -172,7 +172,6 @@ export default class FormRenderer extends Vue {
 
   addValue(field) {
     this.data[field.path].push(this.createDefaultValue(field))
-    this.onInput(field)
   }
 
   removeValue(field, index) {
@@ -202,18 +201,27 @@ export default class FormRenderer extends Vue {
   }
 
   getLocalError(field) {
-    const value = _.get(this.data[field.path], '0.value', `${this.data[field.path]}`)
+    const valueString = _.get(this.data[field.path], '0.value', `${this.data[field.path]}`)
 
-    if (field.minLength && value.length < field.minLength) {
-      return `${this.getName(field)} should be at least ${field.minLength} characters.`
+    if (valueString === null) {
+      return null
     }
 
-    if (field.maxLength && value.length > field.maxLength) {
-      return `${this.getName(field)} should be at most ${field.maxLength} characters.`
-    }
+    const values = valueString.split(',')
+    for (let i = 0; i < values.length; i += 1) {
+      const value = values[i]
 
-    if (field.in && field.in.indexOf(value) === -1) {
-      return `${this.getName(field)} should contain one of the values: ${field.in.join(', ')}.`
+      if (field.minLength && value.length < field.minLength) {
+        return `${this.getName(field)} should be at least ${field.minLength} characters.`
+      }
+
+      if (field.maxLength && value.length > field.maxLength) {
+        return `${this.getName(field)} should be at most ${field.maxLength} characters.`
+      }
+
+      if (field.in && field.in.indexOf(value) === -1) {
+        return `${this.getName(field)} should contain one of the values: ${field.in.join(', ')}.`
+      }
     }
 
     return null
