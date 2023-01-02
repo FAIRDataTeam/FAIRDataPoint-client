@@ -131,6 +131,7 @@ export abstract class SHACLParser<F extends Field<S>, S extends Shape<F>> {
   public parseAllAndGroup(): Group<F>[] {
     const shape = this.store
       .match(null, RDF('type'), SHACL('NodeShape'), null)
+      .filter((s) => this.store.match(null, null, s.subject).length === 0)
       .map((s) => this.loadShapeForm(s.subject))
       .reduce(this.mergeShapes)
 
