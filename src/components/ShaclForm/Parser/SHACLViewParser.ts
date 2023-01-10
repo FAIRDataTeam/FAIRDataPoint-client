@@ -1,19 +1,24 @@
 import * as $rdf from 'rdflib'
-import { Shape, SHACLParser, Field } from '@/components/ShaclForm/Parser/SHACLParser'
+import {
+  Shape, SHACLParser, Field, Group,
+} from '@/components/ShaclForm/Parser/SHACLParser'
 
 export class ViewField extends Field<Shape<ViewField>> {
   viewer: string | null
 
   constructor(
     name: string,
+    description: string | null,
     path: string,
     datatype: string,
+    order: number | null,
     minCount: number | null,
     maxCount: number | null,
     nodeShape: Shape<ViewField> | null,
+    group: string | null,
     viewer: string | null,
   ) {
-    super(name, path, datatype, minCount, maxCount, nodeShape)
+    super(name, description, path, datatype, order, minCount, maxCount, nodeShape, group)
     this.viewer = viewer
   }
 }
@@ -36,11 +41,14 @@ export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
 
   protected createField(
     name: string,
+    description: string | null,
     path: string,
     datatype: string,
+    order: number,
     minCount: number,
     maxCount: number,
     nodeShape: Shape<ViewField> | null,
+    group: string | null,
     prop: $rdf.ValueType,
   ): ViewField[] {
     const viewer = this.getDashValue(prop, 'viewer')
@@ -49,11 +57,22 @@ export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
       return []
     }
 
-    return [new ViewField(name, path, datatype, minCount, maxCount, nodeShape, viewer)]
+    return [new ViewField(
+      name,
+      description,
+      path,
+      datatype,
+      order,
+      minCount,
+      maxCount,
+      nodeShape,
+      group,
+      viewer,
+    )]
   }
 }
 
-export function parseSHACLView(shacl: string, targetClasses: $rdf.ValueType[]): Shape<ViewField> {
+export function parseSHACLView(shacl: string, targetClasses: $rdf.ValueType[]): Group<ViewField>[] {
   const parser = new SHACLViewParser(shacl)
-  return parser.parse(targetClasses)
+  return parser.parseAndGroup(targetClasses)
 }

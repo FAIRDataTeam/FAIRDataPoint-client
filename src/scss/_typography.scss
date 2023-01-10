@@ -25,6 +25,11 @@ $font-size-base: 16;
   font-size: 14rem / $font-size-base;
 }
 
+@mixin typography-lighter-14 {
+  color: $color-text-lighter;
+  font-size: 14rem / $font-size-base;
+}
+
 @mixin typography-primary-14 {
   color: $color-primary;
   font-size: 14rem / $font-size-base;
@@ -100,6 +105,11 @@ $font-size-base: 16;
   color: $color-light;
   font-size: 18rem / $font-size-base;
   font-weight: $font-weight-bold;
+}
+
+@mixin typography-lighter-18 {
+  color: $color-text-lighter;
+  font-size: 18rem / $font-size-base;
 }
 
 @mixin typography-dark-18-semibold {

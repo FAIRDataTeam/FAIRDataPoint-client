@@ -6,8 +6,8 @@
         class="header__repository-name"
       >
         <span class="header__repository-name__title--full">
-          FAIR Data Point
-          <small>Metadata for machines</small>
+          {{ appTitle }}
+          <small>{{ appSubtitle }}</small>
         </span>
         <span class="header__repository-name__title--short">
           FDP
@@ -134,6 +134,14 @@ export default class FdpHeader extends Vue {
 
   get isIndex() {
     return config.isIndex()
+  }
+
+  get appTitle() {
+    return config.appTitle()
+  }
+
+  get appSubtitle() {
+    return config.appSubtitle()
   }
 
   logout() {

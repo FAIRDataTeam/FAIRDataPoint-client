@@ -64,7 +64,8 @@
     & > textarea,
     .input-field,
     .vdp-datepicker input,
-    .version-input input
+    .version-input input,
+    .mx-datepicker .mx-input
     {
       @include typography-default-18;
       padding: $space-xs 0;
@@ -125,6 +126,54 @@
       }
     }
 
+    .autocomplete-wrapper {
+      position: relative;
+
+      .autocomplete-value {
+        @include typography-default-18;
+        border-bottom: 2px solid $color-text-light;
+        padding: $space-xs 0;
+        position: relative;
+
+        .clear {
+          position: absolute;
+          right: 5px;
+          top: 50%;
+          transform: translateY(-50%);
+          @include typography-danger-14;
+        }
+      }
+
+      .autocomplete-options {
+        @include border-radius($border-radius-small);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid $color-text-light;
+        position: absolute;
+        left: 0;
+        right: 0;
+        background: $white;
+        margin: 0;
+        padding: 0;
+        max-height: 250px;
+        overflow-y: auto;
+        z-index: 10;
+
+        li {
+          list-style-type: none;
+          padding: $space-xs $space-sm;
+          cursor: pointer;
+
+          &:hover {
+            background: $color-background-highlighted;
+          }
+        }
+      }
+
+      .uri {
+        color: $color-text-lighter;
+      }
+    }
+
     .invalid-feedback {
       display: none;
     }
@@ -158,5 +207,11 @@
     &--fill {
       flex-grow: 1;
     }
+  }
+
+  .field-description {
+    @include typography-lighter-14;
+    margin-top: .25rem;
+    margin-bottom: 0;
   }
 }

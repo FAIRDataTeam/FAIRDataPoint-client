@@ -13,7 +13,45 @@
     >
       <template #content>
         <status-flash :status="status" />
+        <ul
+          class="nav nav-tabs mb-4"
+        >
+          <li
+            class="nav-item"
+          >
+            <a
+              class="nav-link"
+              :class="{'active': !viewPreview}"
+              @click.prevent="setViewPreview(false)"
+            >
+              Definition
+            </a>
+          </li>
+          <li
+            class="nav-item"
+          >
+            <a
+              class="nav-link"
+              :class="{'active': viewPreview}"
+              @click.prevent="setViewPreview(true)"
+            >
+              Form Preview
+            </a>
+          </li>
+        </ul>
+        <div
+          v-if="viewPreview"
+        >
+          <status-flash :status="previewStatus" />
+          <form-renderer
+            v-if="previewStatus.isDefault()"
+            v-model="data"
+            :definition="form"
+            :validation-report="null"
+          />
+        </div>
         <form
+          v-else
           class="form"
           @submit.prevent="submit"
         >
@@ -426,6 +464,8 @@ import { required, url } from 'vuelidate/lib/validators'
 import axios from 'axios'
 import _ from 'lodash'
 import config from '@/config'
+import { SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLFormParser'
+import FormRenderer from '@/components/ShaclForm/FormRenderer.vue'
 import api from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
 import Page from '../../components/Page/index.vue'
@@ -436,6 +476,7 @@ export default {
   name: 'ResourceDefinitionCreate',
   components: {
     Breadcrumbs,
+    FormRenderer,
     Page,
     StatusFlash,
   },
@@ -458,6 +499,11 @@ export default {
         to: '/resource-definitions',
       }],
       currentResourceDefinition: null,
+      viewPreview: false,
+      form: null,
+      previewError: null,
+      data: { subject: null, data: {} },
+      previewStatus: new Status(),
     }
   },
 
@@ -667,6 +713,33 @@ export default {
 
     findSchema(uuid) {
       return this.metadataSchemas.find((schema) => schema.uuid === uuid)
+    },
+
+    setViewPreview(viewPreview) {
+      if (viewPreview) {
+        this.fetchPreview()
+      }
+
+      this.viewPreview = viewPreview
+    },
+
+    async fetchPreview() {
+      try {
+        this.previewStatus.setPending()
+
+        const uuids = this.resourceDefinition.metadataSchemaUuids.map((uuid) => uuid.uuid)
+        const preview = await api.metadataSchemas.postPreview(uuids)
+        const parser = new SHACLFormParser(preview.data)
+        this.data = { subject: null, data: {} }
+        this.form = {
+          targetClasses: [],
+          groups: parser.parseAllAndGroup(),
+        }
+
+        this.previewStatus.setDone()
+      } catch (error) {
+        this.previewStatus.setErrorFromResponse(error, 'Unable to get preview')
+      }
     },
   },
 }

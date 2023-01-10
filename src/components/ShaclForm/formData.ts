@@ -68,17 +68,23 @@ function isFormData(value: object): value is FormData {
   return _.isObject(value) && _.get(value, 'data', false)
 }
 
-function createQuads(data: FormData, originalRdf: $rdf.IndexedFormula): $rdf.Statement[] {
+function createQuads(
+  data: FormData,
+  originalRdf: $rdf.IndexedFormula,
+  shape: FormShape,
+): $rdf.Statement[] {
   // Add RDF type statements only if they are not present in original RDF
   const targetClasses = _.get(data, 'targetClasses', [])
     .filter((tc) => originalRdf.statementsMatching(data.subject, RDF('type'), tc).length === 0)
     .map((tc) => $rdf.quad(data.subject, RDF('type'), tc, null))
 
+  const findField = (key) => shape.fields.find((field) => field.path === key)
+
   const quads = Object.entries(data.data).flatMap(([key, values]) => {
     if (_.isArray(values)) {
       return values.flatMap((value) => {
         if (isFormData(value)) {
-          const nestedQuads = createQuads(value, originalRdf)
+          const nestedQuads = createQuads(value, originalRdf, shape)
 
           if (nestedQuads.length > 0) {
             return [
@@ -90,8 +96,19 @@ function createQuads(data: FormData, originalRdf: $rdf.IndexedFormula): $rdf.Sta
           return []
         }
 
+        const extraQuads = []
         const hasValue = !_.isEmpty(value) || _.isObject(value)
-        return hasValue ? [$rdf.quad(data.subject, $rdf.namedNode(key), value, null)] : []
+        const field = findField(key)
+
+        // If the field uses class, we need to add extra triple telling that the value of that
+        // field is an instance of the field class
+        if (field && field.class && hasValue) {
+          extraQuads.push($rdf.quad(value, RDF('type'), $rdf.namedNode(field.class), null))
+        }
+
+        return hasValue
+          ? [$rdf.quad(data.subject, $rdf.namedNode(key), value, null)].concat(extraQuads)
+          : []
       })
     }
     return []
@@ -121,7 +138,7 @@ export function toRdf(
   }
   clear($rdf.namedNode(subjectStr), shape.fields)
 
-  store.addAll(createQuads(data, rdf))
+  store.addAll(createQuads(data, rdf, shape))
 
   // @ts-ignore
   const serializer = $rdf.Serializer(rdf)

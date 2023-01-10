@@ -239,7 +239,7 @@
                 v-for="filter in filterData"
                 :key="filter.predicate"
                 :variant="isFilterActive(filter) ? 'secondary' : 'outline-secondary'"
-                class="mr-2 mb-2"
+                class="mr-2 mb-2 dropdown-filter"
               >
                 <template #button-content>
                   {{ filterLabel(filter) }}
@@ -250,7 +250,12 @@
                     +{{ filterLabelBadgeValue(filter) }}
                   </span>
                 </template>
-
+                <b-dropdown-item
+                  @click.prevent="clearFilterValue(filter.predicate)"
+                >
+                  Clear selection
+                </b-dropdown-item>
+                <b-dropdown-divider />
                 <b-dropdown-item
                   v-for="(filterValue, index) in filter.values"
                   :key="`${filter.predicate}-${index}`"
@@ -265,12 +270,6 @@
                     :icon="['far', 'square']"
                   />
                   {{ valueLabel(filterValue) }}
-                </b-dropdown-item>
-                <b-dropdown-divider />
-                <b-dropdown-item
-                  @click.prevent="clearFilterValue(filter.predicate)"
-                >
-                  Clear selection
                 </b-dropdown-item>
               </b-dropdown>
 
@@ -495,7 +494,7 @@ export default class SearchResults extends Vue {
   }
 
   valueLabel(value): string {
-    return value.label || this.pathTerm(value.value)
+    return value.label || this.pathTerm(value.value) || value.value
   }
 
   switchToSparql() {
@@ -525,6 +524,13 @@ export default class SearchResults extends Vue {
   clearFilterValue(predicate) {
     const toggleIsChecked = (v, isChecked, f) => (f.predicate === predicate ? false : isChecked)
     this.filterData = this.mapFilterValueIsChecked(this.filterData, toggleIsChecked)
+  }
+
+  sortFilterValues(filterData) {
+    return filterData.map((filter) => ({
+      ...filter,
+      values: _.orderBy(filter.values, (value) => this.valueLabel(value).toLocaleLowerCase()),
+    }))
   }
 
   createSparqlQuery() {
@@ -639,7 +645,7 @@ export default class SearchResults extends Vue {
       return acc
     }, {})
     const mapIsChecked = (value, isChecked, filter) => checkedValues[filter.predicate][value]
-    this.filterData = this.mapFilterValueIsChecked(filterData, mapIsChecked)
+    this.filterData = this.sortFilterValues(this.mapFilterValueIsChecked(filterData, mapIsChecked))
   }
 
   async searchSimple() {

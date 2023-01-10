@@ -48,4 +48,12 @@ export default {
   postImport(data) {
     return request.post('/metadata-schemas/import', data)
   },
+
+  postPreview(metadataSchemaUuids) {
+    return request.post('/metadata-schemas/preview', { metadataSchemaUuids }, {
+      headers: {
+        Accept: 'text/turtle',
+      },
+    })
+  },
 }

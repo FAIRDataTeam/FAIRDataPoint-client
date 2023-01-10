@@ -1,0 +1,16 @@
+@import "../variables";
+
+$default-color: $color-text-default;
+$primary-color: $color-primary;
+
+
+@import "~vue2-datepicker/scss/index.scss";
+
+.mx-datepicker {
+  width: 100%;
+
+  .mx-input {
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

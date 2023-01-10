@@ -25,6 +25,22 @@
               >
             </div>
 
+            <div class="form__group">
+              <label for="appTitle">App Title</label>
+              <input
+                id="appTitle"
+                v-model="$v.settings.appTitle.$model"
+              >
+            </div>
+
+            <div class="form__group">
+              <label for="appSubtitle">App Subtitle</label>
+              <input
+                id="appSubtitle"
+                v-model="$v.settings.appSubtitle.$model"
+              >
+            </div>
+
             <h2>Metadata</h2>
 
             <div class="form__group">
@@ -119,6 +135,25 @@
                 > Enabled
               </label>
             </div>
+            <div
+              v-if="endpointsFromConfigVisible()"
+              class="form__group"
+            >
+              <label>Endpoints from config</label>
+              <ul>
+                <li
+                  v-for="(e, index) in settings.ping.endpointsFromConfig"
+                  :key="`endpoint-from-config-${index}`"
+                >
+                  <div class="form__group">
+                    <input
+                      :value="e"
+                      disabled
+                    >
+                  </div>
+                </li>
+              </ul>
+            </div>
 
             <div class="form__group">
               <label>Endpoints</label>
@@ -187,6 +222,99 @@
                 :value="settingsData.repository.type"
                 disabled
               >
+            </div>
+
+            <h2>Forms</h2>
+
+            <h3>Autocomplete</h3>
+
+            <div class="form__group">
+              <label for="searchNamespace">
+                <input
+                  id="searchNamespace"
+                  v-model="$v.settings.forms.autocomplete.searchNamespace.$model"
+                  type="checkbox"
+                > Search namespace
+              </label>
+            </div>
+
+            <div class="form__group">
+              <label>Sources</label>
+
+              <ul>
+                <li
+                  v-for="(v, index) in $v.settings.forms.autocomplete.sources.$each.$iter"
+                  :key="`source-${index}`"
+                >
+                  <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                      <div
+                        class="form__group"
+                        :class="{'form__group--error': v.rdfType.$error}"
+                      >
+                        <label :for="`source.${index}.rdfType`">RDF Type</label>
+                        <input
+                          v-model.trim="v.rdfType.$model"
+                          :name="`source.${index}.rdfType`"
+                        >
+                        <p
+                          v-if="!v.rdfType.required"
+                          class="invalid-feedback"
+                        >
+                          Field is required
+                        </p>
+                      </div>
+                      <div
+                        class="form__group"
+                        :class="{'form__group--error': v.sparqlEndpoint.$error}"
+                      >
+                        <label :for="`source.${index}.sparqlEndpoint`">SPARQL Endpoint</label>
+                        <input
+                          v-model.trim="v.sparqlEndpoint.$model"
+                          :name="`source.${index}.sparqlEndpoint`"
+                        >
+                        <p
+                          v-if="!v.sparqlEndpoint.required"
+                          class="invalid-feedback"
+                        >
+                          Field is required
+                        </p>
+                      </div>
+                      <div
+                        class="form__group"
+                        :class="{'form__group--error': v.sparqlQuery.$error}"
+                      >
+                        <label :for="`source.${index}.sparqlQuery`">SPARQL Query</label>
+                        <prism-editor
+                          v-model="v.sparqlQuery.$model"
+                          :name="`source.${index}.sparqlQuery`"
+                          language="sparql"
+                        />
+                        <p
+                          v-if="!v.sparqlQuery.required"
+                          class="invalid-feedback"
+                        >
+                          Field is required
+                        </p>
+                      </div>
+                    </div>
+                    <a
+                      class="text-danger ml-3 p-1"
+                      @click.prevent="removeSource(index)"
+                    >
+                      <fa :icon="['fas', 'times']" />
+                    </a>
+                  </div>
+                </li>
+              </ul>
+
+              <button
+                class="btn btn-link"
+                @click.prevent="addSource()"
+              >
+                <fa :icon="['fas', 'plus']" />
+                Add
+              </button>
             </div>
 
             <h2>Search</h2>
@@ -366,6 +494,7 @@
 </template>
 <script lang="ts">
 import { required, url } from 'vuelidate/lib/validators'
+import PrismEditor from 'vue-prism-editor'
 import api from '@/api'
 import Status from '@/utils/Status'
 import Page from '../../components/Page/index.vue'
@@ -375,12 +504,15 @@ export default {
   name: 'FdpSettings',
   components: {
     Page,
+    PrismEditor,
     StatusFlash,
   },
 
   validations() {
     return {
       settings: {
+        appTitle: {},
+        appSubtitle: {},
         metadataMetrics: {
           $each: {
             metricUri: { required, url },
@@ -392,6 +524,18 @@ export default {
           endpoints: {
             $each: {
               endpoint: { required, url },
+            },
+          },
+        },
+        forms: {
+          autocomplete: {
+            searchNamespace: { required },
+            sources: {
+              $each: {
+                rdfType: { required },
+                sparqlEndpoint: { required },
+                sparqlQuery: { required },
+              },
             },
           },
         },
@@ -466,6 +610,18 @@ export default {
       this.settings.ping.endpoints.splice(index, 1)
     },
 
+    addSource() {
+      this.settings.forms.autocomplete.sources.push({
+        rdfType: '',
+        sparqlEndpoint: '',
+        sparqlQuery: '',
+      })
+    },
+
+    removeSource(index) {
+      this.settings.forms.autocomplete.sources.splice(index, 1)
+    },
+
     addFilter() {
       this.settings.search.filters.push({
         type: 'IRI',
@@ -488,6 +644,11 @@ export default {
       this.settings.search.filters[filterIndex].values.splice(valueIndex, 1)
     },
 
+    endpointsFromConfigVisible() {
+      return this.settings.ping.endpointsFromConfig
+        && this.settings.ping.endpointsFromConfig.length > 0
+    },
+
     async submitSettings() {
       this.$v.settings.$touch()
 
@@ -507,11 +668,14 @@ export default {
 
     formDataToRequestData(formData) {
       return {
+        appTitle: formData.appTitle,
+        appSubtitle: formData.appSubtitle,
         metadataMetrics: formData.metadataMetrics,
         ping: {
           enabled: formData.ping.enabled,
           endpoints: formData.ping.endpoints.map((e) => e.endpoint),
         },
+        forms: formData.forms,
         search: formData.search,
       }
     },

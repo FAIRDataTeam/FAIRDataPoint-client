@@ -3,8 +3,10 @@ import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import Vuelidate from 'vuelidate'
 import vSelect from 'vue-select'
+import vueDebounce from 'vue-debounce'
 import 'prismjs'
 import 'prismjs/components/prism-turtle'
+import 'prismjs/components/prism-sparql'
 import { createEntityConfigs } from '@/entity/entityConfigs'
 import App from './App.vue'
 import { createRouter } from './router'
@@ -18,6 +20,7 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 // @ts-ignore
 Vue.use(Vuelidate)
+Vue.use(vueDebounce)
 Vue.component('VSelect', vSelect)
 
 let entitySpecs = []
@@ -25,6 +28,8 @@ let entitySpecs = []
 api.configs.getBootstrap()
   .then((config) => {
     _.set(window, 'config.persistentURL', _.get(config, 'data.persistentUrl'))
+    _.set(window, 'config.appTitle', _.get(config, 'data.appTitle'))
+    _.set(window, 'config.appSubtitle', _.get(config, 'data.appSubtitle'))
     entitySpecs = _.get(config, 'data.resourceDefinitions', [])
   })
   .finally(() => {
