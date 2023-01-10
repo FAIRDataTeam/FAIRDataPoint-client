@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.16.0]
+
+### Added
+
+- Add app title and ping endpoints from config to the settings
+- Add support for sh:order
+- Add support for sh:description
+- Add support for sh:minLength and sh:maxLength
+- Add support for sh:in
+- Add support for sh:group
+- Add support for dash:DateTimePickerEditor
+- Add support for dash:EnumSelectEditor
+- Add groups and order to entity metadata
+- Add form preview to resource definition and metadata schema
+- Add autocomplete widget
+- Add settings for autocomplete
+- Add extra class statement for fields with class
+
+### Changed
+
+- Rename search param from q to query
+- Remove hardcoded metadata timestamps
+
+### Fixes
+
+- Fix search filters with too many values
+- Fix nested NodeShapes in form previews
+- Fix value validation for multiple values
+
 ## [1.15.0]
 
 ### Added
@@ -232,3 +261,4 @@ Initial version of client application for [FAIR Data Point] providing user inter
 [1.13.0]: /../../tree/v1.13.0
 [1.14.0]: /../../tree/v1.14.0
 [1.15.0]: /../../tree/v1.15.0
+[1.16.0]: /../../tree/v1.16.0
