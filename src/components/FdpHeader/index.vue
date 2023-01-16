@@ -10,7 +10,7 @@
           <small>{{ appSubtitle }}</small>
         </span>
         <span class="header__repository-name__title--short">
-          FDP
+          {{ appTitleShort }}
         </span>
       </router-link>
       <div class="header__nav">
@@ -138,6 +138,10 @@ export default class FdpHeader extends Vue {
 
   get appTitle() {
     return config.appTitle()
+  }
+
+  get appTitleShort() {
+    return config.appTitleShort()
   }
 
   get appSubtitle() {
