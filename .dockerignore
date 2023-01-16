@@ -6,3 +6,4 @@
 !node_modules/bootstrap-vue
 !node_modules/prismjs
 !node_modules/vue-select
+!node_modules/vue2-datepicker
