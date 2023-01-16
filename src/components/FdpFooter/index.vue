@@ -3,7 +3,7 @@
     <div class="footer__inner">
       <div class="footer__container">
         <div>
-          <span>FAIR Data Point</span>
+          <span>{{ appTitle }}</span>
           <span class="footer__separator">&middot;</span>
           <a
             v-b-modal.info-modal
@@ -35,12 +35,17 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import api from '@/api'
+import config from '@/config'
 import Separator from '../Separator/index.vue'
 import VersionInfoTable from '../VersionInfoTable/index.vue'
 
 @Component({ components: { Separator, VersionInfoTable } })
 export default class FdpFooter extends Vue {
   info: any = { version: '', builtAt: '' }
+
+  get appTitle() {
+    return config.appTitle()
+  }
 
   created() {
     this.fetchData()
