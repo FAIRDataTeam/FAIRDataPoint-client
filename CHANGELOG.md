@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.16.3]
+
+- Fix EnumSelectEditor
+
+## [1.16.2]
+
+- Fix custom logo on public path
 
 ## [1.16.1]
 
 - Fix failed login handling
 - Fix app title in the footer
-
 
 ## [1.16.0]
 
@@ -270,3 +276,5 @@ Initial version of client application for [FAIR Data Point] providing user inter
 [1.15.0]: /../../tree/v1.15.0
 [1.16.0]: /../../tree/v1.16.0
 [1.16.1]: /../../tree/v1.16.1
+[1.16.2]: /../../tree/v1.16.2
+[1.16.3]: /../../tree/v1.16.3
