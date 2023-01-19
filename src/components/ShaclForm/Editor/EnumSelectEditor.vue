@@ -1,7 +1,7 @@
 <template>
   <select
     class="input-field"
-    :value="value"
+    :value="toInputValue(value)"
     @input="onInput"
   >
     <option :value="null">
@@ -17,8 +17,9 @@
   </select>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import * as $rdf from 'rdflib'
 import _ from 'lodash'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import rdfUtils from '@/rdf/utils'
 
 @Component({})
@@ -37,7 +38,19 @@ export default class EnumSelectEditor extends Vue {
   }
 
   onInput(e) {
-    this.$emit('input', e.target.value)
+    this.$emit('input', this.fromInputValue(e.target.value))
+  }
+
+  toInputValue(value) {
+    return _.get(value, 'value', value)
+  }
+
+  fromInputValue(value) {
+    try {
+      return $rdf.namedNode(value)
+    } catch {
+      return value
+    }
   }
 }
 </script>
