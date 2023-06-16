@@ -9,6 +9,7 @@
     <page
       v-if="entity !== null"
       :title="title"
+      :content-only="true"
     >
       <template #actions>
         <membership-badge :entity="meta" />
@@ -49,8 +50,11 @@
           Delete
         </a>
       </template>
-      <template #column>
-        <p>
+      <template #content>
+        <p class="description">
+          {{ entity.description }}
+        </p>
+        <p class="external-links">
           <a
             v-for="link in extraLinks"
             :key="link.url"
@@ -63,12 +67,9 @@
             {{ link.label }}
           </a>
         </p>
+
         <entity-metadata :metadata="metadata" />
-      </template>
-      <template #content>
-        <p class="description">
-          {{ entity.description }}
-        </p>
+
         <ul
           v-if="itemLists && itemLists.length > 1"
           class="nav nav-tabs item-list-nav"
