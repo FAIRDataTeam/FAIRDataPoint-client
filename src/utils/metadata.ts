@@ -8,7 +8,7 @@ import {
 import rdfUtils from '@/rdf/utils'
 import config from '@/config'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
-import boolean from '@/utils/boolean'
+import valueUtils from '@/components/ShaclForm/valueUtils'
 
 function field(label, input, extra = {}) {
   if (typeof input !== 'object') {
@@ -102,8 +102,8 @@ function wrapShaclValue(fieldConfig, value) {
         return { label: moment(value).format(config.dateFormat) }
       }
       if (fieldConfig.datatype === XSD('boolean').value) {
-        if (boolean.isTrue(value)) return { label: 'TRUE' }
-        if (boolean.isFalse(value)) return { label: 'FALSE' }
+        if (valueUtils.isTrue(value)) return { label: 'TRUE' }
+        if (valueUtils.isFalse(value)) return { label: 'FALSE' }
       }
       return { label: value }
   }

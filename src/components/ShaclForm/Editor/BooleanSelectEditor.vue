@@ -15,7 +15,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import boolean from '@/utils/boolean'
+import valueUtils from '@/components/ShaclForm/valueUtils'
 
 @Component({})
 export default class BooleanSelectEditor extends Vue {
@@ -30,8 +30,8 @@ export default class BooleanSelectEditor extends Vue {
   }
 
   toInputValue(value) {
-    if (boolean.isTrue(value)) return 'true'
-    if (boolean.isFalse(value)) return 'false'
+    if (valueUtils.isTrue(value)) return 'true'
+    if (valueUtils.isFalse(value)) return 'false'
     return null
   }
 
