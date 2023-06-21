@@ -1,6 +1,6 @@
 import * as $rdf from 'rdflib'
 import _ from 'lodash'
-import { PREFIXES, RDF } from '@/rdf/namespaces'
+import { PREFIXES, RDF, XSD } from '@/rdf/namespaces'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import { FormShape } from '@/components/ShaclForm/Parser/SHACLFormParser'
 
@@ -97,8 +97,10 @@ function createQuads(
         }
 
         const extraQuads = []
-        const hasValue = !_.isEmpty(value) || _.isObject(value)
         const field = findField(key)
+        const isBoolean = field && field.datatype === XSD('boolean').value
+        const hasBooleanValue = isBoolean && (value === true || value === false)
+        const hasValue = !_.isEmpty(value) || _.isObject(value) || hasBooleanValue
 
         // If the field uses class, we need to add extra triple telling that the value of that
         // field is an instance of the field class
