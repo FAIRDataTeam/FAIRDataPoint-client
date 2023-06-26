@@ -117,8 +117,13 @@ function createQuads(
           extraQuads.push($rdf.quad(value, RDF('type'), $rdf.namedNode(field.class), null))
         }
 
+        let wrappedValue = value
+        if (hasValue && field && field.datatype) {
+          wrappedValue = $rdf.literal(value, field.datatype)
+        }
+
         return hasValue
-          ? [$rdf.quad(data.subject, $rdf.namedNode(key), value, null)].concat(extraQuads)
+          ? [$rdf.quad(data.subject, $rdf.namedNode(key), wrappedValue, null)].concat(extraQuads)
           : []
       })
     }
