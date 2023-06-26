@@ -39,24 +39,6 @@ function dateField(label, input, extra = {}) {
   return field(label, moment(input).format(config.dateFormat), extra)
 }
 
-function rdfLinks(url) {
-  return {
-    fields: [{
-      label: 'RDF metadata for machines',
-      links: [{
-        label: 'ttl',
-        uri: `${url}?format=ttl`,
-      }, {
-        label: 'rdf+xml',
-        uri: `${url}?format=rdf`,
-      }, {
-        label: 'json-ld',
-        uri: `${url}?format=jsonld`,
-      }],
-    }],
-  }
-}
-
 function itemFromPath(path) {
   if (!path) return null
 
@@ -133,7 +115,6 @@ function fromShaclField(graph: Graph, fieldConfig) {
 export default {
   field,
   dateField,
-  rdfLinks,
   commonMetadata,
   itemFromPath,
   fromShaclField,
