@@ -12,7 +12,14 @@ export default class Graph {
     if (defaultSubject) {
       this.defaultSubject = $rdf.namedNode(defaultSubject)
     }
-    $rdf.parse(source, this.store, defaultSubject, format, null)
+
+    $rdf.parse(this.fixDoubles(source), this.store, defaultSubject, format, null)
+  }
+
+  fixDoubles(source) {
+    // rdflib.js has troubles parsing doubles in scientific notation,
+    // so we replace it with xsd:double
+    return source.replaceAll(/([0-9]+\.[0-9]+[eE]-?[0-9])/g, (match) => `"${+match}"^^xsd:double`)
   }
 
   get subjectTerm() {
