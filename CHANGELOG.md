@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.17.0]
+
+### Added
+
+- Add support for integer and decimal datetypes
+- Add boolean editor
+- Add option to show the validation report when request fails
+- Add datatypes in serialized RDF
+
+### Changed
+
+- Redesign entity detail page
+- Redesign RDF metadata for machines download links
+- Update reset to defaults text
+
 ## [1.16.3]
 
 - Fix EnumSelectEditor
@@ -278,3 +293,4 @@ Initial version of client application for [FAIR Data Point] providing user inter
 [1.16.1]: /../../tree/v1.16.1
 [1.16.2]: /../../tree/v1.16.2
 [1.16.3]: /../../tree/v1.16.3
+[1.17.0]: /../../tree/v1.17.0
