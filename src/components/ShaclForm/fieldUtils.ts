@@ -33,11 +33,21 @@ function isBoolean(field: FormField): boolean {
 }
 
 function isInteger(field: FormField): boolean {
-  return field.datatype === XSD('integer').value
+  const integerDataTypes = [
+    XSD('integer').value,
+    XSD('long').value,
+    XSD('short').value,
+  ]
+  return integerDataTypes.includes(field.datatype)
 }
 
 function isDecimal(field: FormField): boolean {
-  return field.datatype === XSD('decimal').value
+  const decimalDataTypes = [
+    XSD('decimal').value,
+    XSD('double').value,
+    XSD('float').value,
+  ]
+  return decimalDataTypes.includes(field.datatype)
 }
 
 export default {
