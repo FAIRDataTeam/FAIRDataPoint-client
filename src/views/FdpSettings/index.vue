@@ -14,7 +14,7 @@
           >
             <status-flash :status="submitStatus" />
 
-            <h2>Client</h2>
+            <h2>FDP Client</h2>
 
             <div class="form__group">
               <label for="clientUrl">Client URL</label>
@@ -124,7 +124,7 @@
               </button>
             </div>
 
-            <h2>Ping</h2>
+            <h2>FDP Index connection</h2>
 
             <div class="form__group">
               <label for="users">
@@ -139,7 +139,7 @@
               v-if="endpointsFromConfigVisible()"
               class="form__group"
             >
-              <label>Endpoints from config</label>
+              <label>From config file (application.yml)</label>
               <ul>
                 <li
                   v-for="(e, index) in settings.ping.endpointsFromConfig"
@@ -156,7 +156,7 @@
             </div>
 
             <div class="form__group">
-              <label>Endpoints</label>
+              <label>Connected FDP Indexes</label>
               <ul>
                 <li
                   v-for="(v, index) in $v.settings.ping.endpoints.$each.$iter"
@@ -213,10 +213,10 @@
               >
             </div>
 
-            <h2>Repository</h2>
+            <h2>Metadata storage</h2>
 
             <div class="form__group">
-              <label for="repository">Repository</label>
+              <label for="repository">Connected triple store</label>
               <input
                 id="repository"
                 :value="settingsData.repository.type"

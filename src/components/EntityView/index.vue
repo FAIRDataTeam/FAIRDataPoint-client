@@ -9,6 +9,7 @@
     <page
       v-if="entity !== null"
       :title="title"
+      :content-only="true"
     >
       <template #actions>
         <membership-badge :entity="meta" />
@@ -49,8 +50,11 @@
           Delete
         </a>
       </template>
-      <template #column>
-        <p>
+      <template #content>
+        <p class="description">
+          {{ entity.description }}
+        </p>
+        <p class="external-links">
           <a
             v-for="link in extraLinks"
             :key="link.url"
@@ -63,12 +67,27 @@
             {{ link.label }}
           </a>
         </p>
+
         <entity-metadata :metadata="metadata" />
-      </template>
-      <template #content>
-        <p class="description">
-          {{ entity.description }}
-        </p>
+
+        <div class="mt-4">
+          <a
+            class="btn btn-outline-primary btn-rounded mr-2"
+            :href="`${subject}?format=ttl`"
+            target="_blank"
+          ><fa :icon="['fas', 'download']" /> ttl</a>
+          <a
+            class="btn btn-outline-primary btn-rounded mr-2"
+            :href="`${subject}?format=rdf`"
+            target="_blank"
+          ><fa :icon="['fas', 'download']" /> rdf+xml</a>
+          <a
+            class="btn btn-outline-primary btn-rounded mr-2"
+            :href="`${subject}?format=jsonld`"
+            target="_blank"
+          ><fa :icon="['fas', 'download']" /> json-ld</a>
+        </div>
+
         <ul
           v-if="itemLists && itemLists.length > 1"
           class="nav nav-tabs item-list-nav"
@@ -219,7 +238,6 @@ export default class EntityView extends EntityBase {
     return [
       ...metadata.commonMetadata(this.graph),
       ...this.createLocalMetadata(),
-      metadata.rdfLinks(this.subject),
     ]
   }
 

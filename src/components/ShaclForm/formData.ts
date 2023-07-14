@@ -1,8 +1,9 @@
 import * as $rdf from 'rdflib'
 import _ from 'lodash'
-import { PREFIXES, RDF } from '@/rdf/namespaces'
-import fieldUtils from '@/components/ShaclForm/fieldUtils'
+import { PREFIXES, RDF, XSD } from '@/rdf/namespaces'
 import { FormShape } from '@/components/ShaclForm/Parser/SHACLFormParser'
+import fieldUtils from '@/components/ShaclForm/fieldUtils'
+import valueUtils from '@/components/ShaclForm/valueUtils'
 
 export type FormData = {
   subject: $rdf.Node,
@@ -37,6 +38,12 @@ export function fromRdf(
           } catch {
             // nothing to do
           }
+        } else if (fieldUtils.isBoolean(field)) {
+          data[field.path].push(valueUtils.isTrue(statement.object.value))
+        } else if (fieldUtils.isInteger(field)) {
+          data[field.path].push(parseInt(statement.object.value.replace(/\D/g, ''), 10) || '')
+        } else if (fieldUtils.isDecimal(field)) {
+          data[field.path].push(parseFloat(statement.object.value) || '')
         } else {
           data[field.path].push(statement.object.value)
         }
@@ -97,8 +104,12 @@ function createQuads(
         }
 
         const extraQuads = []
-        const hasValue = !_.isEmpty(value) || _.isObject(value)
         const field = findField(key)
+        const isBoolean = field && fieldUtils.isBoolean(field)
+        const isNumber = field && (fieldUtils.isInteger(field) || fieldUtils.isDecimal(field))
+        const hasBooleanValue = isBoolean && (value === true || value === false)
+        const hasNumberValue = isNumber && (typeof value === 'number')
+        const hasValue = !_.isEmpty(value) || _.isObject(value) || hasBooleanValue || hasNumberValue
 
         // If the field uses class, we need to add extra triple telling that the value of that
         // field is an instance of the field class
@@ -106,8 +117,13 @@ function createQuads(
           extraQuads.push($rdf.quad(value, RDF('type'), $rdf.namedNode(field.class), null))
         }
 
+        let wrappedValue = value
+        if (hasValue && field && field.datatype) {
+          wrappedValue = $rdf.literal(value, field.datatype)
+        }
+
         return hasValue
-          ? [$rdf.quad(data.subject, $rdf.namedNode(key), value, null)].concat(extraQuads)
+          ? [$rdf.quad(data.subject, $rdf.namedNode(key), wrappedValue, null)].concat(extraQuads)
           : []
       })
     }

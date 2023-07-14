@@ -24,6 +24,7 @@
     margin-top: $space-md;
 
     @media (max-width: $breakpoint-small - 1) {
+      margin-left: 0;
       margin-bottom: $space-lg;
     }
 
@@ -31,7 +32,7 @@
       margin-right: 0.75rem;
     }
 
-    &>a {
+    & > a:not(:first-child) {
       margin-left: 1.5rem;
     }
   }
@@ -63,6 +64,11 @@
       @media (max-width: $breakpoint-small - 1px) {
         margin: $space-lg 0;
       }
+    }
+
+    .external-links {
+      margin-top: $space-md;
+      margin-bottom: 0;
     }
   }
 

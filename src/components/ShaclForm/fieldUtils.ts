@@ -28,6 +28,28 @@ function isRequired(field: FormField): boolean {
   return field.minCount > 0
 }
 
+function isBoolean(field: FormField): boolean {
+  return field.datatype === XSD('boolean').value
+}
+
+function isInteger(field: FormField): boolean {
+  const integerDataTypes = [
+    XSD('integer').value,
+    XSD('long').value,
+    XSD('short').value,
+  ]
+  return integerDataTypes.includes(field.datatype)
+}
+
+function isDecimal(field: FormField): boolean {
+  const decimalDataTypes = [
+    XSD('decimal').value,
+    XSD('double').value,
+    XSD('float').value,
+  ]
+  return decimalDataTypes.includes(field.datatype)
+}
+
 export default {
   getName,
   isDatetime,
@@ -35,4 +57,7 @@ export default {
   isList,
   isLiteral,
   isRequired,
+  isBoolean,
+  isInteger,
+  isDecimal,
 }

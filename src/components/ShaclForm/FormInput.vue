@@ -39,6 +39,12 @@
       :value="value"
       @input="onInput"
     />
+    <boolean-select-editor
+      v-else-if="isBooleanEditor"
+      :field="field"
+      :value="value"
+      @input="onInput"
+    />
     <text-field-editor
       v-else
       :field="field"
@@ -50,16 +56,18 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { DASH, SHACL } from '@/rdf/namespaces'
-import TextFieldEditor from '@/components/ShaclForm/Editor/TextFieldEditor.vue'
-import TextAreaEditor from '@/components/ShaclForm/Editor/TextAreaEditor.vue'
-import URIEditor from '@/components/ShaclForm/Editor/URIEditor.vue'
-import DatePickerEditor from '@/components/ShaclForm/Editor/DatePickerEditor.vue'
-import fieldUtils from '@/components/ShaclForm/fieldUtils'
-import EnumSelectEditor from '@/components/ShaclForm/Editor/EnumSelectEditor.vue'
 import AutoCompleteEditor from '@/components/ShaclForm/Editor/AutoCompleteEditor.vue'
+import BooleanSelectEditor from '@/components/ShaclForm/Editor/BooleanSelectEditor.vue'
+import DatePickerEditor from '@/components/ShaclForm/Editor/DatePickerEditor.vue'
+import EnumSelectEditor from '@/components/ShaclForm/Editor/EnumSelectEditor.vue'
+import TextAreaEditor from '@/components/ShaclForm/Editor/TextAreaEditor.vue'
+import TextFieldEditor from '@/components/ShaclForm/Editor/TextFieldEditor.vue'
+import URIEditor from '@/components/ShaclForm/Editor/URIEditor.vue'
+import fieldUtils from '@/components/ShaclForm/fieldUtils'
 
 @Component({
   components: {
+    BooleanSelectEditor,
     AutoCompleteEditor,
     EnumSelectEditor,
     DatePickerEditor,
@@ -97,6 +105,10 @@ export default class FormInput extends Vue {
 
   get isURIEditor() {
     return this.field.editor === DASH('URIEditor').value || fieldUtils.isIRI(this.field)
+  }
+
+  get isBooleanEditor() {
+    return this.field.editor === DASH('BooleanSelectEditor').value
   }
 
   onInput(value) {

@@ -6,7 +6,6 @@
       :current="createName"
     />
     <status-flash :status="status" />
-    <status-flash :status="submitStatus" />
     <page
       v-if="graph !== null"
       :title="createName"
@@ -14,6 +13,34 @@
       small
     >
       <template #content>
+        <status-flash :status="submitStatus">
+          <template
+            v-if="rawError !== null"
+            #extra-content
+          >
+            <div class="mt-2">
+              <a
+                v-b-toggle.raw-error
+                class="collapse-link"
+              >
+                View report
+                <fa
+                  :icon="['fas', 'angle-down']"
+                  class="rotate-icon"
+                />
+              </a>
+
+              <b-collapse id="raw-error">
+                <prism-editor
+                  v-model="rawError"
+                  language="turtle"
+                  :readonly="true"
+                  class="mt-2"
+                />
+              </b-collapse>
+            </div>
+          </template>
+        </status-flash>
         <shacl-form
           :rdf="graph.store"
           :shacl="shacl"
@@ -33,6 +60,7 @@ import { Component, Prop } from 'vue-property-decorator'
 import axios from 'axios'
 import _ from 'lodash'
 import * as $rdf from 'rdflib'
+import PrismEditor from 'vue-prism-editor'
 import ShaclForm from '@/components/ShaclForm/index.vue'
 import Breadcrumbs from '@/components/Breadcrumbs/index.vue'
 import Page from '@/components/Page/index.vue'
@@ -40,7 +68,10 @@ import StatusFlash from '@/components/StatusFlash/index.vue'
 import Graph from '@/rdf/Graph'
 import { DCT } from '@/rdf/namespaces'
 import config from '@/config'
-import { parseValidationReport, ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
+import {
+  parseValidationReport,
+  ValidationReport,
+} from '@/components/ShaclForm/Parser/ValidationReport'
 import { EntityConfig } from '@/entity/EntityConfig'
 import EntityBase from '@/components/EntityBase'
 import Status from '@/utils/Status'
@@ -49,6 +80,7 @@ import Status from '@/utils/Status'
   components: {
     Breadcrumbs,
     Page,
+    PrismEditor,
     StatusFlash,
     ShaclForm,
   },
@@ -61,7 +93,9 @@ export default class EntityCreate extends EntityBase {
 
   validationReport: ValidationReport = {}
 
-  submitStatus : Status = new Status()
+  submitStatus: Status = new Status()
+
+  rawError: string = null
 
   get createName() {
     return `Create ${this.config.urlPrefix}`
@@ -112,7 +146,8 @@ export default class EntityCreate extends EntityBase {
       const entityId = _.last(_.get(response, 'headers.location', '').split('/'))
       await this.$router.push(this.config.toUrl(entityId))
     } catch (error) {
-      const validationReport = parseValidationReport(_.get(error, 'response.data', ''))
+      this.rawError = _.get(error, 'response.data', null)
+      const validationReport = parseValidationReport(this.rawError)
       const focusNodeReport = _.first(Object.values(validationReport)) || {}
       this.validationReport = { [this.subject]: focusNodeReport }
       this.submitStatus.setError('Unable to save entity data.')

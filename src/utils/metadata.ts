@@ -8,6 +8,7 @@ import {
 import rdfUtils from '@/rdf/utils'
 import config from '@/config'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
+import valueUtils from '@/components/ShaclForm/valueUtils'
 
 function field(label, input, extra = {}) {
   if (typeof input !== 'object') {
@@ -36,24 +37,6 @@ function field(label, input, extra = {}) {
 
 function dateField(label, input, extra = {}) {
   return field(label, moment(input).format(config.dateFormat), extra)
-}
-
-function rdfLinks(url) {
-  return {
-    fields: [{
-      label: 'RDF metadata for machines',
-      links: [{
-        label: 'ttl',
-        uri: `${url}?format=ttl`,
-      }, {
-        label: 'rdf+xml',
-        uri: `${url}?format=rdf`,
-      }, {
-        label: 'json-ld',
-        uri: `${url}?format=jsonld`,
-      }],
-    }],
-  }
 }
 
 function itemFromPath(path) {
@@ -100,6 +83,10 @@ function wrapShaclValue(fieldConfig, value) {
       if (fieldConfig.datatype === XSD('dateTime').value) {
         return { label: moment(value).format(config.dateFormat) }
       }
+      if (fieldConfig.datatype === XSD('boolean').value) {
+        if (valueUtils.isTrue(value)) return { label: 'TRUE' }
+        if (valueUtils.isFalse(value)) return { label: 'FALSE' }
+      }
       return { label: value }
   }
 }
@@ -128,7 +115,6 @@ function fromShaclField(graph: Graph, fieldConfig) {
 export default {
   field,
   dateField,
-  rdfLinks,
   commonMetadata,
   itemFromPath,
   fromShaclField,

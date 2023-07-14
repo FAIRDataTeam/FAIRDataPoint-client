@@ -23,6 +23,7 @@
       </template>
       <template v-else-if="status.message">
         {{ status.message }}
+        <slot name="extra-content" />
       </template>
     </div>
   </div>

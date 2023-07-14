@@ -9,7 +9,7 @@
         v-if="group.label"
         class="entity-metadata__group__title"
       >
-        <h3>{{ group.label }}</h3>
+        <h2>{{ group.label }}</h2>
         <p v-if="group.comment">
           {{ group.comment }}
         </p>
@@ -19,9 +19,6 @@
         v-for="(data, dataIndex) in group.fields"
         :key="`${groupIndex}-${dataIndex}`"
         class="entity-metadata__item"
-        :class="{
-          'entity-metadata__item--sm': data.sm,
-        }"
       >
         <h3>{{ data.label }}</h3>
         <p>

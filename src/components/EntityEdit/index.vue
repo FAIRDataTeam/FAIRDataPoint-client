@@ -6,7 +6,6 @@
       current="Edit"
     />
     <status-flash :status="status" />
-    <status-flash :status="submitStatus" />
     <page
       v-if="simpleGraph !== null"
       :title="`Edit ${entity.title}`"
@@ -14,6 +13,34 @@
       small
     >
       <template #content>
+        <status-flash :status="submitStatus">
+          <template
+            v-if="rawError !== null"
+            #extra-content
+          >
+            <div class="mt-2">
+              <a
+                v-b-toggle.raw-error
+                class="collapse-link"
+              >
+                View report
+                <fa
+                  :icon="['fas', 'angle-down']"
+                  class="rotate-icon"
+                />
+              </a>
+
+              <b-collapse id="raw-error">
+                <prism-editor
+                  v-model="rawError"
+                  language="turtle"
+                  :readonly="true"
+                  class="mt-2"
+                />
+              </b-collapse>
+            </div>
+          </template>
+        </status-flash>
         <shacl-form
           :rdf="simpleGraph.store"
           :shacl="shacl"
@@ -30,6 +57,7 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
 import axios from 'axios'
+import PrismEditor from 'vue-prism-editor'
 import ShaclForm from '@/components/ShaclForm/index.vue'
 import Breadcrumbs from '@/components/Breadcrumbs/index.vue'
 import Page from '@/components/Page/index.vue'
@@ -39,11 +67,13 @@ import permissions from '@/utils/permissions'
 import { parseValidationReport, ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
 import EntityBase from '@/components/EntityBase'
 import Status from '@/utils/Status'
+import _ from 'lodash'
 
 @Component({
   components: {
     Breadcrumbs,
     Page,
+    PrismEditor,
     StatusFlash,
     ShaclForm,
   },
@@ -56,6 +86,8 @@ export default class EntityEdit extends EntityBase {
   validationReport : ValidationReport = {}
 
   submitStatus : Status = new Status()
+
+  rawError: string = null
 
   async fetchData(): Promise<void> {
     try {
@@ -90,7 +122,8 @@ export default class EntityEdit extends EntityBase {
       await this.config.api.put(this.entityId, turtle)
       await this.$router.push(this.config.toUrl(this.entityId))
     } catch (error) {
-      this.validationReport = parseValidationReport(error.response.data)
+      this.rawError = _.get(error, 'response.data', null)
+      this.validationReport = parseValidationReport(this.rawError)
       this.submitStatus.setError('Unable to update entity data.')
       window.scrollTo(0, 0)
     }

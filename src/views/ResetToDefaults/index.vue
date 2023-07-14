@@ -43,7 +43,8 @@
               > <strong>Resource Definitions</strong>
             </label>
             <p>
-              Delete all existing resource definitions and SHACL shapes and create the default ones.
+              Delete all existing resource definitions and metadata schemas and create the default
+              ones.
             </p>
           </div>
           <div class="form__group">
