@@ -1,7 +1,7 @@
 <template>
   <div>
     <page
-      title="Settings"
+      title="Index Settings"
       content-only
       small
     >

@@ -6,6 +6,7 @@
       'page--small': small,
     }"
   >
+    <slot name="pagenav" />
     <div class="page__title">
       <h1 v-if="title">
         {{ title }}

@@ -1,9 +1,14 @@
+import _ from 'lodash'
 import { ChildSpec, EntityConfig } from '@/entity/EntityConfig'
 import api from '@/api'
 import Graph from '@/rdf/Graph'
 import config from '@/config'
 
 export class RepositoryConfig extends EntityConfig {
+  public get isRepository() {
+    return true
+  }
+
   protected buildApi(): any {
     return api.repository
   }

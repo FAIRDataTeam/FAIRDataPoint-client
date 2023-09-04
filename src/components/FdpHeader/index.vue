@@ -42,39 +42,35 @@
                 <fa :icon="['fas', 'user-friends']" />
                 Users
               </b-dropdown-item>
-              <b-dropdown-item
-                v-if="isIndex"
-                @click="$router.push('/trigger-ping')"
-              >
-                <fa :icon="['fas', 'sync-alt']" />
-                Trigger ping
-              </b-dropdown-item>
-              <b-dropdown-item
-                v-if="!isIndex"
-                @click="$router.push('/resource-definitions')"
-              >
+              <b-dropdown-item @click="$router.push('/resource-definitions')">
                 <fa :icon="['fas', 'sitemap']" />
                 Resources definitions
               </b-dropdown-item>
-              <b-dropdown-item
-                v-if="!isIndex"
-                @click="$router.push('/schemas')"
-              >
+              <b-dropdown-item @click="$router.push('/schemas')">
                 <fa :icon="['fas', 'shapes']" />
                 Metadata schemas
               </b-dropdown-item>
-              <b-dropdown-item
-                @click="$router.push('/settings')"
-              >
+              <b-dropdown-item @click="$router.push('/settings')">
                 <fa :icon="['fas', 'cogs']" />
                 Settings
               </b-dropdown-item>
-              <b-dropdown-item
-                v-if="!isIndex"
-                @click="$router.push('/reset-to-defaults')"
-              >
+              <b-dropdown-item @click="$router.push('/reset-to-defaults')">
                 <fa :icon="['fas', 'trash']" />
                 Reset to defaults
+              </b-dropdown-item>
+              <b-dropdown-divider />
+            </template>
+            <template v-if="user.role === 'ADMIN' && isIndex">
+              <b-dropdown-header data-cy="user-menu-admin">
+                FDP Index
+              </b-dropdown-header>
+              <b-dropdown-item @click="$router.push('/trigger-ping')">
+                <fa :icon="['fas', 'sync-alt']" />
+                Trigger ping
+              </b-dropdown-item>
+              <b-dropdown-item @click="$router.push('/index/settings')">
+                <fa :icon="['fas', 'cogs']" />
+                Index Settings
               </b-dropdown-item>
               <b-dropdown-divider />
             </template>
