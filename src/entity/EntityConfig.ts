@@ -47,6 +47,10 @@ export class EntityConfig {
     this.enityApi = this.buildApi()
   }
 
+  public get isRepository() {
+    return false
+  }
+
   public get urlPrefix(): string {
     return this.spec.urlPrefix
   }
@@ -128,7 +132,7 @@ export class EntityConfig {
     return `/${this.spec.urlPrefix}/${entityId}/create-${this.getChildUrlPrefix(child)}`
   }
 
-  public createChildrenLists(canCreateChild = false, entityId = null) {
+  public createChildrenLists(canCreateChild = false, entityId = null) : any[] {
     return this.spec.children.map((child) => this.createChildrenListSpec(
       child,
       canCreateChild,

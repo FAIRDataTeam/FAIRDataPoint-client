@@ -11,12 +11,11 @@ jobs:
 
     strategy:
       matrix:
-        app: [fairdatapoint-index, fairdatapoint]
         node-version: [16]
 
     env:
-      PUBLIC_IMAGE: fairdata/${{ matrix.app }}-client
-      PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/${{ matrix.app }}-client
+      PUBLIC_IMAGE: fairdata/fairdatapoint-client
+      PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/fairdatapoint-client
 
     steps:
       # (1) -> Preparations
@@ -62,7 +61,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          build-args: fdp_app=${{ matrix.app }}
           platforms: linux/amd64,linux/arm64
           push: false
           tags: ${{ steps.meta-test.outputs.tags }}
@@ -94,7 +92,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          build-args: fdp_app=${{ matrix.app }}
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-private.outputs.tags }}
@@ -129,7 +126,6 @@ jobs:
           context: .
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
-          build-args: fdp_app=${{ matrix.app }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-public.outputs.tags }}
           labels: ${{ steps.meta-public.outputs.labels }}

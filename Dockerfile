@@ -14,7 +14,4 @@ COPY nginx/start.sh /start.sh
 COPY src src
 COPY dist /usr/share/nginx/html
 
-ARG fdp_app
-ENV APP=$fdp_app
-
 CMD ["/start.sh"]

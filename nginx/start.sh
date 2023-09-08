@@ -3,12 +3,7 @@
 # create config
 config=/usr/share/nginx/html/config.js
 
-isIndex="index:false"
-if [[ "$APP" == "fairdatapoint-index" ]]; then
-  isIndex="index:true"
-fi
-
-echo -n "window.config={publicPath:'"$PUBLIC_PATH"',"$isIndex"};" > ${config}
+echo -n "window.config={publicPath:'"$PUBLIC_PATH"'};" > ${config}
 
 # set correct FDP Host for proxy pass
 sed -i "s#\$FDP_HOST#"$FDP_HOST"#g" /etc/nginx/conf.d/default.conf
