@@ -20,6 +20,24 @@
         </a>
       </div>
     </div>
+    <div
+      v-if="isAdmin"
+      class="table-filter"
+    >
+      <div class="filter-name">
+        Permit:
+      </div>
+      <div class="filter-content">
+        <a
+          v-for="permit in permits"
+          :key="permit"
+          :class="`btn btn-outline-secondary ${permitFilter === permit ? 'active' : ''}`"
+          @click.prevent="filterPermit(permit)"
+        >
+          {{ stateToReadable(permit) }}
+        </a>
+      </div>
+    </div>
     <status-flash :status="status" />
     <template v-if="data">
       <table class="table table-striped">
@@ -73,6 +91,9 @@
             <th>
               Status
             </th>
+            <th v-if="isAdmin">
+              Permit
+            </th>
             <th v-if="isAdmin" />
           </tr>
         </thead>
@@ -92,6 +113,9 @@
               <span :class="`badge badge-${badgeClass(fdp.state)}`">
                 {{ fdp.state }}
               </span>
+            </td>
+            <td v-if="isAdmin">
+              {{ fdp.permit }}
             </td>
             <td v-if="isAdmin">
               <a
@@ -145,6 +169,8 @@ export default class Index extends Vue {
 
   filter: string = 'ACTIVE'
 
+  permitFilter: string = 'ACCEPTED'
+
   sort: string = 'modificationTime,desc'
 
   page: number = 1
@@ -154,6 +180,8 @@ export default class Index extends Vue {
   actionStatus: Status = new Status()
 
   states: string[] = ['ALL', 'ACTIVE', 'INACTIVE', 'UNREACHABLE', 'INVALID', 'UNKNOWN']
+
+  permits: string[] = ['ALL', 'ACCEPTED', 'REJECTED', 'PENDING']
 
   get user() {
     return this.$store.getters['auth/user']
@@ -175,6 +203,14 @@ export default class Index extends Vue {
     await this.loadFdps()
   }
 
+  async filterPermit(permitFilter: string) {
+    this.permitFilter = permitFilter
+    this.page = 0
+    this.updateUrl()
+
+    await this.loadFdps()
+  }
+
   async sortData(sort: string) {
     this.sort = sort
     this.page = 0
@@ -187,8 +223,10 @@ export default class Index extends Vue {
     window.history.pushState(null, '', this.createUrl())
   }
 
-  createUrl(): string {
-    return `/?state=${this.filter}&sort=${this.sort}&page=${this.page}`
+  createUrl(page = null): string {
+    const pageNumber = page || this.page
+    const permitFilter = this.isAdmin ? `&permit=${this.permitFilter}` : ''
+    return `/?state=${this.filter}${permitFilter}&sort=${this.sort}&page=${pageNumber}`
   }
 
   formatDateTime(value): string {
@@ -204,7 +242,8 @@ export default class Index extends Vue {
   }
 
   openPage(page) {
-    this.$router.push(`/?state=${this.filter}&sort=${this.sort}&page=${page + 1}`)
+    const url = this.createUrl(page + 1)
+    this.$router.push(url)
   }
 
   @Watch('$route')
@@ -232,6 +271,7 @@ export default class Index extends Vue {
 
       const dataResponse = await api.fdpIndex.getEntries({
         state: this.filter,
+        permit: this.permitFilter,
         sort: this.sort,
         page: this.page,
       })

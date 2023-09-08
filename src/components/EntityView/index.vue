@@ -34,7 +34,10 @@
           </li>
         </ul>
       </template>
-      <template #actions v-if="!viewIndex">
+      <template
+        v-if="!viewIndex"
+        #actions
+      >
         <membership-badge :entity="meta" />
         <button
           v-if="actionEnabled('publish') && isDraft && (isAdmin || permissions.hasWrite(meta))"
@@ -73,10 +76,16 @@
           Delete
         </a>
       </template>
-      <template #content v-if="viewIndex">
+      <template
+        v-if="viewIndex"
+        #content
+      >
         <fair-data-points />
       </template>
-      <template #content v-else>
+      <template
+        v-else
+        #content
+      >
         <p class="description">
           {{ entity.description }}
         </p>
