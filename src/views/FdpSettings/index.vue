@@ -216,10 +216,19 @@
             <h2>Metadata storage</h2>
 
             <div class="form__group">
-              <label for="repository">Connected triple store</label>
+              <label for="repository">Connected triple store (main)</label>
               <input
                 id="repository"
-                :value="settingsData.repository.type"
+                :value="settingsData.mainRepository.type"
+                disabled
+              >
+            </div>
+
+            <div class="form__group">
+              <label for="repository">Connected triple store (drafts)</label>
+              <input
+                id="repository"
+                :value="settingsData.draftsRepository.type"
                 disabled
               >
             </div>
