@@ -1,0 +1,16 @@
+name: Docker publish
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+
+jobs:
+  build:
+    # todo: create this reusable workflow...
+    uses: FAIRDataTeam/github-workflows/.github/workflows/npm-build.yml@v1
+  publish:
+    needs: build
+    uses: FAIRDataTeam/github-workflows/.github/workflows/docker-publish.yml@v1
+    secrets: inherit
