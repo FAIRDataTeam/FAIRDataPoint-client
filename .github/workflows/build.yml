@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         # https://nodejs.org/en/about/previous-releases#release-schedule
-        node: [16, 18, 20, 22]
+        node: [16, 22]
 
     steps:
       - # https://github.com/actions/checkout
@@ -26,7 +26,7 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install dependencies from package-lock.json
         run: npm clean-install
 
       - name: Lint
@@ -37,5 +37,3 @@ jobs:
 
       - name: Create build info
         run: ./scripts/build_info.sh
-
-#    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v1
