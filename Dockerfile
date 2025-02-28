@@ -22,7 +22,14 @@ FROM nginx:alpine AS dist-stage
 
 # sass (used in start.sh)
 RUN apk add --no-cache libsass sassc && rm -f /tmp/* /etc/apk/cache/*
-COPY src/scss src/scss
+COPY --from=build-stage /app/src/scss src/scss
+COPY --from=build-stage /app/src/components src/components
+COPY --from=build-stage /app/src/views src/views
+COPY --from=build-stage /app/node_modules/bootstrap/scss src/~bootstrap/scss
+COPY --from=build-stage /app/node_modules/bootstrap-vue/src src/~bootstrap-vue/src
+COPY --from=build-stage /app/node_modules/prismjs/themes src/~prismjs/themes
+COPY --from=build-stage /app/node_modules/vue-select/src/scss src/~vue-select/src/scss
+COPY --from=build-stage /app/node_modules/vue2-datepicker/scss src/~vue2-datepicker/scss
 
 # nginx
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
