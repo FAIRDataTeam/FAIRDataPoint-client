@@ -16,9 +16,9 @@ RUN npm run build
 RUN apk add git
 RUN scripts/build_info.sh
 
-###### RUN STAGE ######
+###### DISTRIBUTION STAGE ######
 
-FROM nginx:alpine
+FROM nginx:alpine AS dist-stage
 
 # sass (used in start.sh)
 RUN apk add --no-cache libsass sassc && rm -f /tmp/* /etc/apk/cache/*
