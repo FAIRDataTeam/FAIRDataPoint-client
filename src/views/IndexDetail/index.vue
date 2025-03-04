@@ -52,15 +52,15 @@
             <tbody>
               <tr>
                 <th>Registered <span class="text-muted">(first contact)</span></th>
-                <td>{{ formatDateTime(fdp.registrationTime) }}</td>
+                <td>{{ formatDateTime(fdp.createdAt) }}</td>
               </tr>
               <tr>
                 <th>Modified <span class="text-muted">(last contact)</span></th>
-                <td>{{ formatDateTime(fdp.modificationTime) }}</td>
+                <td>{{ formatDateTime(fdp.updatedAt) }}</td>
               </tr>
               <tr>
                 <th>Verified <span class="text-muted">(last metadata retrieval)</span></th>
-                <td>{{ formatDateTime(fdp.lastRetrievalTime) }}</td>
+                <td>{{ formatDateTime(fdp.lastRetrievalAt) }}</td>
               </tr>
             </tbody>
           </table>

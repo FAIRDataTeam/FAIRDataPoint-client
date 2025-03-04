@@ -61,14 +61,14 @@
             <th>
               Registration
               <a
-                :class="{ 'sort-link': true, 'active': sort === 'registrationTime,asc' }"
-                @click.prevent="sortData('registrationTime,asc')"
+                :class="{ 'sort-link': true, 'active': sort === 'createdAt,asc' }"
+                @click.prevent="sortData('createdAt,asc')"
               >
                 ▲
               </a>
               <a
-                :class="{ 'sort-link': true, 'active': sort === 'registrationTime,desc' }"
-                @click.prevent="sortData('registrationTime,desc')"
+                :class="{ 'sort-link': true, 'active': sort === 'createdAt,desc' }"
+                @click.prevent="sortData('createdAt,desc')"
               >
                 ▼
               </a>
@@ -76,14 +76,14 @@
             <th>
               Modification
               <a
-                :class="{ 'sort-link': true, 'active': sort === 'modificationTime,asc' }"
-                @click.prevent="sortData('modificationTime,asc')"
+                :class="{ 'sort-link': true, 'active': sort === 'updatedAt,asc' }"
+                @click.prevent="sortData('updatedAt,asc')"
               >
                 ▲
               </a>
               <a
-                :class="{ 'sort-link': true, 'active': sort === 'modificationTime,desc' }"
-                @click.prevent="sortData('modificationTime,desc')"
+                :class="{ 'sort-link': true, 'active': sort === 'updatedAt,desc' }"
+                @click.prevent="sortData('updatedAt,desc')"
               >
                 ▼
               </a>
@@ -107,8 +107,8 @@
                 {{ fdp.clientUrl }}
               </router-link>
             </td>
-            <td>{{ formatDateTime(fdp.registrationTime) }}</td>
-            <td>{{ formatDateTime(fdp.modificationTime) }}</td>
+            <td>{{ formatDateTime(fdp.createdAt) }}</td>
+            <td>{{ formatDateTime(fdp.updatedAt) }}</td>
             <td>
               <span :class="`badge badge-${badgeClass(fdp.state)}`">
                 {{ fdp.state }}
@@ -171,7 +171,7 @@ export default class Index extends Vue {
 
   permitFilter: string = 'ACCEPTED'
 
-  sort: string = 'modificationTime,desc'
+  sort: string = 'updatedAt,desc'
 
   page: number = 1
 
