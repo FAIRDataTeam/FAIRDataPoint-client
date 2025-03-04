@@ -12,6 +12,10 @@
       <template #content>
         <status-flash :status="status" />
         <template v-if="fdp">
+          <status-flash
+            :status="permitStatus"
+            no-loading
+          />
           <div class="entry-header">
             <h2 class="entry-title">
               FDP <a
@@ -19,9 +23,28 @@
                 target="_blank"
               >{{ fdp.clientUrl }}</a>
             </h2>
+          </div>
+          <div>
             <span :class="`badge badge-${badgeClass(fdp.state)}`">
               {{ fdp.state }}
             </span>
+            <b-dropdown
+              v-if="user && user.role === 'ADMIN'"
+              variant="link"
+            >
+              <template #button-content>
+                {{ fdp.permit }}
+              </template>
+              <b-dropdown-header>
+                Permit
+              </b-dropdown-header>
+              <b-dropdown-item @click="changePermit('ACCEPTED')">
+                Accepted
+              </b-dropdown-item>
+              <b-dropdown-item @click="changePermit('REJECTED')">
+                Rejected
+              </b-dropdown-item>
+            </b-dropdown>
           </div>
           <hr>
           <h2>Timestamps</h2>
@@ -122,11 +145,17 @@ export default class IndexDetail extends Vue {
 
   status: Status = new Status()
 
+  permitStatus : Status = new Status()
+
   get breadcrumbs() {
     return [{
       label: 'FAIR Data Point Index',
       to: '/',
     }]
+  }
+
+  get user() {
+    return this.$store.getters['auth/user']
   }
 
   get title() {
@@ -174,6 +203,17 @@ export default class IndexDetail extends Vue {
       this.status.setDone()
     } catch (error) {
       this.status.setError('Unable to get FAIR Data Point.')
+    }
+  }
+
+  async changePermit(permit) {
+    try {
+      this.permitStatus.setPending()
+      await api.fdpIndex.putEntry(this.fdp.uuid, { permit })
+      this.fdp.permit = permit
+      this.permitStatus.setDone()
+    } catch (error) {
+      this.permitStatus.setError('Unable to change permit')
     }
   }
 }
