@@ -1,7 +1,7 @@
 <template>
   <div>
     <page
-      title="Settings"
+      title="Index Settings"
       content-only
       small
     >
@@ -13,6 +13,17 @@
             @submit.prevent="submitSettings"
           >
             <status-flash :status="submitStatus" />
+
+            <div class="form__group">
+              <label for="auto-permit">
+                <input
+                  id="auto-permit"
+                  v-model.trim="$v.settings.autoPermit.$model"
+                  type="checkbox"
+                >
+                Auto Permit
+              </label>
+            </div>
 
             <h2>Retrieval</h2>
 
@@ -182,6 +193,7 @@ export default {
   validations() {
     return {
       settings: {
+        autoPermit: { required },
         retrieval: {
           rateLimitWait: { required },
           timeout: { required },
@@ -261,7 +273,11 @@ export default {
     },
 
     fromDataToRequestData(formData) {
-      const data = { ping: { ...formData.ping }, retrieval: { ...formData.retrieval } }
+      const data = {
+        autoPermit: formData.autoPermit,
+        ping: { ...formData.ping },
+        retrieval: { ...formData.retrieval },
+      }
       data.ping.denyList = data.ping.denyList.map((i) => i.item)
       return data
     },

@@ -1,8 +1,10 @@
 import request from '@/api/request'
 
 export default {
-  getEntries({ state, sort, page }) {
-    return request.get(`/index/entries?state=${state}&sort=${sort}&page=${page - 1}`)
+  getEntries({
+    state, permit, sort, page,
+  }) {
+    return request.get(`/index/entries?state=${state}&permit=${permit}&sort=${sort}&page=${page - 1}`)
   },
 
   getInfo() {
@@ -11,6 +13,10 @@ export default {
 
   getEntry(uuid) {
     return request.get(`/index/entries/${uuid}`)
+  },
+
+  putEntry(uuid, data) {
+    return request.put(`/index/entries/${uuid}`, data)
   },
 
   deleteEntry(uuid) {

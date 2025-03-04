@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import EntityCreatePage from '@/views/EntityCreatePage/index.vue'
@@ -12,7 +13,6 @@ import SchemaRelease from '@/views/SchemaRelease/index.vue'
 import Schemas from '@/views/Schemas/index.vue'
 import SchemasImport from '@/views/SchemasImport/index.vue'
 import SchemasUpdate from '@/views/SchemasUpdate/index.vue'
-import Index from '@/views/Index/index.vue'
 import IndexDetail from '@/views/IndexDetail/index.vue'
 import config from '@/config'
 import SearchResults from '@/views/SearchResults/index.vue'
@@ -32,23 +32,13 @@ import ApiKeys from '../views/ApiKeys/index.vue'
 Vue.use(VueRouter)
 
 export function createRouter(store) {
-  const indexRoutes = [
-    { path: '/', component: Index },
-    { path: '/login', component: Login },
-    { path: '/users', component: Users, meta: { requiresAuth: true, roles: ['ADMIN'] } },
-    { path: '/users/create', component: UserCreate, meta: { requiresAuth: true, roles: ['ADMIN'] } },
-    { path: '/users/current', component: UserDetail, meta: { requiresAuth: true } },
-    { path: '/users/:id', component: UserDetail, meta: { requiresAuth: true, roles: ['ADMIN'] } },
-    { path: '/api-keys', component: ApiKeys, meta: { requiresAuth: true } },
-    { path: '/settings', component: IndexSettings, meta: { requiresAuth: true } },
+  const indexRoutes : any[] = [
+    { path: '/index/settings', component: IndexSettings, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/trigger-ping', component: IndexPing, meta: { requiresAuth: true } },
     { path: '/entry/:id', component: IndexDetail },
-    { path: '/search', component: SearchResults },
-    { path: '/not-allowed', component: NotAllowed },
-    { path: '*', component: NotFound },
   ]
 
-  const fpdRoutes = [
+  const fdpRoutes: any[] = [
     { path: '/', component: EntityViewPage },
     { path: '/edit', component: EntityEditPage, meta: { requiresAuth: true } },
     { path: '/my-metadata', component: Dashboard, meta: { requiresAuth: true } },
@@ -83,7 +73,7 @@ export function createRouter(store) {
   const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
-    routes: config.isIndex() ? indexRoutes : fpdRoutes,
+    routes: config.isIndex() ? _.concat(indexRoutes, fdpRoutes) : fdpRoutes,
   })
 
   router.beforeEach((to, from, next) => {
