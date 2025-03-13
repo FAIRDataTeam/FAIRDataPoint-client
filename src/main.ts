@@ -27,10 +27,14 @@ let entitySpecs = []
 
 api.configs.getBootstrap()
   .then((config) => {
-    _.set(window, 'config.persistentURL', _.get(config, 'data.persistentUrl'))
-    _.set(window, 'config.appTitle', _.get(config, 'data.appTitle'))
-    _.set(window, 'config.appSubtitle', _.get(config, 'data.appSubtitle'))
-    _.set(window, 'config.index', _.get(config, 'data.index'))
+    // default to remote config from FDP API, but allow override via local public/config.js file
+    ['persistentURL', 'appTitle', 'appSubtitle', 'index'].forEach(
+      (prop) => {
+        if (!_.has(window, `config.${prop}`)) {
+          _.set(window, `config.${prop}`, _.get(config, `data.${_.camelCase(prop)}`))
+        }
+      },
+    )
     entitySpecs = _.get(config, 'data.resourceDefinitions', [])
   })
   .finally(() => {
