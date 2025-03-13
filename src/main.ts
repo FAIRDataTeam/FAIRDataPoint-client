@@ -35,6 +35,7 @@ api.configs.getBootstrap()
         }
       },
     )
+    // use resource definitions from remote config without possibility to override
     entitySpecs = _.get(config, 'data.resourceDefinitions', [])
   })
   .finally(() => {
