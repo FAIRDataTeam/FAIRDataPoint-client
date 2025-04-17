@@ -4,6 +4,7 @@ import { PREFIXES, RDF, XSD } from '@/rdf/namespaces'
 import { FormShape } from '@/components/ShaclForm/Parser/SHACLFormParser'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import valueUtils from '@/components/ShaclForm/valueUtils'
+import { CustomDate } from '@/components/ShaclForm/CustomDate'
 
 export type FormData = {
   subject: $rdf.Node,
@@ -34,7 +35,7 @@ export function fromRdf(
           }
         } else if (fieldUtils.isDatetime(field)) {
           try {
-            data[field.path].push(new Date(statement.object.value))
+            data[field.path].push(new CustomDate(statement.object.value, field.datatype))
           } catch {
             // nothing to do
           }
@@ -57,7 +58,7 @@ export function fromRdf(
         }
       } else if (fieldUtils.isDatetime(field)) {
         try {
-          data[field.path] = [new Date(field.defaultValue)]
+          data[field.path] = [new CustomDate(field.defaultValue, field.datatype)]
         } catch {
           // nothing to do
         }
