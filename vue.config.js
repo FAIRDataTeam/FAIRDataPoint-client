@@ -9,6 +9,10 @@ module.exports = {
         url: require.resolve('url/'),
       },
     },
+    watchOptions: {
+      poll: 1000, // or true
+      ignored: /node_modules/,
+    },
   },
   css: {
     loaderOptions: {

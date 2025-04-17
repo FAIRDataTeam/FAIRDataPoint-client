@@ -9,7 +9,15 @@ function getName(field: FormField): string {
 }
 
 function isDatetime(field: FormField): boolean {
-  return field.datatype === XSD('dateTime').value
+  const dataTypes = [
+    // Double check CustomDate if you wish to extend data types!
+    XSD('dateTime').value,
+    XSD('date').value,
+    // Disabled because we don't have vue component that support this.
+    // XSD('gYearMonth').value,
+    // XSD('gYear').value,
+  ]
+  return dataTypes.includes(field.datatype)
 }
 
 function isIRI(field: FormField): boolean {
