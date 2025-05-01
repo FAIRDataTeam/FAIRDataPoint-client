@@ -93,7 +93,7 @@ function createQuads(
         if (isFormData(value)) {
           const nestedQuads = createQuads(value, originalRdf, shape)
 
-          if (nestedQuads.length > 0) {
+          if (nestedQuads.length > 1) {
             return [
               $rdf.quad(data.subject, $rdf.namedNode(key), _.get(value, 'subject'), null),
               ...nestedQuads,
