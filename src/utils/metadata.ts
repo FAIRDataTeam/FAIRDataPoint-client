@@ -3,7 +3,7 @@ import * as $rdf from 'rdflib'
 import moment from 'moment'
 import Graph from '@/rdf/Graph'
 import {
-  DASH, DCT, FDPO, RDFS, XSD,
+  DASH, DCT, RDFS, XSD,
 } from '@/rdf/namespaces'
 import rdfUtils from '@/rdf/utils'
 import config from '@/config'
@@ -74,20 +74,28 @@ function wrapShaclValue(fieldConfig, value) {
     return null
   }
 
+  // first see if we have to use a DASH viewer
   switch (fieldConfig.viewer) {
     case DASH('LabelViewer').value:
       return itemFromPath(value)
     case DASH('URIViewer').value:
       return { label: value, uri: value }
-    default:
-      if (fieldConfig.datatype === XSD('dateTime').value) {
-        return { label: moment(value).format(config.dateFormat) }
+    // no dash viewer, so check data type
+    default: {
+      switch (fieldConfig.datatype) {
+        case XSD('dateTime').value:
+          return { label: moment(value).format(config.dateTimeFormat) }
+        case XSD('date').value:
+          return { label: moment(value).format(config.dateFormat) }
+        case XSD('boolean').value: {
+          if (valueUtils.isTrue(value)) return { label: 'TRUE' }
+          if (valueUtils.isFalse(value)) return { label: 'FALSE' }
+          // falls through
+        }
+        default:
+          return { label: value }
       }
-      if (fieldConfig.datatype === XSD('boolean').value) {
-        if (valueUtils.isTrue(value)) return { label: 'TRUE' }
-        if (valueUtils.isFalse(value)) return { label: 'FALSE' }
-      }
-      return { label: value }
+    }
   }
 }
 
