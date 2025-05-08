@@ -1,4 +1,6 @@
 // eslint-disable-next-line no-shadow
+import moment from 'moment'
+
 export enum XsdDateTypes {
     // see FieldUtils.isDatetime()
     DateTime = 'http://www.w3.org/2001/XMLSchema#dateTime',
