@@ -42,7 +42,8 @@ export default class DatePickerEditor extends Vue {
   }
 
   onInput(val) {
-    this.$emit('input', moment(val).toDate())
+    // only convert to JS Date when we actually need the time component
+    this.$emit('input', this.type === 'date' ? val : moment(val).toDate())
   }
 }
 </script>

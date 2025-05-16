@@ -80,7 +80,7 @@ function wrapShaclValue(fieldConfig, value) {
     case DASH('URIViewer').value:
       return { label: value, uri: value }
     default:
-      if (fieldConfig.datatype === XSD('dateTime').value) {
+      if (fieldUtils.isDatetime(fieldConfig)) {
         return { label: moment(value).format(config.dateFormat) }
       }
       if (fieldConfig.datatype === XSD('boolean').value) {
