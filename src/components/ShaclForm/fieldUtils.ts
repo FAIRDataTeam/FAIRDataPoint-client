@@ -9,7 +9,12 @@ function getName(field: FormField): string {
 }
 
 function isDatetime(field: FormField): boolean {
-  return field.datatype === XSD('dateTime').value
+  // todo: rename to isDate(), consistent with the JS Date type
+  const dateDataTypes = [
+    XSD('dateTime').value,
+    XSD('date').value,
+  ]
+  return dateDataTypes.includes(field.datatype)
 }
 
 function isIRI(field: FormField): boolean {
