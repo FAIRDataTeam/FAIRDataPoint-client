@@ -19,5 +19,4 @@ jobs:
     secrets: inherit
     with:
       file: './Dockerfile'
-      platforms: linux/amd64
       push: ${{ github.event_name == 'push' || github.event_name == 'release' }}
