@@ -8,7 +8,10 @@ WORKDIR /app
 COPY package*.json ./
 # install build tools for node-gyp on alpine, then install packages, and clean up
 # https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#node-gyp-alpine
-RUN apk add --no-cache --virtual .gyp python3 py-setuptools make g++ && yes | npm install && apk del .gyp
+RUN apk add --no-cache --virtual .gyp python3 py-setuptools make g++
+RUN npm install
+RUN apk del .gyp
+RUN ln -sf /usr/bin/python3 /usr/bin/python
 
 # build-layer
 COPY . .
