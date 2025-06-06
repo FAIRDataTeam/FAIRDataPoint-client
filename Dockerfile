@@ -4,13 +4,11 @@
 FROM node:16-alpine AS build-stage
 WORKDIR /app
 
-# install build tools for node-gyp on alpine
-# https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#node-gyp-alpine
-RUN apk add --no-cache python3 make g++
-
 # install-layer
 COPY package*.json ./
-RUN npm install
+# install build tools for node-gyp on alpine, then install packages, and clean up
+# https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#node-gyp-alpine
+RUN apk add --no-cache --virtual .gyp python3 py-setuptools make g++ && npm install && apk del .gyp
 
 # build-layer
 COPY . .
