@@ -128,7 +128,7 @@ function createQuads(
           // using a custom iso 8601 compliant string representation YYYY-MM-DDTHH:MM:SSZ
           wrappedValue = $rdf.Literal.fromValue(value)
           // Override auto-detected datatype
-          wrappedValue.datatype.value = field.datatype
+          wrappedValue.datatype = $rdf.namedNode(field.datatype)
         }
 
         return hasValue
