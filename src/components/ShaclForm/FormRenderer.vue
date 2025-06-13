@@ -88,7 +88,7 @@ import _ from 'lodash'
 import FormInput from '@/components/ShaclForm/FormInput.vue'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import { ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
-import { DASH, SHACL } from '@/rdf/namespaces'
+import { SHACL } from '@/rdf/namespaces'
 
 @Component({
   name: 'FormRenderer',
@@ -135,7 +135,7 @@ export default class FormRenderer extends Vue {
   }
 
   createDefaultValueArray(field) {
-    if (field.minCount === 1 || (field.maxCount === 1 && (!field.editor || field.editor !== DASH('BlankNodeEditor').value))) {
+    if (field.minCount === 1 || (field.maxCount === 1 && !fieldUtils.isOptionalBlankNode(field))) {
       return [this.createDefaultValue(field)]
     }
 
