@@ -162,7 +162,7 @@ export default class FormRenderer extends Vue {
   }
 
   isList(field) {
-    return fieldUtils.isList(field)
+    return fieldUtils.isList(field) || fieldUtils.isOptionalBlankNode(field)
   }
 
   canBeRemoved(field) {
