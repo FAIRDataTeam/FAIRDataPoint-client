@@ -134,7 +134,7 @@ export default class FormRenderer extends Vue {
   }
 
   createDefaultValueArray(field) {
-    if (field.minCount === 1 || field.maxCount === 1) {
+    if (field.minCount === 1 || (field.maxCount === 1 && !fieldUtils.isOptionalBlankNode(field))) {
       return [this.createDefaultValue(field)]
     }
 
@@ -161,7 +161,7 @@ export default class FormRenderer extends Vue {
   }
 
   isList(field) {
-    return fieldUtils.isList(field)
+    return fieldUtils.isList(field) || fieldUtils.isOptionalBlankNode(field)
   }
 
   canBeRemoved(field) {
