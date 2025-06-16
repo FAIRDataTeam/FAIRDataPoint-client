@@ -65,6 +65,7 @@
         <button
           v-if="isList(field)"
           class="btn btn-link"
+          :hidden="!canAddValue(field)"
           @click.prevent="addValue(field)"
         >
           <fa :icon="['fas', 'plus']" />
@@ -168,6 +169,11 @@ export default class FormRenderer extends Vue {
     const values = this.data[field.path].length
     const minCount = _.get(field, 'minCount', 0)
     return this.isList(field) && values > minCount
+  }
+
+  canAddValue(field) {
+    const maxCount: number = _.get(field, 'maxCount', 0)
+    return maxCount === 0 || this.data[field.path].length < maxCount
   }
 
   addValue(field) {
