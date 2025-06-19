@@ -172,8 +172,9 @@ export default class FormRenderer extends Vue {
   }
 
   canAddValue(field) {
+    const values = this.data[field.path].length
     const maxCount: number = _.get(field, 'maxCount', 0)
-    return maxCount === 0 || this.data[field.path].length < maxCount
+    return maxCount === 0 || values < maxCount
   }
 
   addValue(field) {
