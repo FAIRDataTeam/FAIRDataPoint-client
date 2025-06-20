@@ -166,14 +166,15 @@ export default class FormRenderer extends Vue {
   }
 
   canBeRemoved(field) {
-    const values = this.data[field.path].length
+    const count = this.data[field.path].length
     const minCount = _.get(field, 'minCount', 0)
-    return this.isList(field) && values > minCount
+    return this.isList(field) && count > minCount
   }
 
   canAddValue(field) {
-    const maxCount: number = _.get(field, 'maxCount', 0)
-    return maxCount === 0 || this.data[field.path].length < maxCount
+    const count = this.data[field.path].length
+    const maxCount: number | null = _.get(field, 'maxCount', null)
+    return maxCount === null || count < maxCount
   }
 
   addValue(field) {
