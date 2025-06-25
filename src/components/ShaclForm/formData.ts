@@ -156,7 +156,10 @@ export function toRdf(
       if (field.nodeShape) {
         store
           .statementsMatching(subject, $rdf.namedNode(field.path))
-          .forEach((statement) => clear(statement.object, field.nodeShape.fields))
+          .forEach((statement) => {
+            clear(statement.object, field.nodeShape.fields)
+            store.removeMany(statement.object)
+          })
       }
       store.removeMany(subject, $rdf.namedNode(field.path))
     })
