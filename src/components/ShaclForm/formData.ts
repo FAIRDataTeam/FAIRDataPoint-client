@@ -166,7 +166,7 @@ export function toRdf(
   }
   clear($rdf.namedNode(subjectStr), shape.fields)
 
-  store.addAll(createQuads(data, rdf, shape))
+  store.addAll(createQuads(data, store, shape))
 
   // @ts-ignore
   const serializer = $rdf.Serializer(rdf)
