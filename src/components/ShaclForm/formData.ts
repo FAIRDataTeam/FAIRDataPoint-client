@@ -148,22 +148,43 @@ export function toRdf(
   subjectStr: string,
   shape: FormShape,
 ): string {
+  // Create a copy of the original RDF Store (a.k.a. IndexedFormula)
+  // which contains all RDF statements describing the (exising) resource
   const store = $rdf.graph()
   store.addAll(rdf.statementsMatching(undefined, undefined, undefined))
 
+  /**
+   * Recursively clears all RDF statements related to specified form fields
+   * (as defined in the SHACL shape) from the in-memory RDF store.
+   *
+   * @param {$rdf.NamedNode} subject - An RDF named node (IRI)
+   * @param {Array} fields - An array of Fields representing SHACL properties
+   * @returns {void}
+   */
   const clear = (subject, fields) => {
     fields.forEach((field) => {
+      // Recursive case
       if (field.nodeShape) {
+        // Note that statement.object now represents a blank node
         store
           .statementsMatching(subject, $rdf.namedNode(field.path))
-          .forEach((statement) => clear(statement.object, field.nodeShape.fields))
+          .forEach((statement) => {
+            // Recursive call is necessary to support nesting of blank nodes
+            clear(statement.object, field.nodeShape.fields)
+            // Remove the blank node itself
+            store.removeMany(statement.object)
+          })
       }
+      // Base case
       store.removeMany(subject, $rdf.namedNode(field.path))
     })
   }
+
+  // Remove all existing statements related to the present shape from the RDF store
   clear($rdf.namedNode(subjectStr), shape.fields)
 
-  store.addAll(createQuads(data, rdf, shape))
+  // Create new statements from form data, and add them to the RDF store
+  store.addAll(createQuads(data, store, shape))
 
   // @ts-ignore
   const serializer = $rdf.Serializer(rdf)
