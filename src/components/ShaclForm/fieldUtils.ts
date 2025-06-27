@@ -33,7 +33,7 @@ function isRequired(field: FormField): boolean {
   return field.minCount > 0
 }
 
-function isOptionalBlankNode(field: FormField): boolean {
+function isOptionalNode(field: FormField): boolean {
   return field.editor === DASH('BlankNodeEditor').value && !field.minCount && field.maxCount === 1
 }
 
@@ -65,7 +65,7 @@ export default {
   isIRI,
   isList,
   isLiteral,
-  isOptionalBlankNode,
+  isOptionalNode,
   isRequired,
   isBoolean,
   isInteger,
