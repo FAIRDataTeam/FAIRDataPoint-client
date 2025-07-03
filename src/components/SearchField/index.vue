@@ -34,7 +34,7 @@ export default class SearchField extends Vue {
 
   @Watch('$route')
   setQ() {
-    this.routeQ = _.get(this.$route, 'query.q', '')
+    this.routeQ = _.get(this.$route, 'query.q', '') as string
     this.q = this.routeQ
   }
 }
