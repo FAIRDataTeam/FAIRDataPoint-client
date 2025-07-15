@@ -187,7 +187,7 @@ export function toRdf(
   store.addAll(createQuads(data, store, shape))
 
   // @ts-ignore
-  const serializer = $rdf.Serializer(rdf)
+  const serializer = $rdf.Serializer(store)
   serializer.setFlags('sir')
 
   Object.entries(PREFIXES).forEach(([prefix, url]) => {
