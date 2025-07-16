@@ -11,7 +11,33 @@
       :title="title"
       :content-only="true"
     >
-      <template #actions>
+      <template
+        v-if="isRepository && isIndex"
+        #pagenav
+      >
+        <ul class="nav nav-tabs nav-fill mb-4 mt-4">
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              :class="{'active': viewIndex}"
+              href="#"
+              @click.prevent="setViewIndex(true)"
+            >Index</a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              :class="{'active': !viewIndex}"
+              href="#"
+              @click.prevent="setViewIndex(false)"
+            >Metadata</a>
+          </li>
+        </ul>
+      </template>
+      <template
+        v-if="!viewIndex"
+        #actions
+      >
         <membership-badge :entity="meta" />
         <button
           v-if="actionEnabled('publish') && isDraft && (isAdmin || permissions.hasWrite(meta))"
@@ -50,7 +76,16 @@
           Delete
         </a>
       </template>
-      <template #content>
+      <template
+        v-if="viewIndex"
+        #content
+      >
+        <fair-data-points />
+      </template>
+      <template
+        v-else
+        #content
+      >
         <p class="description">
           {{ entity.description }}
         </p>
@@ -136,9 +171,12 @@ import metadata from '@/utils/metadata'
 import permissions from '@/utils/permissions'
 import { parseSHACLView } from '@/components/ShaclForm/Parser/SHACLViewParser'
 import EntityBase from '@/components/EntityBase'
+import FairDataPoints from '@/components/FairDataPoints/index.vue'
+import config from '@/config'
 
 @Component({
   components: {
+    FairDataPoints,
     Breadcrumbs,
     EntityMetadata,
     ItemList,
@@ -162,6 +200,8 @@ export default class EntityView extends EntityBase {
 
   groups: any = null
 
+  viewIndex: any = null
+
   get permissions() {
     return permissions
   }
@@ -176,7 +216,16 @@ export default class EntityView extends EntityBase {
   }
 
   get title() {
+    if (this.viewIndex) return 'FAIR Data Points'
     return this.isDraft ? `[DRAFT] ${this.entity.title}` : this.entity.title
+  }
+
+  get isRepository() {
+    return this.config.isRepository
+  }
+
+  get isIndex() {
+    return config.isIndex()
   }
 
   actionEnabled(action: string): boolean {
@@ -192,6 +241,10 @@ export default class EntityView extends EntityBase {
     this.activeItemList = itemList
   }
 
+  setViewIndex(value) {
+    this.viewIndex = value
+  }
+
   reset() {
     this.metadata = null
     this.itemLists = null
@@ -204,6 +257,8 @@ export default class EntityView extends EntityBase {
 
   async fetchData(): Promise<void> {
     try {
+      this.viewIndex = this.isIndex && this.isRepository
+
       this.status.setPending()
       const [entity, spec, meta] = await this.loadData()
 
