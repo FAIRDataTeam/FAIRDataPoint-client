@@ -161,13 +161,19 @@ export class EntityConfig {
     graph: Graph,
     meta = null,
   ) {
-    const typePredicate = $rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
-    const typeNode = $rdf.namedNode(_.first(entity.targetClassUris))
-
-    return graph.store.match(null, typePredicate, typeNode)
-      .map((c) => {
-        const id = rdfUtils.pathTerm(_.get(c.subject, 'value'))
-        const options = { subject: c.subject }
+    const typePredicate: $rdf.NamedNode = $rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
+    // Get all quads matching the specified target classes.
+    // Likely to include duplicate subjects because FDP specifies both Resource and its subclasses.
+    const matchingQuads: $rdf.Quad[] = entity.targetClassUris.flatMap(
+      (targetClass: string) => graph.store.match(null, typePredicate, $rdf.namedNode(targetClass)),
+    )
+    // Extract unique subjects
+    const uniqueSubjects = [...new Set(matchingQuads.map((q: $rdf.Quad) => q.subject))]
+    // Return objects with relevant information about the subject
+    return uniqueSubjects.map(
+      (rdfSubject) => {
+        const id = rdfUtils.pathTerm(_.get(rdfSubject, 'value'))
+        const options = { subject: rdfSubject }
 
         const tags = child.listView.tagsUri
           ? graph.findAll($rdf.namedNode(child.listView.tagsUri), options)
@@ -182,7 +188,7 @@ export class EntityConfig {
           : []
 
         const stateChildren = _.get(meta, 'state.children', {})
-        const prefix = stateChildren[c.subject.value] === 'DRAFT' ? '[DRAFT] ' : ''
+        const prefix = stateChildren[rdfSubject.value] === 'DRAFT' ? '[DRAFT] ' : ''
 
         return {
           title: prefix + graph.findOne(DCT('title'), options),
@@ -194,7 +200,8 @@ export class EntityConfig {
             metadata.dateField('Modified', graph.findOne(FDPO('metadataModified'), options)),
           ].concat(extraMetadata),
         }
-      })
+      },
+    )
   }
 
   // BREADCRUMBS --
