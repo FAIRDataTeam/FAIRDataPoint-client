@@ -194,6 +194,7 @@ export class EntityConfig {
 
         return {
           title: prefix + graph.findOne(DCT('title'), options),
+          // todo: shouldn't we use this.createUrl(this.getChildUrlPrefix(child), id) for the link?
           link: `/${this.getChildUrlPrefix(child)}/${id}`,
           description: graph.findOne(DCT('description'), options),
           tags,
