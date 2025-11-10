@@ -161,13 +161,21 @@ export class EntityConfig {
     graph: Graph,
     meta = null,
   ) {
-    const typePredicate = $rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
-    const typeNode = $rdf.namedNode(_.first(entity.targetClassUris))
-
-    return graph.store.match(null, typePredicate, typeNode)
-      .map((c) => {
-        const id = rdfUtils.pathTerm(_.get(c.subject, 'value'))
-        const options = { subject: c.subject }
+    const typePredicate: $rdf.NamedNode = $rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
+    // Get all quads matching the specified target classes.
+    // Likely to include duplicate subjects because FDP specifies both Resource and its subclasses.
+    const targetClassQuads: $rdf.Quad[] = entity.targetClassUris.flatMap(
+      (targetClass: string) => graph.store.match(null, typePredicate, $rdf.namedNode(targetClass)),
+    )
+    // Determine unique subjects corresponding to the target classes
+    const uniqueSubjects: $rdf.Quad_Subject[] = [
+      ...new Set(targetClassQuads.map((q: $rdf.Quad) => q.subject)),
+    ]
+    // Extract relevant information from the subjects
+    return uniqueSubjects.map(
+      (subject: $rdf.Quad_subject) => {
+        const id = rdfUtils.pathTerm(_.get(subject, 'value'))
+        const options = { subject }
 
         const tags = child.listView.tagsUri
           ? graph.findAll($rdf.namedNode(child.listView.tagsUri), options)
@@ -182,10 +190,11 @@ export class EntityConfig {
           : []
 
         const stateChildren = _.get(meta, 'state.children', {})
-        const prefix = stateChildren[c.subject.value] === 'DRAFT' ? '[DRAFT] ' : ''
+        const prefix = stateChildren[subject.value] === 'DRAFT' ? '[DRAFT] ' : ''
 
         return {
           title: prefix + graph.findOne(DCT('title'), options),
+          // todo: shouldn't we use this.createUrl(this.getChildUrlPrefix(child), id) for the link?
           link: `/${this.getChildUrlPrefix(child)}/${id}`,
           description: graph.findOne(DCT('description'), options),
           tags,
@@ -194,7 +203,8 @@ export class EntityConfig {
             metadata.dateField('Modified', graph.findOne(FDPO('metadataModified'), options)),
           ].concat(extraMetadata),
         }
-      })
+      },
+    )
   }
 
   // BREADCRUMBS --
