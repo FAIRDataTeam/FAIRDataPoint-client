@@ -44,7 +44,7 @@
               </b-dropdown-item>
               <b-dropdown-item @click="$router.push('/resource-definitions')">
                 <fa :icon="['fas', 'sitemap']" />
-                Resources definitions
+                Resource definitions
               </b-dropdown-item>
               <b-dropdown-item @click="$router.push('/schemas')">
                 <fa :icon="['fas', 'shapes']" />
