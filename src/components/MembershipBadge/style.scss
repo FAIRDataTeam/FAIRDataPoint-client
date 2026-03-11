@@ -1,6 +1,6 @@
-@import "../../scss/mixins";
-@import "../../scss/typography";
-@import "../../scss/variables";
+@use "../../scss/mixins" as *;
+@use "../../scss/typography" as *;
+@use "../../scss/variables" as *;
 
 
 .membership-badge {

@@ -18,7 +18,7 @@ export default {
     })
   },
 
-  getChildren(_id, child, page) {
+  getChildren(_id: any, child: string, page: number) {
     return request.get(`/page/${child}?page=${page}&size=${config.defaultPageSize}`, {
       headers: {
         Accept: 'text/turtle',
@@ -26,7 +26,7 @@ export default {
     })
   },
 
-  put(_id, data) {
+  put(_id: any, data: string) {
     return request.put('/', data, {
       headers: {
         Accept: 'text/turtle',

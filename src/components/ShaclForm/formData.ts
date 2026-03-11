@@ -1,31 +1,40 @@
 import * as $rdf from 'rdflib'
 import _ from 'lodash'
 import { PREFIXES, RDF } from '@/rdf/namespaces'
-import { FormShape } from '@/components/ShaclForm/Parser/SHACLFormParser'
+import { FormField, FormShape } from '@/components/ShaclForm/Parser/SHACLFormParser'
 import fieldUtils from '@/components/ShaclForm/fieldUtils'
 import valueUtils from '@/components/ShaclForm/valueUtils'
+import type {
+  Quad_Object as QuadObject,
+  Quad_Subject as QuadSubject,
+} from 'rdflib/lib/tf-types'
 
 export type FormData = {
-  subject: $rdf.Node,
-  data: Record<string, FormDataValue>
+  subject: QuadSubject,
+  data: Record<string, FormDataValue[]>
 }
 
-export type FormDataValue = FormData | $rdf.NamedNode | string
+export type FormDataValue = FormData | QuadObject | string | number | boolean | Date | null
 
 export function fromRdf(
   form: FormShape,
-  subject: $rdf.Node,
+  subject: QuadSubject,
   rdf: $rdf.IndexedFormula,
   defaults = false,
 ): FormData {
-  const data = {}
+  const data: Record<string, FormDataValue[]> = {}
   form.fields.forEach((field) => {
     const statements = rdf.match(subject, $rdf.namedNode(field.path), null, null)
     if (statements.length > 0) {
       data[field.path] = []
       statements.forEach((statement) => {
         if (field.nodeShape) {
-          data[field.path].push(fromRdf(field.nodeShape, statement.object, rdf, defaults))
+          data[field.path].push(fromRdf(
+            field.nodeShape,
+            statement.object as QuadSubject,
+            rdf,
+            defaults,
+          ))
         } else if (fieldUtils.isIRI(field)) {
           try {
             data[field.path].push($rdf.namedNode(statement.object.value))
@@ -65,13 +74,18 @@ export function fromRdf(
         data[field.path] = [field.defaultValue]
       }
     } else if (defaults && field.nodeShape) {
-      data[field.path] = [fromRdf(field.nodeShape, $rdf.blankNode(''), rdf, defaults)]
+      data[field.path] = [fromRdf(
+        field.nodeShape,
+        $rdf.blankNode(''),
+        rdf,
+        defaults,
+      )]
     }
   })
   return { subject, data }
 }
 
-function isFormData(value: object): value is FormData {
+function isFormData(value: unknown): value is FormData {
   return _.isObject(value) && _.get(value, 'data', false)
 }
 
@@ -81,11 +95,20 @@ function createQuads(
   shape: FormShape,
 ): $rdf.Statement[] {
   // Add RDF type statements only if they are not present in original RDF
-  const targetClasses = _.get(data, 'targetClasses', [])
-    .filter((tc) => originalRdf.statementsMatching(data.subject, RDF('type'), tc).length === 0)
-    .map((tc) => $rdf.quad(data.subject, RDF('type'), tc, null))
+  const targetClasses = _.get(data, 'targetClasses', []) as QuadObject[]
+  const targetClassQuads = targetClasses
+    .filter((tc) => (
+      originalRdf.statementsMatching(
+        data.subject,
+        RDF('type'),
+        tc,
+      ).length === 0
+    ))
+    .map((tc) => $rdf.quad(data.subject, RDF('type'), tc, undefined))
 
-  const findField = (key) => shape.fields.find((field) => field.path === key)
+  const findField = (key: string): FormField | undefined => (
+    shape.fields.find((field) => field.path === key)
+  )
 
   const quads = Object.entries(data.data).flatMap(([key, values]) => {
     if (_.isArray(values)) {
@@ -95,7 +118,12 @@ function createQuads(
 
           if (nestedQuads.length > 0) {
             return [
-              $rdf.quad(data.subject, $rdf.namedNode(key), _.get(value, 'subject'), null),
+              $rdf.quad(
+                data.subject,
+                $rdf.namedNode(key),
+                _.get(value, 'subject') as QuadSubject,
+                undefined,
+              ),
               ...nestedQuads,
             ]
           }
@@ -106,40 +134,60 @@ function createQuads(
         const extraQuads = []
         const field = findField(key)
         const isBoolean = field && fieldUtils.isBoolean(field)
-        const isNumber = field && (fieldUtils.isInteger(field) || fieldUtils.isDecimal(field))
+        const isNumber = field && (
+          fieldUtils.isInteger(field) || fieldUtils.isDecimal(field)
+        )
         const hasBooleanValue = isBoolean && (value === true || value === false)
         const hasNumberValue = isNumber && (typeof value === 'number')
-        const hasValue = !_.isEmpty(value) || _.isObject(value) || hasBooleanValue || hasNumberValue
+        const hasValue = !_.isEmpty(value)
+          || _.isObject(value)
+          || hasBooleanValue
+          || hasNumberValue
 
         // If the field uses class, we need to add extra triple telling that the value of that
         // field is an instance of the field class
         if (field && field.class && hasValue) {
-          extraQuads.push($rdf.quad(value, RDF('type'), $rdf.namedNode(field.class), null))
+          extraQuads.push(
+            $rdf.quad(
+              value as QuadSubject,
+              RDF('type'),
+              $rdf.namedNode(field.class),
+              undefined,
+            ),
+          )
         }
 
         // $rdf.quad() converts input values to Literal with auto-detected datatype.
         // However, we want the Literal.datatype to match field.datatype.
         // By creating the Literal ourselves, we can override the datatype,
         // and it won't be modified by $rdf.quad().
-        let wrappedValue = value
+        let wrappedValue: FormDataValue = value
         if (hasValue && field && field.datatype) {
           // Create Literal from value so we can override the datatype.
           // Note that fromValue() auto-detects the datatype and converts JS Date values to UTC,
           // using a custom iso 8601 compliant string representation YYYY-MM-DDTHH:MM:SSZ
-          wrappedValue = $rdf.Literal.fromValue(value)
+          const literal = $rdf.Literal.fromValue(value as any) as $rdf.Literal
           // Override auto-detected datatype
-          wrappedValue.datatype = $rdf.namedNode(field.datatype)
+          literal.datatype = $rdf.namedNode(field.datatype)
+          wrappedValue = literal as FormDataValue
         }
 
         return hasValue
-          ? [$rdf.quad(data.subject, $rdf.namedNode(key), wrappedValue, null)].concat(extraQuads)
+          ? [
+            $rdf.quad(
+              data.subject,
+              $rdf.namedNode(key),
+              wrappedValue as QuadObject,
+              undefined,
+            ),
+          ].concat(extraQuads)
           : []
       })
     }
     return []
   })
 
-  return targetClasses.concat(quads)
+  return targetClassQuads.concat(quads)
 }
 
 export function toRdf(
@@ -161,18 +209,19 @@ export function toRdf(
    * @param {Array} fields - An array of Fields representing SHACL properties
    * @returns {void}
    */
-  const clear = (subject, fields) => {
+  const clear = (subject: QuadSubject, fields: FormField[]) => {
     fields.forEach((field) => {
       // Recursive case
       if (field.nodeShape) {
+        const { nodeShape } = field
         // Note that statement.object now represents a blank node
         store
           .statementsMatching(subject, $rdf.namedNode(field.path))
           .forEach((statement) => {
             // Recursive call is necessary to support nesting of blank nodes
-            clear(statement.object, field.nodeShape.fields)
+            clear(statement.object as QuadSubject, nodeShape.fields)
             // Remove the blank node itself
-            store.removeMany(statement.object)
+            store.removeMany(statement.object as any)
           })
       }
       // Base case

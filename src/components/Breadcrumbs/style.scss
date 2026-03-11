@@ -1,6 +1,6 @@
-@import "../../scss/variables";
-@import "../../scss/typography";
-@import "../../scss/mixins";
+@use "../../scss/variables" as *;
+@use "../../scss/typography" as *;
+@use "../../scss/mixins" as *;
 
 .breadcrumbs {
   @include typography-default-14;

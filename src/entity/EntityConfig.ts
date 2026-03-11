@@ -7,7 +7,7 @@ import permissions from '@/utils/permissions'
 import rdfUtils from '@/rdf/utils'
 import { DCT, FDPO } from '@/rdf/namespaces'
 import metadata from '@/utils/metadata'
-import breadcrumbs from '@/utils/breadcrumbs'
+import breadcrumbs, { BreadcrumbItem } from '@/utils/breadcrumbs'
 
 export type ChildSpec = {
   resourceDefinitionUuid: string,
@@ -79,13 +79,13 @@ export class EntityConfig {
 
   // Navigation --
 
-  public toUrl(enityId) {
+  public toUrl(enityId: string) {
     return this.createUrl(this.spec.urlPrefix, enityId)
   }
 
   // RDF --
 
-  public subject(entityId) {
+  public subject(entityId: string) {
     return `${config.persistentURL()}/${this.spec.urlPrefix}/${entityId}`
   }
 
@@ -124,7 +124,7 @@ export class EntityConfig {
     return this.specs[child.resourceDefinitionUuid].urlPrefix
   }
 
-  public canCreateChild(authenticated, entity) {
+  public canCreateChild(authenticated: boolean, entity: Record<string, any> | null) {
     return authenticated && permissions.hasCreate(entity)
   }
 
@@ -132,7 +132,7 @@ export class EntityConfig {
     return `/${this.spec.urlPrefix}/${entityId}/create-${this.getChildUrlPrefix(child)}`
   }
 
-  public createChildrenLists(canCreateChild = false, entityId = null) : any[] {
+  public createChildrenLists(canCreateChild = false, entityId: string | null = null) : any[] {
     return this.spec.children.map((child) => this.createChildrenListSpec(
       child,
       canCreateChild,
@@ -143,15 +143,19 @@ export class EntityConfig {
   private createChildrenListSpec(
     child: ChildSpec,
     canCreateChild = false,
-    entityId = null,
+    entityId: string | null = null,
   ) {
     const childSpec = this.specs[child.resourceDefinitionUuid]
+    const hasEntityId = entityId !== null && entityId !== undefined && entityId !== ''
+    const createLink = canCreateChild && (this.isRepository || hasEntityId)
+      ? this.createChildUrl(child, hasEntityId ? entityId : '')
+      : null
 
     return {
       title: child.listView.title,
       childUrlPrefix: childSpec.urlPrefix,
       childSpec: child,
-      createLink: canCreateChild ? this.createChildUrl(child, entityId) : null,
+      createLink,
     }
   }
 
@@ -159,21 +163,21 @@ export class EntityConfig {
     entity: EntitySpec,
     child: ChildSpec,
     graph: Graph,
-    meta = null,
+    meta: Record<string, any> | null = null,
   ) {
     const typePredicate: $rdf.NamedNode = $rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
     // Get all quads matching the specified target classes.
     // Likely to include duplicate subjects because FDP specifies both Resource and its subclasses.
-    const targetClassQuads: $rdf.Quad[] = entity.targetClassUris.flatMap(
+    const targetClassQuads = entity.targetClassUris.flatMap(
       (targetClass: string) => graph.store.match(null, typePredicate, $rdf.namedNode(targetClass)),
     )
     // Determine unique subjects corresponding to the target classes
-    const uniqueSubjects: $rdf.Quad_Subject[] = [
-      ...new Set(targetClassQuads.map((q: $rdf.Quad) => q.subject)),
+    const uniqueSubjects = [
+      ...new Set(targetClassQuads.map((q) => q.subject)),
     ]
     // Extract relevant information from the subjects
     return uniqueSubjects.map(
-      (subject: $rdf.Quad_subject) => {
+      (subject) => {
         const id = rdfUtils.pathTerm(_.get(subject, 'value'))
         const options = { subject }
 
@@ -189,7 +193,7 @@ export class EntityConfig {
           })
           : []
 
-        const stateChildren = _.get(meta, 'state.children', {})
+        const stateChildren = _.get(meta, 'state.children', {}) as Record<string, string>
         const prefix = stateChildren[subject.value] === 'DRAFT' ? '[DRAFT] ' : ''
 
         return {
@@ -199,8 +203,14 @@ export class EntityConfig {
           description: graph.findOne(DCT('description'), options),
           tags,
           metadata: [
-            metadata.dateField('Issued', graph.findOne(FDPO('metadataIssued'), options)),
-            metadata.dateField('Modified', graph.findOne(FDPO('metadataModified'), options)),
+            metadata.dateField(
+              'Issued',
+              graph.findOne(FDPO('metadataIssued'), options) as string | undefined,
+            ),
+            metadata.dateField(
+              'Modified',
+              graph.findOne(FDPO('metadataModified'), options) as string | undefined,
+            ),
           ].concat(extraMetadata),
         }
       },
@@ -209,19 +219,21 @@ export class EntityConfig {
 
   // BREADCRUMBS --
 
-  public createBreadcrumbsWithSelf(path, entityIri: string) {
+  public createBreadcrumbsWithSelf(path: Record<string, any>, entityIri: string): BreadcrumbItem[] {
     return this.buildBreadcrumbs(path, entityIri)
   }
 
-  public createBreadcrumbs(path, entityIri: string) {
+  public createBreadcrumbs(path: Record<string, any>, entityIri: string): BreadcrumbItem[] {
     return this.buildBreadcrumbs(path, _.get(path[entityIri], 'parent'))
   }
 
-  buildBreadcrumbs(path, iri) {
+  buildBreadcrumbs(path: Record<string, any>, iri: string | null): BreadcrumbItem[] {
     if (!iri) return []
 
     const pathItem = _.get(path, iri)
+    if (!pathItem) return []
     const spec = _.get(this.specs, pathItem.resourceDefinitionUuid)
+    if (!spec) return []
 
     const id = rdfUtils.pathTerm(iri)
     const url = this.createUrl(spec.urlPrefix, id)
@@ -230,7 +242,7 @@ export class EntityConfig {
     return this.buildBreadcrumbs(path, pathItem.parent).concat([item])
   }
 
-  createUrl(urlPrefix, entityId) {
+  createUrl(urlPrefix: string, entityId: string) {
     if (urlPrefix === '') {
       return '/'
     }

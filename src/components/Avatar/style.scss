@@ -1,4 +1,4 @@
-@import "../../scss/typography";
+@use "../../scss/typography" as *;
 
 .avatar {
   @include typography-default-18-semibold;

@@ -12,7 +12,7 @@
         :subject="subject"
         :definition="formDefinition"
         :validation-report="validationReport"
-        @input="onInput"
+        @update:modelValue="onInput"
       />
       <div class="mb-5">
         <a
@@ -50,10 +50,10 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent, PropType } from 'vue'
 import _ from 'lodash'
 import * as $rdf from 'rdflib'
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import PrismEditor from 'vue-prism-editor'
+import PrismEditor from '@/components/PrismEditor/index.vue'
 import FormRenderer from '@/components/ShaclForm/FormRenderer.vue'
 import StatusFlash from '@/components/StatusFlash/index.vue'
 import Status from '@/utils/Status'
@@ -61,50 +61,35 @@ import { FormShape, SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLF
 import * as formData from '@/components/ShaclForm/formData'
 import { ValidationReport } from '@/components/ShaclForm/Parser/ValidationReport'
 
-@Component({
+export default defineComponent({
   components: {
     FormRenderer,
     PrismEditor,
     StatusFlash,
   },
-})
-export default class ShaclForm extends Vue {
-  @Prop({ required: true })
-  readonly shacl: string
-
-  @Prop({ required: true })
-  readonly rdf: $rdf.IndexedFormula
-
-  @Prop({ required: true })
-  readonly subject: string
-
-  @Prop({ required: true })
-  readonly targetClasses: $rdf.ValueType[]
-
-  @Prop({ required: true })
-  readonly validationReport: ValidationReport
-
-  @Prop({ required: true })
-  readonly submitStatus: Status
-
-  @Prop({ required: false, default: false })
-  readonly fillDefaults: boolean
-
-  form: FormShape
-
-  data: any = {
-    subject: '',
-    data: {},
-  }
-
-  text: any = ''
-
-  turtle: any = null
-
-  status: Status = new Status()
-
-  formDefinition : any = null
-
+  props: {
+    shacl: { type: String, required: true },
+    rdf: { type: Object as PropType<$rdf.IndexedFormula>, required: true },
+    subject: { type: String, required: true },
+    targetClasses: { type: Array as PropType<any[]>, required: true },
+    validationReport: { type: Object as PropType<ValidationReport>, required: true },
+    submitStatus: { type: Object as PropType<Status>, required: true },
+    fillDefaults: { type: Boolean, default: false },
+  },
+  emits: ['submit'],
+  data() {
+    return {
+      form: null as FormShape | null,
+      data: {
+        subject: '',
+        data: {},
+      },
+      text: '',
+      turtle: null,
+      status: new Status(),
+      formDefinition: null,
+    }
+  },
   created() {
     try {
       const parser = new SHACLFormParser(this.shacl)
@@ -126,15 +111,19 @@ export default class ShaclForm extends Vue {
     } catch (error) {
       this.status.setError('The form configuration is not valid.')
     }
-  }
-
-  onInput() {
-    this.turtle = formData.toRdf(this.rdf, this.data, this.subject, this.form)
-  }
-
-  onSubmit() {
-    _.get(this, '$refs.formRenderer.cleanDirty')()
-    this.$emit('submit', this.turtle)
-  }
-}
+  },
+  methods: {
+    onInput(value: any = null) {
+      if (value) {
+        this.data = value
+      }
+      this.turtle = formData.toRdf(this.rdf, this.data, this.subject, this.form)
+    },
+    onSubmit() {
+      this.turtle = formData.toRdf(this.rdf, this.data, this.subject, this.form)
+      _.get(this, '$refs.formRenderer.cleanDirty')()
+      this.$emit('submit', this.turtle)
+    },
+  },
+})
 </script>

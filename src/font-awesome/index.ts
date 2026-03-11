@@ -1,8 +1,8 @@
-import Vue from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import * as far from '@fortawesome/free-regular-svg-icons'
 import * as fas from '@fortawesome/free-solid-svg-icons'
+import type { App } from 'vue'
 
 library.add(far.faTrashAlt)
 library.add(fas.faAngleDoubleDown)
@@ -42,4 +42,6 @@ library.add(fas.faUserFriends)
 library.add(fas.faUserPlus)
 library.add(fas.faUserSlash)
 
-Vue.component('Fa', FontAwesomeIcon)
+export const registerFontAwesome = (app: App) => {
+  app.component('Fa', FontAwesomeIcon)
+}

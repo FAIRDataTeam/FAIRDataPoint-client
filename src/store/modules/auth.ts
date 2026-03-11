@@ -1,6 +1,15 @@
 import _ from 'lodash'
 import api from '../../api'
 
+type AuthSession = {
+  user: any
+  token: string
+}
+
+type AuthState = {
+  session: AuthSession | null
+}
+
 export default {
   namespaced: true,
 
@@ -9,17 +18,28 @@ export default {
   },
 
   getters: {
-    authenticated: (state) => state.session !== null,
-    user: (state) => _.get(state.session, 'user'),
-    role: (state) => _.get(state.session, 'user.role'),
-    isAdmin: (state) => _.get(state.session, 'user.role') === 'ADMIN',
-    token: (state) => _.get(state, 'session.token'),
+    authenticated: (state: AuthState) => state.session !== null,
+    user: (state: AuthState) => _.get(state.session, 'user'),
+    role: (state: AuthState) => _.get(state.session, 'user.role'),
+    isAdmin: (state: AuthState) => _.get(state.session, 'user.role') === 'ADMIN',
+    token: (state: AuthState) => _.get(state, 'session.token'),
   },
 
   actions: {
-    async authenticate({ commit }, {
-      email, password, onSuccess, onError,
-    }) {
+    async authenticate(
+      { commit }: { commit: (type: string, payload: AuthSession | null) => void },
+      {
+        email,
+        password,
+        onSuccess,
+        onError,
+      }: {
+        email: string
+        password: string
+        onSuccess: () => void
+        onError: () => void
+      },
+    ) {
       try {
         const response = await api.tokens.fetchToken(email, password)
         commit('setSession', { user: null, token: response.data.token })
@@ -33,7 +53,13 @@ export default {
       }
     },
 
-    updateUser({ commit, state }, { user }) {
+    updateUser(
+      { commit, state }: { commit: (type: string, payload: AuthSession) => void; state: AuthState },
+      { user }: { user: any },
+    ) {
+      if (!state.session) {
+        return
+      }
       const session = {
         user,
         token: state.session.token,
@@ -41,13 +67,13 @@ export default {
       commit('setSession', session)
     },
 
-    logout({ commit }) {
+    logout({ commit }: { commit: (type: string, payload: AuthSession | null) => void }) {
       commit('setSession', null)
     },
   },
 
   mutations: {
-    setSession(state, session) {
+    setSession(state: AuthState, session: AuthSession | null) {
       state.session = session
     },
   },

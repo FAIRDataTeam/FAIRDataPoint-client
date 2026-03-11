@@ -1,7 +1,7 @@
 <template>
   <div
     class="item-list__item"
-    :class="{'item-list__item--frameless': frameless}"
+    :class="{ 'item-list__item--frameless': frameless }"
     data-cy="user-item"
   >
     <avatar
@@ -20,20 +20,15 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { defineComponent } from 'vue'
 import Avatar from '../Avatar/index.vue'
 
-@Component({
+export default defineComponent({
   components: { Avatar },
+  props: {
+    avatarInitials: { type: [String, Number], required: true },
+    avatarValue: { type: [String, Number], required: true },
+    frameless: { type: Boolean, default: false },
+  },
 })
-export default class ItemSimple extends Vue {
-  @Prop({ required: true })
-  readonly avatarInitials: any
-
-  @Prop({ required: true })
-  readonly avatarValue: any
-
-  @Prop({ type: Boolean, default: false })
-  readonly frameless: boolean
-}
 </script>

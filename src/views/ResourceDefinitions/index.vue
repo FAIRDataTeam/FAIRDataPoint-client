@@ -62,45 +62,49 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import _ from 'lodash'
-import { Component, Vue, Watch } from 'vue-property-decorator'
 import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
 import api from '../../api'
 import ItemSimple from '../../components/ItemSimple/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 
-@Component({ components: { Page, StatusFlash, ItemSimple } })
-export default class ResourceDefinitions extends Vue {
-  status: Status = new Status()
-
-  resourceDefinitions: any = null
-
+export default defineComponent({
+  components: { Page, StatusFlash, ItemSimple },
+  data() {
+    return {
+      status: new Status(),
+      resourceDefinitions: null,
+    }
+  },
+  watch: {
+    $route: 'fetchData',
+  },
   created() {
     this.fetchData()
-  }
-
-  @Watch('$route')
-  async fetchData() {
-    try {
-      this.status.setPending()
-      const response = await api.resourceDefinition.getResourceDefinitions()
-      this.resourceDefinitions = _.orderBy(response.data, ['name'], ['asc'])
-      this.status.setDone()
-    } catch (error) {
-      this.status.setError('Unable to get resourceDefinitions.')
-    }
-  }
-
-  async deleteResourceDefinition(resourceDefinition) {
-    if (window.confirm(`Are you sure you want to remove ${resourceDefinition.name}?`)) {
+  },
+  methods: {
+    async fetchData() {
       try {
-        await api.resourceDefinition.deleteResourceDefinition(resourceDefinition)
-        await this.fetchData()
+        this.status.setPending()
+        const response = await api.resourceDefinition.getResourceDefinitions()
+        this.resourceDefinitions = _.orderBy(response.data, ['name'], ['asc'])
+        this.status.setDone()
       } catch (error) {
-        this.status.setError('Unable to delete resource definition')
+        this.status.setError('Unable to get resourceDefinitions.')
       }
-    }
-  }
-}
+    },
+    async deleteResourceDefinition(resourceDefinition) {
+      if (window.confirm(`Are you sure you want to remove ${resourceDefinition.name}?`)) {
+        try {
+          await api.resourceDefinition.deleteResourceDefinition(resourceDefinition)
+          await this.fetchData()
+        } catch (error) {
+          this.status.setError('Unable to delete resource definition')
+        }
+      }
+    },
+  },
+})
 </script>

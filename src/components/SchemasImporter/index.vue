@@ -30,7 +30,7 @@
               v-for="(metadataSchema, index) in metadataSchemaGroup"
               :key="metadataSchema.schema.versionUuid"
               class="item"
-              :class="{'item-indented': index > 0}"
+              :class="{ 'item-indented': index > 0 }"
             >
               <div class="item__title">
                 <label>
@@ -101,87 +101,79 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import _ from 'lodash'
-import {
-  Component, Prop, Vue,
-} from 'vue-property-decorator'
-import PrismEditor from 'vue-prism-editor'
+import PrismEditor from '@/components/PrismEditor/index.vue'
 import semverRcompare from 'semver/functions/rcompare'
-import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
 import api from '@/api'
 import StatusFlash from '@/components/StatusFlash/index.vue'
-import Breadcrumbs from '@/components/Breadcrumbs/index.vue'
 
-@Component({
+export default defineComponent({
   components: {
-    Breadcrumbs, Page, PrismEditor, StatusFlash,
+    PrismEditor, StatusFlash,
   },
-})
-export default class SchemasImporter extends Vue {
-  @Prop({ type: Array, default: [] })
-  readonly metadataSchemas: any
-
-  importStatus: Status = new Status()
-
-  metadataSchemaGroups: any = []
-
-  showDefinition = []
-
-  get selectedSchemas() {
-    if (this.metadataSchemaGroups) {
-      const checkStatus = (schema) => _.get(schema, 'status') !== 'ALREADY_IMPORTED'
-      const checkSelected = (schema) => _.get(schema, 'selected')
-      return _.flatten(this.metadataSchemaGroups)
-        .filter((schema) => checkStatus(schema) && checkSelected(schema))
-        .map((schema) => _.get(schema, 'schema'))
+  props: {
+    metadataSchemas: { type: Array, default: () => [] },
+  },
+  data() {
+    return {
+      importStatus: new Status() as Status,
+      metadataSchemaGroups: [] as any[],
+      showDefinition: [] as string[],
     }
-    return []
-  }
-
-  get someShapeSelected() {
-    return this.selectedSchemas.length > 0
-  }
-
+  },
+  computed: {
+    selectedSchemas() {
+      if (this.metadataSchemaGroups) {
+        const checkStatus = (schema) => _.get(schema, 'status') !== 'ALREADY_IMPORTED'
+        const checkSelected = (schema) => _.get(schema, 'selected')
+        return _.flatten(this.metadataSchemaGroups)
+          .filter((schema) => checkStatus(schema) && checkSelected(schema))
+          .map((schema) => _.get(schema, 'schema'))
+      }
+      return []
+    },
+    someShapeSelected() {
+      return this.selectedSchemas.length > 0
+    },
+  },
   mounted() {
     this.createMetadataGroups()
-  }
-
-  isDefinitionVisible(uuid) {
-    return this.showDefinition.some((u) => u === uuid)
-  }
-
-  showShape(uuid) {
-    this.showDefinition.push(uuid)
-  }
-
-  hideShape(uuid) {
-    this.showDefinition = this.showDefinition.filter((u) => u !== uuid)
-  }
-
-  createMetadataGroups() {
-    const preselected = this.metadataSchemas.map((schema) => {
-      if (schema.status === 'ALREADY_IMPORTED') {
-        return { ...schema, selected: true }
+  },
+  methods: {
+    isDefinitionVisible(uuid) {
+      return this.showDefinition.some((u) => u === uuid)
+    },
+    showShape(uuid) {
+      this.showDefinition.push(uuid)
+    },
+    hideShape(uuid) {
+      this.showDefinition = this.showDefinition.filter((u) => u !== uuid)
+    },
+    createMetadataGroups() {
+      const preselected = this.metadataSchemas.map((schema) => {
+        if (schema.status === 'ALREADY_IMPORTED') {
+          return { ...schema, selected: true }
+        }
+        return schema
+      })
+      const groups = Object.values(_.groupBy(preselected, (ms) => ms.schema.uuid))
+      const comparator = (a, b) => semverRcompare(a.schema.version, b.schema.version)
+      const mapName = (a) => _.get(a, '0.schema.name')
+      this.metadataSchemaGroups = _.sortBy(groups.map((group) => group.sort(comparator)), mapName)
+    },
+    async importShapes() {
+      if (this.someShapeSelected) {
+        try {
+          this.importStatus.setPending()
+          await api.metadataSchemas.postImport(this.selectedSchemas)
+          this.importStatus.setDone('Metadata schemas were successfully imported')
+        } catch (err) {
+          this.importStatus.setErrorFromResponse(err, 'Unable to import metadata schemas')
+        }
       }
-      return schema
-    })
-    const groups = Object.values(_.groupBy(preselected, (ms) => ms.schema.uuid))
-    const comparator = (a, b) => semverRcompare(a.schema.version, b.schema.version)
-    const mapName = (a) => _.get(a, '0.schema.name')
-    this.metadataSchemaGroups = _.sortBy(groups.map((group) => group.sort(comparator)), mapName)
-  }
-
-  async importShapes() {
-    if (this.someShapeSelected) {
-      try {
-        this.importStatus.setPending()
-        await api.metadataSchemas.postImport(this.selectedSchemas)
-        this.importStatus.setDone('Metadata schemas were successfully imported')
-      } catch (err) {
-        this.importStatus.setErrorFromResponse(err, 'Unable to import metadata schemas')
-      }
-    }
-  }
-}
+    },
+  },
+})
 </script>

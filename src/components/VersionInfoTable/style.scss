@@ -1,4 +1,4 @@
-@import "../../scss/variables";
+@use "../../scss/variables" as *;
 
 .version-info-table {
   max-width: 100%;

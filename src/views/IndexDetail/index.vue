@@ -128,8 +128,8 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import _ from 'lodash'
-import { Component, Vue, Watch } from 'vue-property-decorator'
 import moment from 'moment'
 import Page from '@/components/Page/index.vue'
 import config from '@/config'
@@ -139,82 +139,77 @@ import { stateClass } from '@/utils/fdpIndex'
 import Breadcrumbs from '../../components/Breadcrumbs/index.vue'
 import api from '../../api'
 
-@Component({ components: { Breadcrumbs, Page, StatusFlash } })
-export default class IndexDetail extends Vue {
-  fdp: any = null
-
-  status: Status = new Status()
-
-  permitStatus : Status = new Status()
-
-  get breadcrumbs() {
-    return [{
-      label: 'FAIR Data Point Index',
-      to: '/',
-    }]
-  }
-
-  get user() {
-    return this.$store.getters['auth/user']
-  }
-
-  get title() {
-    return _.get(this.fdp, 'clientUrl')
-  }
-
-  get metadataTitle() {
-    return _.get(this.fdp, 'currentMetadata.metadata.title')
-  }
-
-  get metadataVersion() {
-    return _.get(this.fdp, 'currentMetadata.metadata.version')
-  }
-
-  get metadataPublisher() {
-    return _.get(this.fdp, 'currentMetadata.metadata.publisher')
-  }
-
-  get metadataPublisherName() {
-    return _.get(this.fdp, 'currentMetadata.metadata.publisherName')
-  }
-
-  get metadataDescription() {
-    return _.get(this.fdp, 'currentMetadata.metadata.description')
-  }
-
+export default defineComponent({
+  components: { Breadcrumbs, Page, StatusFlash },
+  data() {
+    return {
+      fdp: null,
+      status: new Status(),
+      permitStatus: new Status(),
+    }
+  },
+  computed: {
+    breadcrumbs() {
+      return [{
+        label: 'FAIR Data Point Index',
+        to: '/',
+      }]
+    },
+    user() {
+      return this.$store.getters['auth/user']
+    },
+    title() {
+      return _.get(this.fdp, 'clientUrl')
+    },
+    metadataTitle() {
+      return _.get(this.fdp, 'currentMetadata.metadata.title')
+    },
+    metadataVersion() {
+      return _.get(this.fdp, 'currentMetadata.metadata.version')
+    },
+    metadataPublisher() {
+      return _.get(this.fdp, 'currentMetadata.metadata.publisher')
+    },
+    metadataPublisherName() {
+      return _.get(this.fdp, 'currentMetadata.metadata.publisherName')
+    },
+    metadataDescription() {
+      return _.get(this.fdp, 'currentMetadata.metadata.description')
+    },
+  },
+  watch: {
+    $route: 'init',
+  },
   created(): void {
     this.init()
-  }
-
-  badgeClass(state) {
-    return stateClass(state)
-  }
-
-  formatDateTime(value): string {
-    return moment(value).format(config.dateTimeFormat)
-  }
-
-  @Watch('$route')
-  async init() {
-    try {
-      this.status.setPending()
-      const response = await api.fdpIndex.getEntry(this.$route.params.id)
-      this.fdp = response.data
-      this.status.setDone()
-    } catch (error) {
-      this.status.setError('Unable to get FAIR Data Point.')
-    }
-  }
-
-  async changePermit(permit) {
-    try {
-      this.permitStatus.setPending()
-      await api.fdpIndex.putEntry(this.fdp.uuid, { permit })
-      this.fdp.permit = permit
-      this.permitStatus.setDone()
-    } catch (error) {
-      this.permitStatus.setError('Unable to change permit')
-    }
-  }
-}
+  },
+  methods: {
+    badgeClass(state) {
+      return stateClass(state)
+    },
+    formatDateTime(value): string {
+      return moment(value).format(config.dateTimeFormat)
+    },
+    async init() {
+      try {
+        this.status.setPending()
+        const response = await api.fdpIndex.getEntry(this.$route.params.id)
+        this.fdp = response.data
+        this.status.setDone()
+      } catch (error) {
+        this.status.setError('Unable to get FAIR Data Point.')
+      }
+    },
+    async changePermit(permit) {
+      try {
+        this.permitStatus.setPending()
+        await api.fdpIndex.putEntry(this.fdp.uuid, { permit })
+        this.fdp.permit = permit
+        this.permitStatus.setDone()
+      } catch (error) {
+        this.permitStatus.setError('Unable to change permit')
+      }
+    },
+  },
+})
 </script>

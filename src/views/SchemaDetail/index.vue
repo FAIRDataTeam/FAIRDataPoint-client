@@ -21,7 +21,7 @@
           >
             <a
               class="nav-link"
-              :class="{'active': !viewPreview}"
+              :class="{ active: !viewPreview }"
               @click.prevent="setViewPreview(false)"
             >
               Definition
@@ -32,7 +32,7 @@
           >
             <a
               class="nav-link"
-              :class="{'active': viewPreview}"
+              :class="{ active: viewPreview }"
               @click.prevent="setViewPreview(true)"
             >
               Form Preview
@@ -68,7 +68,7 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.schema.name.$error}"
+            :class="{ 'form__group--error': v$.schema.name.$error }"
           >
             <label
               for="name"
@@ -78,12 +78,12 @@
             </label>
             <input
               id="name"
-              v-model.trim="$v.schema.name.$model"
+              v-model.trim="v$.schema.name.$model"
               placeholder="Name"
               name="name"
             >
             <p
-              v-if="!$v.schema.name.required"
+              v-if="!v$.schema.name.required"
               class="invalid-feedback"
             >
               Field is required
@@ -92,19 +92,19 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.schema.description.$error}"
+            :class="{ 'form__group--error': v$.schema.description.$error }"
           >
             <label for="description">
               Description
             </label>
             <textarea
               id="description"
-              v-model.trim="$v.schema.description.$model"
+              v-model.trim="v$.schema.description.$model"
               placeholder="Description"
               name="description"
             />
             <p
-              v-if="!$v.schema.description.required"
+              v-if="!v$.schema.description.required"
               class="invalid-feedback"
             >
               Field is required
@@ -113,18 +113,18 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.schema.abstractSchema.$error}"
+            :class="{ 'form__group--error': v$.schema.abstractSchema.$error }"
           >
             <label>
               <input
                 id="abstractSchema"
-                v-model.trim="$v.schema.abstractSchema.$model"
+                v-model.trim="v$.schema.abstractSchema.$model"
                 name="abstractSchema"
                 type="checkbox"
               >
               Abstract</label>
             <p
-              v-if="!$v.schema.abstractSchema.required"
+              v-if="!v$.schema.abstractSchema.required"
               class="invalid-feedback"
             >
               Field is required
@@ -133,21 +133,21 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.schema.extendsSchemaUuids.$error}"
+            :class="{ 'form__group--error': v$.schema.extendsSchemaUuids.$error }"
           >
             <label>
               Extends
             </label>
             <ul>
               <li
-                v-for="(v, index) in $v.schema.extendsSchemaUuids.$each.$iter"
+                v-for="(v, index) in v$.schema.extendsSchemaUuids.$each.$iter"
                 :key="`target-class-${index}`"
                 data-cy="target-class"
               >
                 <div class="d-flex align-items-start">
                   <div
                     class="form__group flex-grow-1"
-                    :class="{'form__group--error': v.uuid.$error}"
+                    :class="{ 'form__group--error': v.uuid.$error }"
                   >
                     <select
                       v-model="schema.extendsSchemaUuids[index].uuid"
@@ -169,7 +169,7 @@
                     </p>
                   </div>
                   <a
-                    class="text-danger ml-3 p-1"
+                    class="text-danger ms-3 p-1"
                     :data-cy="`extendsSchemaUuids.${index}.remove`"
                     @click.prevent="removeExtends(index)"
                   >
@@ -179,7 +179,7 @@
               </li>
             </ul>
             <p
-              v-if="!$v.schema.extendsSchemaUuids.required"
+              v-if="!v$.schema.extendsSchemaUuids.required"
               class="invalid-feedback"
             >
               You should specify at least one shape
@@ -197,14 +197,14 @@
           <div
             v-if="!schema.abstractSchema"
             class="form__group"
-            :class="{'form__group--error': $v.schema.suggestedResourceName.$error}"
+            :class="{ 'form__group--error': v$.schema.suggestedResourceName.$error }"
           >
             <label for="description">
               Suggested Resource Name
             </label>
             <input
               id="suggestedResourceName"
-              v-model.trim="$v.schema.suggestedResourceName.$model"
+              v-model.trim="v$.schema.suggestedResourceName.$model"
               name="suggestedResourceName"
             >
           </div>
@@ -212,32 +212,32 @@
           <div
             v-if="!schema.abstractSchema"
             class="form__group"
-            :class="{'form__group--error': $v.schema.suggestedUrlPrefix.$error}"
+            :class="{ 'form__group--error': v$.schema.suggestedUrlPrefix.$error }"
           >
             <label for="description">
               Suggested URL Prefix
             </label>
             <input
               id="suggestedUrlPrefix"
-              v-model.trim="$v.schema.suggestedUrlPrefix.$model"
+              v-model.trim="v$.schema.suggestedUrlPrefix.$model"
               name="suggestedUrlPrefix"
             >
           </div>
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.schema.definition.$error}"
+            :class="{ 'form__group--error': v$.schema.definition.$error }"
           >
             <label class="required">
               Form Definition
             </label>
             <prism-editor
               id="schema-definition"
-              v-model="$v.schema.definition.$model"
+              v-model="v$.schema.definition.$model"
               language="turtle"
             />
             <p
-              v-if="!$v.schema.definition.required"
+              v-if="!v$.schema.definition.required"
               class="invalid-feedback"
             >
               Field is required
@@ -254,7 +254,7 @@
               Save
             </button>
             <button
-              class="btn btn-primary btn-rounded ml-2"
+              class="btn btn-primary btn-rounded ms-2"
               :disabled="status.isPending()"
               data-cy="save-release"
               @click.prevent="release"
@@ -268,8 +268,9 @@
   </div>
 </template>
 <script lang="ts">
-import { required } from 'vuelidate/lib/validators'
-import PrismEditor from 'vue-prism-editor'
+import { useVuelidate } from '@vuelidate/core'
+import { required, helpers } from '@vuelidate/validators'
+import PrismEditor from '@/components/PrismEditor/index.vue'
 import _ from 'lodash'
 import { SHACLFormParser } from '@/components/ShaclForm/Parser/SHACLFormParser'
 import FormRenderer from '@/components/ShaclForm/FormRenderer.vue'
@@ -287,6 +288,9 @@ export default {
     Page,
     PrismEditor,
     StatusFlash,
+  },
+  setup() {
+    return { v$: useVuelidate() }
   },
 
   data() {
@@ -337,9 +341,9 @@ export default {
         abstractSchema: {},
         definition: { required },
         extendsSchemaUuids: {
-          $each: {
+          $each: helpers.forEach({
             uuid: { required },
-          },
+          }),
         },
         suggestedResourceName: {},
         suggestedUrlPrefix: {},
@@ -395,9 +399,9 @@ export default {
     },
 
     async submit(release) {
-      this.$v.schema.$touch()
+      this.v$.schema.$touch()
 
-      if (!this.$v.schema.$invalid) {
+      if (!this.v$.schema.$invalid) {
         this.submitStatus.setPending()
         this.errors = []
         try {

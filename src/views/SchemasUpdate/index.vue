@@ -28,8 +28,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import PrismEditor from 'vue-prism-editor'
+import { defineComponent } from 'vue'
 import api from '@/api'
 import Status from '@/utils/Status'
 import Breadcrumbs from '@/components/Breadcrumbs/index.vue'
@@ -37,35 +36,37 @@ import Page from '@/components/Page/index.vue'
 import SchemasImporter from '@/components/SchemasImporter/index.vue'
 import StatusFlash from '@/components/StatusFlash/index.vue'
 
-@Component({
+export default defineComponent({
   components: {
-    Breadcrumbs, Page, PrismEditor, SchemasImporter, StatusFlash,
+    Breadcrumbs, Page, SchemasImporter, StatusFlash,
   },
-})
-export default class SchemasUpdate extends Vue {
-  loadingStatus: Status = new Status()
-
-  metadataSchemas: any = null
-
-  breadcrumbs = [{
-    label: 'Metadata Schemas',
-    to: '/schemas',
-  }]
-
+  data() {
+    return {
+      loadingStatus: new Status(),
+      metadataSchemas: null,
+      breadcrumbs: [{
+        label: 'Metadata Schemas',
+        to: '/schemas',
+      }],
+    }
+  },
+  watch: {
+    $route: 'fetchData',
+  },
   created() {
     this.fetchData()
-  }
-
-  @Watch('$route')
-  async fetchData() {
-    try {
-      this.loadingStatus.setPending()
-      const response = await api.metadataSchemas.getUpdate()
-      this.metadataSchemas = response.data
-      this.loadingStatus.setDone()
-    } catch (err) {
-      this.loadingStatus.setError('Unable to get metadata schemas for update')
-    }
-  }
-}
+  },
+  methods: {
+    async fetchData() {
+      try {
+        this.loadingStatus.setPending()
+        const response = await api.metadataSchemas.getUpdate()
+        this.metadataSchemas = response.data
+        this.loadingStatus.setDone()
+      } catch (err) {
+        this.loadingStatus.setError('Unable to get metadata schemas for update')
+      }
+    },
+  },
+})
 </script>

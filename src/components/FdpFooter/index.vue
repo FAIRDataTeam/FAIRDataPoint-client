@@ -33,27 +33,32 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { defineComponent } from 'vue'
 import api from '@/api'
 import config from '@/config'
 import Separator from '../Separator/index.vue'
 import VersionInfoTable from '../VersionInfoTable/index.vue'
 
-@Component({ components: { Separator, VersionInfoTable } })
-export default class FdpFooter extends Vue {
-  info: any = { version: '', builtAt: '' }
-
-  get appTitle() {
-    return config.appTitle()
-  }
-
+export default defineComponent({
+  components: { Separator, VersionInfoTable },
+  data() {
+    return {
+      info: { version: '', builtAt: '' } as any,
+    }
+  },
+  computed: {
+    appTitle() {
+      return config.appTitle()
+    },
+  },
   created() {
     this.fetchData()
-  }
-
-  async fetchData(): Promise<void> {
-    const response = await api.info.getInfo()
-    this.info = response.data
-  }
-}
+  },
+  methods: {
+    async fetchData(): Promise<void> {
+      const response = await api.info.getInfo()
+      this.info = response.data
+    },
+  },
+})
 </script>

@@ -22,22 +22,19 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import moment from 'moment'
-import { Component, Prop, Vue } from 'vue-property-decorator'
 
-@Component
-export default class VersionInfoTable extends Vue {
-  @Prop({ type: String, required: true })
-  readonly title: string
-
-  @Prop({ type: String, required: true })
-  readonly version: string
-
-  @Prop({ type: String, required: true })
-  readonly builtAt: string
-
-  get builtAtFormatted() {
-    return moment(this.builtAt).format('D. M. YYYY, HH:mm')
-  }
-}
+export default defineComponent({
+  props: {
+    title: { type: String, required: true },
+    version: { type: String, required: true },
+    builtAt: { type: String, required: true },
+  },
+  computed: {
+    builtAtFormatted() {
+      return moment(this.builtAt).format('D. M. YYYY, HH:mm')
+    },
+  },
+})
 </script>

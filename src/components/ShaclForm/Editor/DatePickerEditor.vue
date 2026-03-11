@@ -1,49 +1,51 @@
 <template>
-  <date-picker
-    :value="convert(value)"
+  <input
+    :value="inputValue"
     :placeholder="placeholder"
-    :type="type"
-    :format="format"
-    value-type="format"
+    :type="inputType"
     :name="name"
     @input="onInput"
-  />
+  >
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import DatePicker from 'vue2-datepicker'
-import rdfUtils from '@/rdf/utils'
+import { defineComponent, PropType } from 'vue'
 import moment from 'moment'
+import rdfUtils from '@/rdf/utils'
 
-@Component({ components: { DatePicker } })
-export default class DatePickerEditor extends Vue {
-  @Prop({ required: true })
-  readonly field: any
-
-  @Prop({ required: true })
-  readonly value: any
-
-  @Prop({ required: true })
-  readonly format: any
-
-  @Prop({ required: false, default: 'date' })
-  readonly type: any
-
-  get name() {
-    return rdfUtils.pathTerm(this.field.path)
-  }
-
-  get placeholder() {
-    return 'Enter date'
-  }
-
-  convert(val) {
-    return val ? moment(val).format(this.format) : null
-  }
-
-  onInput(val) {
-    // only convert to JS Date when we actually need the time component
-    this.$emit('input', this.type === 'date' ? val : moment(val).toDate())
-  }
-}
+export default defineComponent({
+  props: {
+    field: { type: Object as PropType<any>, required: true },
+    modelValue: { type: [String, Date, Object] as PropType<any>, required: true },
+    format: { type: String as PropType<any>, required: true },
+    type: { type: String as PropType<any>, required: false, default: 'date' },
+  },
+  emits: ['update:modelValue'],
+  computed: {
+    name() {
+      return rdfUtils.pathTerm(this.field.path)
+    },
+    placeholder() {
+      return 'Enter date'
+    },
+    inputType() {
+      return this.type === 'date' ? 'date' : 'datetime-local'
+    },
+    inputValue() {
+      if (!this.modelValue) return ''
+      const value = moment(this.modelValue)
+      return value.format(this.inputType === 'date' ? 'YYYY-MM-DD' : 'YYYY-MM-DDTHH:mm')
+    },
+  },
+  methods: {
+    onInput(event) {
+      const val = event.target.value
+      if (!val) {
+        this.$emit('update:modelValue', null)
+        return
+      }
+      // only convert to JS Date when we actually need the time component
+      this.$emit('update:modelValue', this.type === 'date' ? val : moment(val).toDate())
+    },
+  },
+})
 </script>

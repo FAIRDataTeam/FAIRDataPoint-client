@@ -6,21 +6,19 @@
   />
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { defineComponent } from 'vue'
 import Avatar from '../Avatar/index.vue'
 
-@Component({
+export default defineComponent({
   components: { Avatar },
+  props: {
+    user: { type: Object, required: true },
+    smaller: { type: Boolean, default: false },
+  },
+  computed: {
+    initials(): string {
+      return this.user.firstName[0] + this.user.lastName[0]
+    },
+  },
 })
-export default class UserAvatar extends Vue {
-  @Prop({ required: true })
-  readonly user: any
-
-  @Prop({ type: Boolean, default: false })
-  readonly smaller: boolean
-
-  get initials(): string {
-    return this.user.firstName[0] + this.user.lastName[0]
-  }
-}
 </script>

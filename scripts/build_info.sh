@@ -3,8 +3,12 @@
 set -e
 
 
-# File with build info
-BUILD_INFO_FILE=$(dirname $0)/../dist/js/app.*.js
+# Files with build info (Vite -> dist/assets, legacy -> dist/js)
+BUILD_INFO_FILES="$(
+  printf '%s\n' \
+    "$(dirname $0)/../dist/assets/index-*.js" \
+    "$(dirname $0)/../dist/js/app.*.js"
+)"
 
 
 # Create version based on git tag or branch
@@ -23,5 +27,16 @@ builtAt=`date -R`
 
 
 # Replace values
-sed -i.bak "s#{version}#$version#" $BUILD_INFO_FILE && rm $BUILD_INFO_FILE".bak"
-sed -i.bak "s#{builtAt}#$builtAt#" $BUILD_INFO_FILE && rm $BUILD_INFO_FILE".bak"
+found=false
+for file in $BUILD_INFO_FILES; do
+  if [ -f "$file" ]; then
+    found=true
+    sed -i.bak "s#{version}#$version#" "$file" && rm "${file}.bak"
+    sed -i.bak "s#{builtAt}#$builtAt#" "$file" && rm "${file}.bak"
+  fi
+done
+
+if [ "$found" = false ]; then
+  echo "No build info files found in dist/assets or dist/js." >&2
+  exit 1
+fi

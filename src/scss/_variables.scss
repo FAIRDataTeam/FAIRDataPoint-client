@@ -1,9 +1,10 @@
-@import "custom/variables";
+@use "sass:color";
+@use "custom/variables" as *;
 
 // Colors
 $color-primary: #00518E !default;
-$color-primary-lighter: lighten($color-primary, 10%) !default;
-$color-primary-darker: darken($color-primary, 10%) !default;
+$color-primary-lighter: color.adjust($color-primary, $lightness: 10%) !default;
+$color-primary-darker: color.adjust($color-primary, $lightness: -10%) !default;
 $color-light: #FFFFFF !default;
 $color-complementary: #EFC700 !default;
 $color-text-default: #4A4A4A !default;
@@ -15,12 +16,13 @@ $color-background-highlighted: #F1F1F1 !default;
 $color-background-primary: #BFD4E3 !default;
 $color-separator: #DCDCDC !default;
 $color-danger: #900 !default;
-$color-danger-lighter: lighten($color-danger, 10%) !default;
-$color-danger-light: lighten($color-danger, 65%) !default;
+$color-danger-lighter: color.adjust($color-danger, $lightness: 10%) !default;
+$color-danger-light: color.adjust($color-danger, $lightness: 65%) !default;
 $color-warning: #856404 !default;
-$color-warning-light: lighten($color-warning, 65%) !default;
+$color-warning-light: color.adjust($color-warning, $lightness: 65%) !default;
 $color-success: #090 !default;
-$color-success-light: lighten($color-success, 65%) !default;
+$color-success-light: color.adjust($color-success, $lightness: 65%) !default;
+$cyan: #0DCAF0 !default;
 
 // Fonts
 $font-family: 'Open Sans', sans-serif !default;

@@ -1,10 +1,10 @@
 <template>
   <div
-    v-if="value && value.length > 0"
+    v-if="modelValue && modelValue.length > 0"
     class="item-list"
   >
     <div
-      v-for="item in sortByTitle(value)"
+      v-for="item in sortByTitle(modelValue)"
       :key="item.uri"
       class="item-list__item"
     >
@@ -41,8 +41,8 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent, PropType } from 'vue'
 import _ from 'lodash'
-import { Component, Prop, Vue } from 'vue-property-decorator'
 import Avatar from '../../components/Avatar/index.vue'
 import MembershipBadge from '../../components/MembershipBadge/index.vue'
 
@@ -50,42 +50,38 @@ type Item = {
   children: Item[]
 }
 
-@Component({
+export default defineComponent({
   name: 'ItemTree',
   components: {
     Avatar,
-    // eslint-disable-next-line no-use-before-define
-    ItemTree,
     MembershipBadge,
   },
+  props: {
+    modelValue: { type: Array as PropType<Item[]>, required: true },
+  },
+  emits: ['update:modelValue'],
+  methods: {
+    title(item) {
+      return item.state === 'DRAFT' ? `[DRAFT] ${item.title}` : item.title
+    },
+    sortByTitle(list) {
+      return _.orderBy(list, ['title'], ['asc'])
+    },
+    toggleOpen(entity) {
+      this.changeOpen((current) => (
+        current.uri === entity.uri ? !current.open : current.open
+      ))
+    },
+    changeOpen(f) {
+      this.$emit('update:modelValue', this.modelValue.map((c) => ({
+        ...c,
+        open: f(c),
+        children: c.children.map((d) => ({
+          ...d,
+          open: f(d),
+        })),
+      })))
+    },
+  },
 })
-export default class ItemTree extends Vue {
-  @Prop({ required: true })
-  readonly value: Item[]
-
-  title(item) {
-    return item.state === 'DRAFT' ? `[DRAFT] ${item.title}` : item.title
-  }
-
-  sortByTitle(list) {
-    return _.orderBy(list, ['title'], ['asc'])
-  }
-
-  toggleOpen(entity) {
-    this.changeOpen((current) => (
-      current.uri === entity.uri ? !current.open : current.open
-    ))
-  }
-
-  changeOpen(f) {
-    this.$emit('input', this.value.map((c) => ({
-      ...c,
-      open: f(c),
-      children: c.children.map((d) => ({
-        ...d,
-        open: f(d),
-      })),
-    })))
-  }
-}
 </script>

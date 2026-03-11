@@ -1,7 +1,7 @@
 import request from '../request'
 
 export default {
-  getProfile(id) {
+  getProfile(id: string) {
     return request.get(`/profile/${id}`, {
       headers: {
         Accept: 'text/turtle',

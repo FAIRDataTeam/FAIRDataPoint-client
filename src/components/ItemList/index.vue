@@ -43,112 +43,95 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent, PropType } from 'vue'
 import _ from 'lodash'
-import {
-  Component, Prop, Vue, Watch,
-} from 'vue-property-decorator'
 import parseLinkHeader from 'parse-link-header'
-import { ChildSpec, EntityConfig, EntitySpec } from '@/entity/EntityConfig'
+import { ChildSpec, EntityConfig } from '@/entity/EntityConfig'
 import Status from '@/utils/Status'
 import Graph from '@/rdf/Graph'
 import Pagination from '@/components/Pagination/index.vue'
 import Item from '../Item/index.vue'
 
-@Component({
+export default defineComponent({
   components: { Item, Pagination },
-})
-export default class ItemList extends Vue {
-  @Prop({ required: true })
-  readonly config: EntityConfig
-
-  @Prop({ required: true })
-  readonly childSpec: ChildSpec
-
-  @Prop({ required: true })
-  readonly meta: any
-
-  @Prop({ type: String, required: true })
-  readonly childUrlPrefix: string
-
-  @Prop({ required: true })
-  readonly entityId: any
-
-  @Prop({ type: String, required: true })
-  readonly title: string
-
-  @Prop({ type: String, required: false, default: null })
-  readonly createLink: string
-
-  status: Status = new Status()
-
-  items: Array<any> = []
-
-  currentPage: number = null
-
-  firstPage: number = null
-
-  lastPage: number = null
-
-  prevPage: number = null
-
-  nextPage: number = null
-
-  get emptyText() {
-    return `There are no ${_.toLower(this.title)}.`
-  }
-
+  props: {
+    config: { type: Object as PropType<EntityConfig>, required: true },
+    childSpec: { type: Object as PropType<ChildSpec>, required: true },
+    meta: { type: Object as PropType<any>, required: true },
+    childUrlPrefix: { type: String, required: true },
+    entityId: { type: [String, Number] as PropType<any>, required: true },
+    title: { type: String, required: true },
+    createLink: { type: String, required: false, default: null },
+  },
+  data() {
+    return {
+      status: new Status(),
+      items: [] as Array<any>,
+      currentPage: null as number | null,
+      firstPage: null as number | null,
+      lastPage: null as number | null,
+      prevPage: null as number | null,
+      nextPage: null as number | null,
+    }
+  },
+  computed: {
+    emptyText() {
+      return `There are no ${_.toLower(this.title)}.`
+    },
+  },
+  watch: {
+    $route: 'init',
+  },
   created(): void {
     this.init()
-  }
+  },
+  methods: {
+    async init(): Promise<void> {
+      await this.fetchData()
+    },
+    async fetchData(): Promise<void> {
+      await this.loadPage(0)
+    },
+    async loadPage(pageNumber): Promise<void> {
+      if (this.currentPage === pageNumber) return
 
-  @Watch('$route')
-  async init(): Promise<void> {
-    await this.fetchData()
-  }
+      try {
+        this.status.setPending()
+        const response = await this.config.api.getChildren(
+          this.entityId,
+          this.childUrlPrefix,
+          pageNumber,
+        )
+        const graph = new Graph(response.data, this.config.subject(this.entityId))
 
-  async fetchData(): Promise<void> {
-    await this.loadPage(0)
-  }
+        const linkHeader = parseLinkHeader(_.get(response.headers, 'link'))
 
-  async loadPage(pageNumber): Promise<void> {
-    if (this.currentPage === pageNumber) return
+        this.currentPage = pageNumber
 
-    try {
-      this.status.setPending()
-      const response = await this.config.api.getChildren(
-        this.entityId,
-        this.childUrlPrefix,
-        pageNumber,
-      )
-      const graph = new Graph(response.data, this.config.subject(this.entityId))
+        const parsePage = (page) => {
+          const pageString = _.get(linkHeader, `${page}.page`)
+          return pageString ? parseInt(pageString, 10) : pageString
+        }
 
-      const linkHeader = parseLinkHeader(_.get(response.headers, 'link'))
+        this.firstPage = parsePage('first')
+        this.lastPage = parsePage('last')
+        this.prevPage = parsePage('prev')
+        this.nextPage = parsePage('next')
 
-      this.currentPage = pageNumber
+        const { resourceDefinitionUuid } = this.childSpec
+        const childEntityConfig = this.$store.getters['entities/configByUuid'](resourceDefinitionUuid)
+        this.items = this.config.createChildrenList(
+          childEntityConfig.spec,
+          this.childSpec,
+          graph,
+          this.meta,
+        )
 
-      const parsePage = (page) => {
-        const pageString = _.get(linkHeader, `${page}.page`)
-        return pageString ? parseInt(pageString, 10) : pageString
+        this.status.setDone()
+      } catch (error) {
+        this.status.setError('Unable to load data')
       }
-
-      this.firstPage = parsePage('first')
-      this.lastPage = parsePage('last')
-      this.prevPage = parsePage('prev')
-      this.nextPage = parsePage('next')
-
-      const { resourceDefinitionUuid } = this.childSpec
-      const childEntityConfig = this.$store.getters['entities/configByUuid'](resourceDefinitionUuid)
-      this.items = this.config.createChildrenList(
-        childEntityConfig.spec,
-        this.childSpec,
-        graph,
-        this.meta,
-      )
-
-      this.status.setDone()
-    } catch (error) {
-      this.status.setError('Unable to load data')
-    }
-  }
-}
+    },
+  },
+})
 </script>

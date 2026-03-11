@@ -29,7 +29,7 @@
               <label for="appTitle">App Title</label>
               <input
                 id="appTitle"
-                v-model="$v.settings.appTitle.$model"
+                v-model="v$.settings.appTitle.$model"
               >
             </div>
 
@@ -37,7 +37,7 @@
               <label for="appSubtitle">App Subtitle</label>
               <input
                 id="appSubtitle"
-                v-model="$v.settings.appSubtitle.$model"
+                v-model="v$.settings.appSubtitle.$model"
               >
             </div>
 
@@ -47,14 +47,14 @@
               <label>Metadata Metrics</label>
               <ul>
                 <li
-                  v-for="(v, index) in $v.settings.metadataMetrics.$each.$iter"
+                  v-for="(v, index) in v$.settings.metadataMetrics.$each.$iter"
                   :key="`metric-${index}`"
                 >
                   <div class="d-flex align-items-start">
                     <div class="flex-grow-1">
                       <div
                         class="form__group"
-                        :class="{'form__group--error': v.metricUri.$error}"
+                        :class="{ 'form__group--error': v.metricUri.$error }"
                       >
                         <label
                           :for="`metric.${index}.metricUri`"
@@ -80,7 +80,7 @@
                       </div>
                       <div
                         class="form__group"
-                        :class="{'form__group--error': v.resourceUri.$error}"
+                        :class="{ 'form__group--error': v.resourceUri.$error }"
                       >
                         <label
                           :for="`metric.${index}.resourceUri`"
@@ -106,7 +106,7 @@
                       </div>
                     </div>
                     <a
-                      class="text-danger ml-3 p-1"
+                      class="text-danger ms-3 p-1"
                       @click.prevent="removeMetadataMetric(index)"
                     >
                       <fa :icon="['fas', 'times']" />
@@ -130,7 +130,7 @@
               <label for="users">
                 <input
                   id="users"
-                  v-model="$v.settings.ping.enabled"
+                  v-model="v$.settings.ping.enabled.$model"
                   type="checkbox"
                 > Enabled
               </label>
@@ -159,14 +159,14 @@
               <label>Connected FDP Indexes</label>
               <ul>
                 <li
-                  v-for="(v, index) in $v.settings.ping.endpoints.$each.$iter"
+                  v-for="(v, index) in v$.settings.ping.endpoints.$each.$iter"
                   :key="`endpoint-${index}`"
                 >
                   <div class="d-flex align-items-start">
                     <div class="flex-grow-1">
                       <div
                         class="form__group"
-                        :class="{'form__group--error': v.endpoint.$error}"
+                        :class="{ 'form__group--error': v.endpoint.$error }"
                       >
                         <input
                           v-model.trim="v.endpoint.$model"
@@ -186,7 +186,7 @@
                       </div>
                     </div>
                     <a
-                      class="text-danger ml-3 p-1"
+                      class="text-danger ms-3 p-1"
                       @click.prevent="removePingEndpoint(index)"
                     >
                       <fa :icon="['fas', 'times']" />
@@ -219,7 +219,7 @@
               <label for="repository">Connected triple store (main)</label>
               <input
                 id="repository"
-                :value="settingsData.mainRepository.type"
+                :value="settingsData?.mainRepository?.type"
                 disabled
               >
             </div>
@@ -228,7 +228,7 @@
               <label for="repository">Connected triple store (drafts)</label>
               <input
                 id="repository"
-                :value="settingsData.draftsRepository.type"
+                :value="settingsData?.draftsRepository?.type"
                 disabled
               >
             </div>
@@ -241,7 +241,7 @@
               <label for="searchNamespace">
                 <input
                   id="searchNamespace"
-                  v-model="$v.settings.forms.autocomplete.searchNamespace.$model"
+                  v-model="v$.settings.forms.autocomplete.searchNamespace.$model"
                   type="checkbox"
                 > Search namespace
               </label>
@@ -252,14 +252,14 @@
 
               <ul>
                 <li
-                  v-for="(v, index) in $v.settings.forms.autocomplete.sources.$each.$iter"
+                  v-for="(v, index) in v$.settings.forms.autocomplete.sources.$each.$iter"
                   :key="`source-${index}`"
                 >
                   <div class="d-flex align-items-start">
                     <div class="flex-grow-1">
                       <div
                         class="form__group"
-                        :class="{'form__group--error': v.rdfType.$error}"
+                        :class="{ 'form__group--error': v.rdfType.$error }"
                       >
                         <label :for="`source.${index}.rdfType`">RDF Type</label>
                         <input
@@ -275,7 +275,7 @@
                       </div>
                       <div
                         class="form__group"
-                        :class="{'form__group--error': v.sparqlEndpoint.$error}"
+                        :class="{ 'form__group--error': v.sparqlEndpoint.$error }"
                       >
                         <label :for="`source.${index}.sparqlEndpoint`">SPARQL Endpoint</label>
                         <input
@@ -291,7 +291,7 @@
                       </div>
                       <div
                         class="form__group"
-                        :class="{'form__group--error': v.sparqlQuery.$error}"
+                        :class="{ 'form__group--error': v.sparqlQuery.$error }"
                       >
                         <label :for="`source.${index}.sparqlQuery`">SPARQL Query</label>
                         <prism-editor
@@ -308,7 +308,7 @@
                       </div>
                     </div>
                     <a
-                      class="text-danger ml-3 p-1"
+                      class="text-danger ms-3 p-1"
                       @click.prevent="removeSource(index)"
                     >
                       <fa :icon="['fas', 'times']" />
@@ -333,14 +333,14 @@
 
               <ul>
                 <li
-                  v-for="(v, index) in $v.settings.search.filters.$each.$iter"
+                  v-for="(v, index) in v$.settings.search.filters.$each.$iter"
                   :key="`endpoint-${index}`"
                 >
                   <div class="d-flex align-items-start">
                     <div class="flex-grow-1">
                       <div
                         class="form__group"
-                        :class="{'form__group--error': v.label.$error}"
+                        :class="{ 'form__group--error': v.label.$error }"
                       >
                         <label :for="`filter.${index}.label`">Label</label>
                         <input
@@ -357,7 +357,7 @@
 
                       <div
                         class="form__group"
-                        :class="{'form__group--error': v.predicate.$error}"
+                        :class="{ 'form__group--error': v.predicate.$error }"
                       >
                         <label :for="`filter.${index}.predicate`">Predicate</label>
                         <input
@@ -413,8 +413,8 @@
                             <div class="d-flex align-items-start">
                               <div class="flex-grow-1 d-flex">
                                 <div
-                                  class="flex-grow-1 form__group mr-4"
-                                  :class="{'form__group--error': valueV.label.$error}"
+                                  class="flex-grow-1 form__group me-4"
+                                  :class="{ 'form__group--error': valueV.label.$error }"
                                 >
                                   <label :for="`filter.${index}.values.${valueIndex}.label`">
                                     Label
@@ -432,7 +432,7 @@
                                 </div>
                                 <div
                                   class="flex-grow-1 form__group"
-                                  :class="{'form__group--error': valueV.value.$error}"
+                                  :class="{ 'form__group--error': valueV.value.$error }"
                                 >
                                   <label :for="`filter.${index}.values.${valueIndex}.value`">
                                     Value
@@ -450,7 +450,7 @@
                                 </div>
                               </div>
                               <a
-                                class="text-danger ml-3 p-1"
+                                class="text-danger ms-3 p-1"
                                 @click.prevent="removeFilterValue(index, valueIndex)"
                               >
                                 <fa :icon="['fas', 'times']" />
@@ -469,7 +469,7 @@
                       </div>
                     </div>
                     <a
-                      class="text-danger ml-3 p-1"
+                      class="text-danger ms-3 p-1"
                       @click.prevent="removeFilter(index)"
                     >
                       <fa :icon="['fas', 'times']" />
@@ -502,8 +502,9 @@
   </div>
 </template>
 <script lang="ts">
-import { required, url } from 'vuelidate/lib/validators'
-import PrismEditor from 'vue-prism-editor'
+import { useVuelidate } from '@vuelidate/core'
+import { required, url, helpers } from '@vuelidate/validators'
+import PrismEditor from '@/components/PrismEditor/index.vue'
 import api from '@/api'
 import Status from '@/utils/Status'
 import Page from '../../components/Page/index.vue'
@@ -516,6 +517,9 @@ export default {
     PrismEditor,
     StatusFlash,
   },
+  setup() {
+    return { v$: useVuelidate() }
+  },
 
   validations() {
     return {
@@ -523,45 +527,45 @@ export default {
         appTitle: {},
         appSubtitle: {},
         metadataMetrics: {
-          $each: {
+          $each: helpers.forEach({
             metricUri: { required, url },
             resourceUri: { required, url },
-          },
+          }),
         },
         ping: {
           enabled: { required },
           endpoints: {
-            $each: {
+            $each: helpers.forEach({
               endpoint: { required, url },
-            },
+            }),
           },
         },
         forms: {
           autocomplete: {
             searchNamespace: { required },
             sources: {
-              $each: {
+              $each: helpers.forEach({
                 rdfType: { required },
                 sparqlEndpoint: { required },
                 sparqlQuery: { required },
-              },
+              }),
             },
           },
         },
         search: {
           filters: {
-            $each: {
+            $each: helpers.forEach({
               type: { required },
               label: { required },
               predicate: { required, url },
               queryFromRecords: {},
               values: {
-                $each: {
+                $each: helpers.forEach({
                   label: {},
                   value: { required },
-                },
+                }),
               },
-            },
+            }),
           },
         },
       },
@@ -590,7 +594,7 @@ export default {
       try {
         this.status.setPending()
         const response = await api.settings.get()
-        this.settingsData = response.data
+        this.settingsData = this.normalizeSettingsData(response.data)
         this.settings = this.requestDataToFormData(response.data)
         this.status.setDone()
       } catch (error) {
@@ -659,9 +663,9 @@ export default {
     },
 
     async submitSettings() {
-      this.$v.settings.$touch()
+      this.v$.settings.$touch()
 
-      if (!this.$v.settings.$invalid) {
+      if (!this.v$.settings.$invalid) {
         try {
           this.submitStatus.setPending()
           const response = await api.settings.put(this.formDataToRequestData(this.settings))
@@ -690,9 +694,58 @@ export default {
     },
 
     requestDataToFormData(requestData) {
-      const formData = { ...requestData }
-      formData.ping.endpoints = formData.ping.endpoints.map((endpoint) => ({ endpoint }))
+      const formData = {
+        appTitle: '',
+        appSubtitle: '',
+        metadataMetrics: [],
+        ping: {
+          enabled: false,
+          endpoints: [],
+          endpointsFromConfig: [],
+          interval: '',
+        },
+        forms: {
+          autocomplete: {
+            searchNamespace: '',
+            sources: [],
+          },
+        },
+        search: {
+          filters: [],
+        },
+        ...requestData,
+      }
+
+      const endpoints = (formData.ping?.endpoints || []).map((endpoint) => ({ endpoint }))
+      formData.ping = {
+        ...formData.ping,
+        endpoints,
+        endpointsFromConfig: formData.ping?.endpointsFromConfig || [],
+      }
+      formData.metadataMetrics = formData.metadataMetrics || []
+      formData.forms = {
+        ...formData.forms,
+        autocomplete: {
+          ...formData.forms?.autocomplete,
+          searchNamespace: formData.forms?.autocomplete?.searchNamespace || '',
+          sources: formData.forms?.autocomplete?.sources || [],
+        },
+      }
+      formData.search = {
+        ...formData.search,
+        filters: formData.search?.filters || [],
+      }
+
       return formData
+    },
+
+    normalizeSettingsData(requestData) {
+      const data = { ...requestData }
+      const repositoryFallback = data.repository || {}
+      data.mainRepository = data.mainRepository || repositoryFallback
+      data.draftsRepository = data.draftsRepository || repositoryFallback
+      data.ping = data.ping || { interval: '' }
+      return data
     },
   },
 }

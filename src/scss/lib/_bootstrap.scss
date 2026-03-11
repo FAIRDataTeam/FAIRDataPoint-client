@@ -1,12 +1,22 @@
-@import "../variables";
-@import "../typography";
+@use "sass:color";
+@use "../variables" as *;
+@use "../mixins" as mixins;
+@use "../typography" as *;
 
-// override BS variables with FDP variables
-$primary: $color-primary;
-$link-hover-color: $color-primary-lighter;
-
-@import "~bootstrap/scss/bootstrap";
-@import "~bootstrap-vue/src/index";
+:root {
+  --bs-primary: #{$color-primary};
+  --bs-primary-rgb: #{color.channel($color-primary, "red", $space: rgb)},
+    #{color.channel($color-primary, "green", $space: rgb)},
+    #{color.channel($color-primary, "blue", $space: rgb)};
+  --bs-link-color: #{$color-primary};
+  --bs-link-color-rgb: #{color.channel($color-primary, "red", $space: rgb)},
+    #{color.channel($color-primary, "green", $space: rgb)},
+    #{color.channel($color-primary, "blue", $space: rgb)};
+  --bs-link-hover-color: #{$color-primary-lighter};
+  --bs-link-hover-color-rgb: #{color.channel($color-primary-lighter, "red", $space: rgb)},
+    #{color.channel($color-primary-lighter, "green", $space: rgb)},
+    #{color.channel($color-primary-lighter, "blue", $space: rgb)};
+}
 
 
 // extend BS styles
@@ -33,10 +43,30 @@ $link-hover-color: $color-primary-lighter;
 
   &-primary {
     @include typography-inverse-16;
+    background-color: $color-primary;
+    border-color: $color-primary;
+
+    &:hover,
+    &:focus-visible {
+      background-color: $color-primary-darker;
+      border-color: $color-primary-darker;
+    }
+  }
+
+  &-outline-primary {
+    color: $color-primary;
+    border-color: $color-primary;
+
+    &:hover,
+    &:focus-visible {
+      background-color: $color-primary;
+      border-color: $color-primary;
+      color: $color-light;
+    }
   }
 
   &-rounded {
-    @include border-radius($border-radius-full);
+    @include mixins.border-radius($border-radius-full);
     padding: 0.375rem 1.5rem;
 
     &.dropdown-toggle::after {
@@ -60,22 +90,6 @@ $link-hover-color: $color-primary-lighter;
 
   svg {
     margin-right: $space-xs;
-  }
-}
-
-.card-list {
-  .card-body {
-    padding: 0;
-
-    .item-list {
-      &__item:first-child {
-        border-top: none;
-      }
-
-      &__item:last-child {
-        border-bottom: none;
-      }
-    }
   }
 }
 
@@ -126,10 +140,10 @@ $link-hover-color: $color-primary-lighter;
 }
 
 a.sort-link {
-  color: $gray-400;
+  color: $color-text-light;
   text-decoration: none;
 
   &.active {
-    color: $primary;
+    color: $color-primary;
   }
 }

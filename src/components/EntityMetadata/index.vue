@@ -84,48 +84,48 @@
   </div>
 </template>
 <script lang="ts">
-
+import { defineComponent } from 'vue'
 import _ from 'lodash'
-import { Component, Prop, Vue } from 'vue-property-decorator'
 import RdfLink from '@/components/RdfLink/index.vue'
 
-@Component({ components: { RdfLink } })
-export default class EntityMetadata extends Vue {
-  @Prop({ type: Array, default: [] })
-  readonly metadata: Array<any>
-
-  viewAll = []
-
-  get filteredMetadata() {
-    if (!this.metadata) return []
-    return this.metadata.filter((group) => group.fields.length > 0)
-  }
-
-  viewItems(key, items) {
-    if (this.showMoreActive(key, items)) {
-      return items.slice(0, 3)
+export default defineComponent({
+  components: { RdfLink },
+  props: {
+    metadata: { type: Array, default: () => [] },
+  },
+  data() {
+    return {
+      viewAll: [],
     }
-    return items
-  }
-
-  showMoreActive(key, items) {
-    return items.length > 4 && !this.getViewAll(key)
-  }
-
-  showLessActive(key, items) {
-    return items.length > 4 && this.getViewAll(key)
-  }
-
-  getViewAll(key) {
-    return _.includes(this.viewAll, key)
-  }
-
-  addViewAll(key) {
-    this.viewAll.push(key)
-  }
-
-  removeViewAll(key) {
-    this.viewAll = this.viewAll.filter((i) => i !== key)
-  }
-}
+  },
+  computed: {
+    filteredMetadata() {
+      if (!this.metadata) return []
+      return this.metadata.filter((group) => group.fields.length > 0)
+    },
+  },
+  methods: {
+    viewItems(key, items) {
+      if (this.showMoreActive(key, items)) {
+        return items.slice(0, 3)
+      }
+      return items
+    },
+    showMoreActive(key, items) {
+      return items.length > 4 && !this.getViewAll(key)
+    },
+    showLessActive(key, items) {
+      return items.length > 4 && this.getViewAll(key)
+    },
+    getViewAll(key) {
+      return _.includes(this.viewAll, key)
+    },
+    addViewAll(key) {
+      this.viewAll.push(key)
+    },
+    removeViewAll(key) {
+      this.viewAll = this.viewAll.filter((i) => i !== key)
+    },
+  },
+})
 </script>

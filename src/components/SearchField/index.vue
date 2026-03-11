@@ -13,29 +13,32 @@
   </form>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import _ from 'lodash'
-import { Component, Vue, Watch } from 'vue-property-decorator'
 
-@Component
-export default class SearchField extends Vue {
-  q: string = ''
-
-  routeQ: string = null
-
-  submit() {
-    if (this.q.length > 0) {
-      this.$router.push({ path: '/search', query: { q: this.q } }).catch(() => {})
+export default defineComponent({
+  data() {
+    return {
+      q: '' as string,
+      routeQ: '' as string,
     }
-  }
-
+  },
+  watch: {
+    $route: 'setQ',
+  },
   created(): void {
     this.setQ()
-  }
-
-  @Watch('$route')
-  setQ() {
-    this.routeQ = _.get(this.$route, 'query.q', '') as string
-    this.q = this.routeQ
-  }
-}
+  },
+  methods: {
+    submit() {
+      if (this.q.length > 0) {
+        this.$router.push({ path: '/search', query: { q: this.q } }).catch(() => {})
+      }
+    },
+    setQ() {
+      this.routeQ = _.get(this.$route, 'query.q', '') as string
+      this.q = this.routeQ
+    },
+  },
+})
 </script>

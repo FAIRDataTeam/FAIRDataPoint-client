@@ -1,138 +1,139 @@
-@import "variables";
+@use "sass:math";
+@use "variables" as *;
 
 $font-size-base: 16;
 
 
 @mixin typography-default-14 {
   color: $color-text-default;
-  font-size: 14rem / $font-size-base;
+  font-size: math.div(14rem, $font-size-base);
 }
 
 @mixin typography-default-14-bold {
   color: $color-text-default;
-  font-size: 14rem / $font-size-base;
+  font-size: math.div(14rem, $font-size-base);
   font-weight: $font-weight-bold;
 }
 
 @mixin typography-default-14-semibold {
   color: $color-text-default;
-  font-size: 14rem / $font-size-base;
+  font-size: math.div(14rem, $font-size-base);
   font-weight: $font-weight-semibold;
 }
 
 @mixin typography-light-14 {
   color: $color-text-light;
-  font-size: 14rem / $font-size-base;
+  font-size: math.div(14rem, $font-size-base);
 }
 
 @mixin typography-lighter-14 {
   color: $color-text-lighter;
-  font-size: 14rem / $font-size-base;
+  font-size: math.div(14rem, $font-size-base);
 }
 
 @mixin typography-primary-14 {
   color: $color-primary;
-  font-size: 14rem / $font-size-base;
+  font-size: math.div(14rem, $font-size-base);
 }
 
 @mixin typography-primary-14-bold {
   color: $color-primary;
-  font-size: 14rem / $font-size-base;
+  font-size: math.div(14rem, $font-size-base);
   font-weight: $font-weight-bold;
 }
 
 @mixin typography-danger-14 {
   color: $color-danger;
-  font-size: 14rem / $font-size-base;
+  font-size: math.div(14rem, $font-size-base);
 }
 
 @mixin typography-mono-14 {
   color: $color-text-default;
-  font-size: 14rem / $font-size-base;
+  font-size: math.div(14rem, $font-size-base);
   font-family: $font-family-mono;
 }
 
 @mixin typography-default-16 {
   color: $color-text-default;
-  font-size: 16rem / $font-size-base;
+  font-size: math.div(16rem, $font-size-base);
 }
 
 @mixin typography-default-16-semibold {
   color: $color-text-default;
-  font-size: 16rem / $font-size-base;
+  font-size: math.div(16rem, $font-size-base);
   font-weight: $font-weight-semibold;
 }
 
 @mixin typography-light-16 {
   color: $color-text-light;
-  font-size: 16rem / $font-size-base;
+  font-size: math.div(16rem, $font-size-base);
 }
 
 @mixin typography-inverse-16 {
   color: $color-light;
-  font-size: 16rem / $font-size-base;
+  font-size: math.div(16rem, $font-size-base);
 }
 
 @mixin typography-primary-16 {
   color: $color-primary;
-  font-size: 16rem / $font-size-base;
+  font-size: math.div(16rem, $font-size-base);
 }
 
 @mixin typography-lighter-16-semibold {
   color: $color-text-lighter;
-  font-size: 16rem / $font-size-base;
+  font-size: math.div(16rem, $font-size-base);
   font-weight: $font-weight-semibold;
 }
 
 @mixin typography-default-18 {
   color: $color-text-default;
-  font-size: 18rem / $font-size-base;
+  font-size: math.div(18rem, $font-size-base);
 }
 
 @mixin typography-default-18-semibold {
   color: $color-text-default;
-  font-size: 18rem / $font-size-base;
+  font-size: math.div(18rem, $font-size-base);
   font-weight: $font-weight-semibold;
 }
 
 @mixin typography-primary-18-bold {
   color: $color-primary;
-  font-size: 18rem / $font-size-base;
+  font-size: math.div(18rem, $font-size-base);
   font-weight: $font-weight-bold;
 }
 
 @mixin typography-light-18-bold {
   color: $color-light;
-  font-size: 18rem / $font-size-base;
+  font-size: math.div(18rem, $font-size-base);
   font-weight: $font-weight-bold;
 }
 
 @mixin typography-lighter-18 {
   color: $color-text-lighter;
-  font-size: 18rem / $font-size-base;
+  font-size: math.div(18rem, $font-size-base);
 }
 
 @mixin typography-dark-18-semibold {
   color: $color-text-dark;
-  font-size: 18rem / $font-size-base;
+  font-size: math.div(18rem, $font-size-base);
   font-weight: $font-weight-semibold;
 
 }
 
 @mixin typography-default-24-bold {
   color: $color-text-default;
-  font-size: 24rem / $font-size-base;
+  font-size: math.div(24rem, $font-size-base);
   font-weight: $font-weight-bold;
 }
 
 @mixin typography-default-32-bold {
   color: $color-text-default;
-  font-size: 32rem / $font-size-base;
+  font-size: math.div(32rem, $font-size-base);
   font-weight: $font-weight-bold;
 }
 
 @mixin typography-primary-32-bold {
   color: $color-primary;
-  font-size: 32rem / $font-size-base;
+  font-size: math.div(32rem, $font-size-base);
   font-weight: $font-weight-bold;
 }

@@ -1,4 +1,3 @@
-import * as $rdf from 'rdflib'
 import {
   Shape, SHACLParser, Field, Group,
 } from '@/components/ShaclForm/Parser/SHACLParser'
@@ -7,10 +6,10 @@ export class ViewField extends Field<Shape<ViewField>> {
   viewer: string | null
 
   constructor(
-    name: string,
+    name: string | null,
     description: string | null,
     path: string,
-    datatype: string,
+    datatype: string | null,
     order: number | null,
     minCount: number | null,
     maxCount: number | null,
@@ -28,7 +27,7 @@ export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
     return new Shape<ViewField>([])
   }
 
-  protected createShape(properties: ViewField[], shape: $rdf.ValueType): Shape<ViewField> {
+  protected createShape(properties: ViewField[], _shape: any): Shape<ViewField> {
     return new Shape<ViewField>(properties)
   }
 
@@ -40,20 +39,20 @@ export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
   }
 
   protected createField(
-    name: string,
+    name: string | null,
     description: string | null,
-    path: string,
-    datatype: string,
-    order: number,
-    minCount: number,
-    maxCount: number,
+    path: string | null,
+    datatype: string | null,
+    order: number | null,
+    minCount: number | null,
+    maxCount: number | null,
     nodeShape: Shape<ViewField> | null,
     group: string | null,
-    prop: $rdf.ValueType,
+    prop: any,
   ): ViewField[] {
     const viewer = this.getDashValue(prop, 'viewer')
 
-    if (!viewer) {
+    if (!viewer || !path) {
       return []
     }
 
@@ -72,7 +71,7 @@ export class SHACLViewParser extends SHACLParser<ViewField, Shape<ViewField>> {
   }
 }
 
-export function parseSHACLView(shacl: string, targetClasses: $rdf.ValueType[]): Group<ViewField>[] {
+export function parseSHACLView(shacl: string, targetClasses: any[]): Group<ViewField>[] {
   const parser = new SHACLViewParser(shacl)
   return parser.parseAndGroup(targetClasses)
 }

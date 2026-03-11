@@ -5,7 +5,7 @@ export default {
     return request.get('/settings')
   },
 
-  put(settings) {
+  put(settings: Record<string, unknown>) {
     return request.put('/settings', settings)
   },
 }

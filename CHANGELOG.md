@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add support for integer and decimal datetypes
+## [v1.0.0] - 2026-02-13
+
+### Fixed
+- I did a patch of the index.html by @Hans-christian in e894c10
+
+
 - Add boolean editor
 - Add option to show the validation report when request fails
 - Add datatypes in serialized RDF

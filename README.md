@@ -17,14 +17,25 @@ Install dependencies using:
 $ npm install
 ```
 
-Create `public/config.js` file. For local development, you need to set the apiURL to where the FDP server is running, usually:
+### Local development (no Docker)
+
+1) Start the FDP server (default `http://localhost:8080`).
+2) Create `public/config.js` and set `apiURL` to the FDP server:
 
 ```js
 // public/config.js
 window.config = {
-  apiURL: 'http://localhost:8080'
+  apiURL: 'http://localhost:8080',
 }
 ```
+
+3) Run the dev server:
+
+```
+$ npm run serve
+```
+
+The client will be available at `http://localhost:8081`.
 
 > **Tip:** If you run both, the server and the client locally, start the server first, because it needs to run on port 8080. The client will then be automatically started on port 8081.
 
@@ -39,6 +50,37 @@ Compile and minify for production:
 ```
 $ npm run build
 ```
+
+## Docker
+
+The nginx container can be configured at runtime using environment variables:
+
+- `API_URL` (optional): browser-facing API base URL. For Docker, use `/` to call same-origin and avoid CORS/internal DNS issues.
+- `FDP_HOST` (required for Docker proxy): backend `host:port` used by nginx inside the container network. Do not include `http://` or `https://`.
+- `FDP_SCHEME` (optional): `http` or `https` for the proxy (`http` default).
+- `PUBLIC_PATH` (optional): base path if serving under a subpath (e.g. `/app`).
+- `REBUILD_STYLES` (optional): set to any value to force rebuilding SCSS at container start.
+
+Example: backend is another container on the same network (`fdp` service):
+
+```
+docker run --rm -p 8081:80 \
+  --network fdppv1_default \
+  -e FDP_HOST=fdp:8080 \
+  -e API_URL=/ \
+  fdp-client
+```
+
+Example: backend is on host machine:
+
+```
+docker run --rm -p 8081:80 \
+  -e FDP_HOST=host.docker.internal:8080 \
+  -e API_URL=/ \
+  fdp-client
+```
+
+If the backend is HTTPS-only, set `FDP_SCHEME=https` and ensure the API URL is `https://...`.
 
 Run tests or linter:
 

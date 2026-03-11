@@ -100,7 +100,7 @@
                   </b-dropdown-item>
                 </b-dropdown>
                 <a
-                  class="text-danger ml-3 p-1"
+                  class="text-danger ms-3 p-1"
                   @click="removeMember(member.user)"
                 >
                   <fa :icon="['fas', 'user-slash']" />
@@ -114,9 +114,9 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import _ from 'lodash'
 import axios from 'axios'
-import { Component } from 'vue-property-decorator'
 import EntityBase from '@/components/EntityBase'
 import api from '../../api'
 import Breadcrumbs from '../Breadcrumbs/index.vue'
@@ -125,113 +125,107 @@ import StatusFlash from '../StatusFlash/index.vue'
 import UserItem from '../UserItem/index.vue'
 import Status from '../../utils/Status'
 
-@Component({
+export default defineComponent({
   components: {
     Breadcrumbs,
     Page,
     StatusFlash,
     UserItem,
   },
-})
-export default class EntitySettings extends EntityBase {
-  inviteForm: any = {
-    userUuid: null,
-    membershipUuid: null,
-  }
-
-  inviteStatus: Status = new Status()
-
-  members: any = null
-
-  memberships: any = null
-
-  users: any = null
-
-  async fetchData(): Promise<void> {
-    try {
-      this.status.setPending()
-      const [entity, meta, members, users, memberships] = await this.loadData()
-
-      this.buildGraph(entity.data)
-      this.members = _.orderBy(members.data, ['user.firstName', 'user.lastName'], ['asc'])
-      this.users = this.createUsers(users.data, this.members)
-      this.memberships = this.createMemberships(memberships.data)
-      this.inviteForm.membershipUuid = _.get(this.memberships, '0.uuid')
-      this.breadcrumbs = this.config.createBreadcrumbsWithSelf(meta.data.path, this.subject)
-      this.status.setDone()
-    } catch (error) {
-      if (_.get(error, 'response.status') === 403) {
-        await this.$router.replace(this.config.toUrl(this.entityId))
-      } else {
-        this.status.setErrorFromResponse(error, 'Unable to get data.')
-      }
+  extends: EntityBase,
+  data() {
+    return {
+      inviteForm: {
+        userUuid: null,
+        membershipUuid: null,
+      } as any,
+      inviteStatus: new Status() as Status,
+      members: null as any,
+      memberships: null as any,
+      users: null as any,
     }
-  }
-
-  async loadData() {
-    return axios.all([
-      this.config.api.get(this.entityId),
-      this.config.api.getMeta(this.entityId),
-      this.config.api.getMembers(this.entityId),
-      api.users.getUsers(),
-      api.memberships.getMemberships(),
-    ])
-  }
-
-  createUsers(users: Array<any>, members: Array<any>): Array<any> {
-    return _.orderBy(users
-      .filter((u) => members.filter((m) => m.user.uuid === u.uuid).length === 0)
-      .map((u) => ({
-        ...u,
-        fullName: `${u.firstName} ${u.lastName}`,
-      })), ['firstName', 'lastName'], ['asc'])
-  }
-
-  createMemberships(memberships: Array<any>): Array<any> {
-    return memberships.filter((m) => _.includes(m.allowedEntities, this.config.uuid))
-  }
-
-  async submitInvite(): Promise<void> {
-    if (this.inviteForm.userUuid !== null && this.inviteForm.membershipUuid !== null) {
+  },
+  methods: {
+    async fetchData(): Promise<void> {
       try {
-        this.inviteStatus.setPending()
-        await this.config.api.putMember(
-          this.$route.params.id,
-          this.inviteForm.userUuid,
-          this.inviteForm.membershipUuid,
-        )
+        this.status.setPending()
+        const [entity, meta, members, users, memberships] = await this.loadData()
 
-        this.inviteStatus.setStatus(Status.DEFAULT)
-        this.inviteForm = {
-          userUuid: null,
-          membershipUuid: null,
+        this.buildGraph(entity.data)
+        this.members = _.orderBy(members.data, ['user.firstName', 'user.lastName'], ['asc'])
+        this.users = this.createUsers(users.data, this.members)
+        this.memberships = this.createMemberships(memberships.data)
+        this.inviteForm.membershipUuid = _.get(this.memberships, '0.uuid')
+        this.breadcrumbs = this.config.createBreadcrumbsWithSelf(meta.data.path, this.subject)
+        this.status.setDone()
+      } catch (error) {
+        if (_.get(error, 'response.status') === 403) {
+          await this.$router.replace(this.config.toUrl(this.entityId))
+        } else {
+          this.status.setErrorFromResponse(error, 'Unable to get data.')
         }
-        this.graph = null
-        this.fetchData()
-      } catch (error) {
-        this.inviteStatus.setErrorFromResponse(error, 'User could not be invited.')
       }
-    }
-  }
+    },
+    async loadData() {
+      return axios.all([
+        this.config.api.get(this.entityId),
+        this.config.api.getMeta(this.entityId),
+        this.config.api.getMembers(this.entityId),
+        api.users.getUsers(),
+        api.memberships.getMemberships(),
+      ])
+    },
+    createUsers(users: Array<any>, members: Array<any>): Array<any> {
+      return _.orderBy(users
+        .filter((u) => members.filter((m) => m.user.uuid === u.uuid).length === 0)
+        .map((u) => ({
+          ...u,
+          fullName: `${u.firstName} ${u.lastName}`,
+        })), ['firstName', 'lastName'], ['asc'])
+    },
+    createMemberships(memberships: Array<any>): Array<any> {
+      return memberships.filter((m) => _.includes(m.allowedEntities, this.config.uuid))
+    },
+    async submitInvite(): Promise<void> {
+      if (this.inviteForm.userUuid !== null && this.inviteForm.membershipUuid !== null) {
+        try {
+          this.inviteStatus.setPending()
+          await this.config.api.putMember(
+            this.$route.params.id,
+            this.inviteForm.userUuid,
+            this.inviteForm.membershipUuid,
+          )
 
-  async updateMember(userUuid: string, membershipUuid: string): Promise<void> {
-    try {
-      await this.config.api.putMember(this.entityId, userUuid, membershipUuid)
-      this.fetchData()
-    } catch (error) {
-      this.status.setErrorFromResponse(error, 'Unable to update user membership.')
-    }
-  }
-
-  async removeMember(user: any): Promise<void> {
-    if (window.confirm(`Are you sure you want to remove ${user.firstName} ${user.lastName}?`)) {
+          this.inviteStatus.setStatus(Status.DEFAULT)
+          this.inviteForm = {
+            userUuid: null,
+            membershipUuid: null,
+          }
+          this.graph = null
+          this.fetchData()
+        } catch (error) {
+          this.inviteStatus.setErrorFromResponse(error, 'User could not be invited.')
+        }
+      }
+    },
+    async updateMember(userUuid: string, membershipUuid: string): Promise<void> {
       try {
-        await this.config.api.deleteMember(this.entityId, user.uuid)
+        await this.config.api.putMember(this.entityId, userUuid, membershipUuid)
         this.fetchData()
       } catch (error) {
-        this.status.setErrorFromResponse(error, 'Unable to remove user.')
+        this.status.setErrorFromResponse(error, 'Unable to update user membership.')
       }
-    }
-  }
-}
+    },
+    async removeMember(user: any): Promise<void> {
+      if (window.confirm(`Are you sure you want to remove ${user.firstName} ${user.lastName}?`)) {
+        try {
+          await this.config.api.deleteMember(this.entityId, user.uuid)
+          this.fetchData()
+        } catch (error) {
+          this.status.setErrorFromResponse(error, 'Unable to remove user.')
+        }
+      }
+    },
+  },
+})
 </script>

@@ -34,28 +34,32 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { defineComponent } from 'vue'
 import api from '@/api'
 import Page from '@/components/Page/index.vue'
 import Status from '../../utils/Status'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 
-@Component({ components: { Page, StatusFlash } })
-export default class IndexPing extends Vue {
-  fdpUrl: string = ''
-
-  submitStatus: Status = new Status()
-
-  async submit() {
-    if (this.fdpUrl.length > 0) {
-      try {
-        this.submitStatus.setPending()
-        await api.fdpIndex.ping(this.fdpUrl)
-        this.submitStatus.setDone('Successfully triggered ping!')
-      } catch (error) {
-        this.submitStatus.setError('Unable to trigger ping.')
-      }
+export default defineComponent({
+  components: { Page, StatusFlash },
+  data() {
+    return {
+      fdpUrl: '',
+      submitStatus: new Status(),
     }
-  }
-}
+  },
+  methods: {
+    async submit() {
+      if (this.fdpUrl.length > 0) {
+        try {
+          this.submitStatus.setPending()
+          await api.fdpIndex.ping(this.fdpUrl)
+          this.submitStatus.setDone('Successfully triggered ping!')
+        } catch (error) {
+          this.submitStatus.setError('Unable to trigger ping.')
+        }
+      }
+    },
+  },
+})
 </script>

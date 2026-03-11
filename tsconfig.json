@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "strict": false,
+    "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
@@ -13,7 +13,7 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "types": [
-      "webpack-env"
+      "vite/client"
     ],
     "paths": {
       "@/*": [

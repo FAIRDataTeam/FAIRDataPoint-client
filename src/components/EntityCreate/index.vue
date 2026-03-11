@@ -56,11 +56,11 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop } from 'vue-property-decorator'
+import { defineComponent, PropType } from 'vue'
 import axios from 'axios'
 import _ from 'lodash'
 import * as $rdf from 'rdflib'
-import PrismEditor from 'vue-prism-editor'
+import PrismEditor from '@/components/PrismEditor/index.vue'
 import ShaclForm from '@/components/ShaclForm/index.vue'
 import Breadcrumbs from '@/components/Breadcrumbs/index.vue'
 import Page from '@/components/Page/index.vue'
@@ -76,7 +76,7 @@ import { EntityConfig } from '@/entity/EntityConfig'
 import EntityBase from '@/components/EntityBase'
 import Status from '@/utils/Status'
 
-@Component({
+export default defineComponent({
   components: {
     Breadcrumbs,
     Page,
@@ -84,75 +84,73 @@ import Status from '@/utils/Status'
     StatusFlash,
     ShaclForm,
   },
-})
-export default class EntityCreate extends EntityBase {
-  @Prop({ required: true })
-  readonly parentConfig: EntityConfig
+  extends: EntityBase,
+  props: {
+    parentConfig: { type: Object as PropType<EntityConfig>, required: true },
+  },
+  data() {
+    return {
+      shacl: null as any,
+      validationReport: {} as ValidationReport,
+      submitStatus: new Status() as Status,
+      rawError: null as string | null,
+    }
+  },
+  computed: {
+    createName() {
+      return `Create ${this.config.urlPrefix}`
+    },
+    subject() {
+      return `${config.persistentURL()}/new`
+    },
+    isPartOf() {
+      return this.parentConfig.subject(this.entityId)
+    },
+  },
+  methods: {
+    async fetchData(): Promise<void> {
+      try {
+        this.status.setPending()
 
-  shacl: any = null
+        const [spec, meta] = await this.loadData()
 
-  validationReport: ValidationReport = {}
-
-  submitStatus: Status = new Status()
-
-  rawError: string = null
-
-  get createName() {
-    return `Create ${this.config.urlPrefix}`
-  }
-
-  get subject() {
-    return `${config.persistentURL()}/new`
-  }
-
-  get isPartOf() {
-    return this.parentConfig.subject(this.entityId)
-  }
-
-  async fetchData(): Promise<void> {
-    try {
-      this.status.setPending()
-
-      const [spec, meta] = await this.loadData()
-
-      if (this.isAdmin || this.parentConfig.canCreateChild(this.isAuthenticated, meta.data)) {
-        this.shacl = spec.data
-        this.graph = new Graph('', this.subject)
-        this.graph.store.add($rdf.namedNode(this.subject), DCT('isPartOf'), $rdf.namedNode(this.isPartOf), null)
-        this.breadcrumbs = this.parentConfig.createBreadcrumbsWithSelf(
-          meta.data.path,
-          this.parentConfig.subject(this.entityId),
-        )
-        this.status.setDone()
-      } else {
-        await this.$router.replace(this.parentConfig.toUrl(this.entityId))
+        if (this.isAdmin || this.parentConfig.canCreateChild(this.isAuthenticated, meta.data)) {
+          this.shacl = spec.data
+          this.graph = new Graph('', this.subject)
+          this.graph.store.add($rdf.namedNode(this.subject), DCT('isPartOf'), $rdf.namedNode(this.isPartOf), null)
+          this.breadcrumbs = this.parentConfig.createBreadcrumbsWithSelf(
+            meta.data.path,
+            this.parentConfig.subject(this.entityId),
+          )
+          this.status.setDone()
+        } else {
+          await this.$router.replace(this.parentConfig.toUrl(this.entityId))
+        }
+      } catch (error) {
+        this.status.setErrorFromResponse(error, 'Unable to get metadata.')
       }
-    } catch (error) {
-      this.status.setErrorFromResponse(error, 'Unable to get metadata.')
-    }
-  }
-
-  async loadData() {
-    return axios.all([
-      this.config.api.getSpec(),
-      this.parentConfig.api.getMeta(this.entityId),
-    ])
-  }
-
-  async onSubmit(turtle: string): Promise<void> {
-    try {
-      this.submitStatus.setPending()
-      const response = await this.config.api.post(turtle)
-      const entityId = _.last(_.get(response, 'headers.location', '').split('/'))
-      await this.$router.push(this.config.toUrl(entityId))
-    } catch (error) {
-      this.rawError = _.get(error, 'response.data', null)
-      const validationReport = parseValidationReport(this.rawError)
-      const focusNodeReport = _.first(Object.values(validationReport)) || {}
-      this.validationReport = { [this.subject]: focusNodeReport }
-      this.submitStatus.setError('Unable to save entity data.')
-      window.scrollTo(0, 0)
-    }
-  }
-}
+    },
+    async loadData() {
+      return axios.all([
+        this.config.api.getSpec(),
+        this.parentConfig.api.getMeta(this.entityId),
+      ])
+    },
+    async onSubmit(turtle: string): Promise<void> {
+      try {
+        this.submitStatus.setPending()
+        const response = await this.config.api.post(turtle)
+        const entityId = _.last(_.get(response, 'headers.location', '').split('/'))
+        await this.$router.push(this.config.toUrl(entityId))
+      } catch (error) {
+        this.rawError = _.get(error, 'response.data', null)
+        const validationReport = parseValidationReport(this.rawError)
+        const focusNodeReport = _.first(Object.values(validationReport)) || {}
+        this.validationReport = { [this.subject]: focusNodeReport }
+        this.submitStatus.setError('Unable to save entity data.')
+        window.scrollTo(0, 0)
+      }
+    },
+  },
+})
 </script>

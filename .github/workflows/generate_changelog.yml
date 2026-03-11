@@ -1,0 +1,138 @@
+name: Generate Changelog
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+
+jobs:
+  generate-changelog:
+    name: Update CHANGELOG and Open PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Generate changelog entry
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          CHANGELOG_FILE="CHANGELOG.md"
+          LATEST_TAG="${{ inputs.tag }}"
+          PREVIOUS_TAG="$(git tag --sort=-creatordate | sed -n '2p')"
+          CHANGELOG_BRANCH="chore/changelog-${LATEST_TAG#v}"
+
+          if [[ -n "$PREVIOUS_TAG" ]]; then
+            RANGE="$PREVIOUS_TAG..$LATEST_TAG"
+            echo "Generating changelog for $LATEST_TAG since $PREVIOUS_TAG"
+          else
+            RANGE="$LATEST_TAG"
+            echo "Generating changelog for $LATEST_TAG from repository start"
+          fi
+
+          git checkout -B "$CHANGELOG_BRANCH"
+
+          COMMITS="$(git log "$RANGE" --no-merges --pretty=format:"%s by @%an in %h" || true)"
+
+          ADDED=""; CHANGED=""; FIXED=""; REMOVED=""; SECURITY=""
+          while IFS= read -r line; do
+            [[ -z "$line" ]] && continue
+            case "$line" in
+              *feat*|*implement*) ADDED+="- $line\n" ;;
+              *fix*|*bug*|*resolve*|*patch*) FIXED+="- $line\n" ;;
+              *update*|*modify*|*change*|*refactor*|*chore*) CHANGED+="- $line\n" ;;
+              *decommission*|*delete*|*remove*) REMOVED+="- $line\n" ;;
+              *security*|*vuln*|*"patch security"*) SECURITY+="- $line\n" ;;
+              *) CHANGED+="- $line\n" ;;
+            esac
+          done <<< "$COMMITS"
+
+          if [[ -z "$ADDED$CHANGED$FIXED$REMOVED$SECURITY" ]]; then
+            CHANGED="- No user-facing changes captured in commit messages.\n"
+          fi
+
+          {
+            echo "## [$LATEST_TAG] - $(date +'%Y-%m-%d')"
+            echo
+            [[ -n "$ADDED" ]] && echo -e "### Added\n$ADDED"
+            [[ -n "$CHANGED" ]] && echo -e "### Changed\n$CHANGED"
+            [[ -n "$FIXED" ]] && echo -e "### Fixed\n$FIXED"
+            [[ -n "$REMOVED" ]] && echo -e "### Removed\n$REMOVED"
+            [[ -n "$SECURITY" ]] && echo -e "### Security\n$SECURITY"
+          } > temp_changelog.md
+
+          if [[ ! -f "$CHANGELOG_FILE" ]]; then
+            {
+              echo "# Changelog"
+              echo
+              echo "All notable changes to this project will be documented in this file."
+              echo
+              echo "## [Unreleased]"
+              echo
+            } > "$CHANGELOG_FILE"
+          fi
+
+          if grep -q "^## \[Unreleased\]" "$CHANGELOG_FILE"; then
+            awk '
+              BEGIN { inserted=0 }
+              {
+                print
+                if (!inserted && $0 ~ /^## \[Unreleased\]/) {
+                  print ""
+                  while ((getline line < "temp_changelog.md") > 0) print line
+                  close("temp_changelog.md")
+                  print ""
+                  inserted=1
+                }
+              }
+            ' "$CHANGELOG_FILE" > "${CHANGELOG_FILE}.tmp"
+            mv "${CHANGELOG_FILE}.tmp" "$CHANGELOG_FILE"
+          else
+            {
+              cat temp_changelog.md
+              echo
+              cat "$CHANGELOG_FILE"
+            } > "${CHANGELOG_FILE}.tmp"
+            mv "${CHANGELOG_FILE}.tmp" "$CHANGELOG_FILE"
+          fi
+          rm -f temp_changelog.md
+
+          git add "$CHANGELOG_FILE"
+          if git diff --cached --quiet; then
+            echo "No changelog updates to commit; skipping PR creation."
+            exit 0
+          fi
+
+          git commit -m "docs: update CHANGELOG.md for $LATEST_TAG"
+          git push --set-upstream origin "$CHANGELOG_BRANCH"
+
+          if [[ -z "${BASE_BRANCH}" ]]; then
+            BASE_BRANCH="develop"
+          fi
+
+          EXISTING_PR_COUNT="$(gh pr list --head "$CHANGELOG_BRANCH" --base "$BASE_BRANCH" --json number --jq 'length')"
+          if [[ "$EXISTING_PR_COUNT" -eq 0 ]]; then
+            gh pr create \
+              --title "chore: update changelog for $LATEST_TAG" \
+              --body "This PR updates the changelog for release $LATEST_TAG." \
+              --base "$BASE_BRANCH" \
+              --head "$CHANGELOG_BRANCH"
+          else
+            echo "A changelog PR for $CHANGELOG_BRANCH already exists."
+          fi

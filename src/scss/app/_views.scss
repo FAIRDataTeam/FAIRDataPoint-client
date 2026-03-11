@@ -1,4 +1,4 @@
-@import "../../views/IndexDetail/style";
-@import "../../views/Login/style";
-@import "../../views/SchemasImport/style";
-@import "../../views/SearchResults/style";
+@use "../../views/IndexDetail/style" as *;
+@use "../../views/Login/style" as *;
+@use "../../views/SchemasImport/style" as *;
+@use "../../views/SearchResults/style" as *;

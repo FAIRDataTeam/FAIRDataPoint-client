@@ -9,19 +9,18 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import _ from 'lodash'
-import { Component, Prop, Vue } from 'vue-property-decorator'
 
-@Component
-export default class LineNumbers extends Vue {
-  @Prop({ required: true })
-    from: number
-
-  @Prop({ required: true })
-    to: number
-
-  get numbers() {
-    return _.range(this.from, this.to)
-  }
-}
+export default defineComponent({
+  props: {
+    from: { type: Number, required: true },
+    to: { type: Number, required: true },
+  },
+  computed: {
+    numbers() {
+      return _.range(this.from, this.to)
+    },
+  },
+})
 </script>

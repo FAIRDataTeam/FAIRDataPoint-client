@@ -29,18 +29,13 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 
-import { Component, Prop, Vue } from 'vue-property-decorator'
-
-@Component
-export default class Page extends Vue {
-  @Prop({ type: String, default: null })
-  readonly title?: string
-
-  @Prop({ type: Boolean, default: false })
-  readonly contentOnly: boolean
-
-  @Prop({ type: Boolean, default: false })
-  readonly small: boolean
-}
+export default defineComponent({
+  props: {
+    title: { type: String, default: null },
+    contentOnly: { type: Boolean, default: false },
+    small: { type: Boolean, default: false },
+  },
+})
 </script>

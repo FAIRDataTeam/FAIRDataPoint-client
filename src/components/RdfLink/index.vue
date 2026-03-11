@@ -8,24 +8,20 @@
   </a>
 </template>
 <script lang="ts">
-import {
-  Component, Prop, Vue, Watch,
-} from 'vue-property-decorator'
+import { defineComponent } from 'vue'
 import api from '../../api'
 
-@Component
-export default class RdfLink extends Vue {
-  @Prop({ type: String })
-  readonly uri: string
-
-  @Prop({ type: String })
-  readonly label: string
-
-  @Prop({ type: Boolean, default: false })
-  readonly labelResolved: boolean
-
-  resolvedLabel : string = null
-
+export default defineComponent({
+  props: {
+    uri: { type: String, default: null },
+    label: { type: String, default: null },
+    labelResolved: { type: Boolean, default: false },
+  },
+  data() {
+    return {
+      resolvedLabel: null,
+    }
+  },
   async created(): Promise<void> {
     if (!this.labelResolved) {
       try {
@@ -35,6 +31,6 @@ export default class RdfLink extends Vue {
         // nothing could be fetched, keep default label
       }
     }
-  }
-}
+  },
+})
 </script>

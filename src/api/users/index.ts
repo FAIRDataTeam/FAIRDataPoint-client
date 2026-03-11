@@ -5,7 +5,7 @@ export default {
     return request.get('/users')
   },
 
-  getUser(id) {
+  getUser(id: string) {
     return request.get(`/users/${id}`)
   },
 
@@ -13,19 +13,19 @@ export default {
     return request.get('/users/current')
   },
 
-  postUser(user) {
+  postUser(user: Record<string, unknown>) {
     return request.post('/users', user)
   },
 
-  putUser(userUuid, user) {
+  putUser(userUuid: string, user: Record<string, unknown>) {
     return request.put(`/users/${userUuid}`, user)
   },
 
-  deleteUser(user) {
+  deleteUser(user: { uuid: string }) {
     return request.delete(`/users/${user.uuid}`)
   },
 
-  putUserPassword(userUuid, password) {
+  putUserPassword(userUuid: string, password: string) {
     return request.put(`/users/${userUuid}/password`, { password })
   },
 }

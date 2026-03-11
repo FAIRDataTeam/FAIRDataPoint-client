@@ -1,7 +1,7 @@
 <template>
   <div
     class="item-list__item"
-    :class="{'item-list__item--frameless': frameless}"
+    :class="{ 'item-list__item--frameless': frameless }"
     data-cy="user-item"
   >
     <user-avatar :user="user" />
@@ -21,17 +21,14 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { defineComponent } from 'vue'
 import UserAvatar from '../UserAvatar/index.vue'
 
-@Component({
+export default defineComponent({
   components: { UserAvatar },
+  props: {
+    user: { type: Object, required: true },
+    frameless: { type: Boolean, default: false },
+  },
 })
-export default class UserItem extends Vue {
-  @Prop({ required: true })
-  readonly user: any
-
-  @Prop({ type: Boolean, default: false })
-  readonly frameless: boolean
-}
 </script>

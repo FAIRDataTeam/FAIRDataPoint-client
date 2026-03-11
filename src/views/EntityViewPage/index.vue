@@ -2,22 +2,28 @@
   <entity-view :config="config" />
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import _ from 'lodash'
-import { Component, Vue, Watch } from 'vue-property-decorator'
 import EntityView from '@/components/EntityView/index.vue'
 
-@Component({ components: { EntityView } })
-export default class EntityViewPage extends Vue {
-  config = null
-
+export default defineComponent({
+  components: { EntityView },
+  data() {
+    return {
+      config: null,
+    }
+  },
+  watch: {
+    $route: 'init',
+  },
   created(): void {
     this.init()
-  }
-
-  @Watch('$route')
-  init() {
-    const url = _.get(this.$route, 'params.entity', '')
-    this.config = this.$store.getters['entities/config'](url)
-  }
-}
+  },
+  methods: {
+    init() {
+      const url = _.get(this.$route, 'params.entity', '')
+      this.config = this.$store.getters['entities/config'](url)
+    },
+  },
+})
 </script>

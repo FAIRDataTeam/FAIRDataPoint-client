@@ -1,4 +1,4 @@
-export function stateClass(state) {
+export function stateClass(state: string) {
   switch (state) {
     case 'ALL':
       return 'primary'

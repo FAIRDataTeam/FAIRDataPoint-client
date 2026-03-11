@@ -1,6 +1,6 @@
-@import "../../scss/variables";
-@import "../../scss/mixins";
-@import "../../scss/typography";
+@use "../../scss/variables" as *;
+@use "../../scss/mixins" as *;
+@use "../../scss/typography" as *;
 
 .index-detail {
   .entry-header {

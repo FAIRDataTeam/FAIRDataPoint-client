@@ -18,7 +18,7 @@
               <label for="auto-permit">
                 <input
                   id="auto-permit"
-                  v-model.trim="$v.settings.autoPermit.$model"
+                  v-model.trim="v$.settings.autoPermit.$model"
                   type="checkbox"
                 >
                 Auto Permit
@@ -29,16 +29,16 @@
 
             <div
               class="form__group"
-              :class="{'form__group--error': $v.settings.retrieval.rateLimitWait.$error}"
+              :class="{ 'form__group--error': v$.settings.retrieval.rateLimitWait.$error }"
             >
               <label for="retrieval-rateLimitWait">Rate Limit Wait</label>
               <input
                 id="retrieval-rateLimitWait"
-                v-model.trim="$v.settings.retrieval.rateLimitWait.$model"
+                v-model.trim="v$.settings.retrieval.rateLimitWait.$model"
                 name="rateLimitWait"
               >
               <p
-                v-if="!$v.settings.retrieval.rateLimitWait.required"
+                v-if="!v$.settings.retrieval.rateLimitWait.required"
                 class="invalid-feedback"
               >
                 Field is required
@@ -46,16 +46,16 @@
             </div>
             <div
               class="form__group"
-              :class="{'form__group--error': $v.settings.retrieval.timeout.$error}"
+              :class="{ 'form__group--error': v$.settings.retrieval.timeout.$error }"
             >
               <label for="retrieval-timeout">Timeout</label>
               <input
                 id="retrieval-timeout"
-                v-model.trim="$v.settings.retrieval.timeout.$model"
+                v-model.trim="v$.settings.retrieval.timeout.$model"
                 name="timeout"
               >
               <p
-                v-if="!$v.settings.retrieval.timeout.required"
+                v-if="!v$.settings.retrieval.timeout.required"
                 class="invalid-feedback"
               >
                 Field is required
@@ -66,16 +66,16 @@
 
             <div
               class="form__group"
-              :class="{'form__group--error': $v.settings.ping.validDuration.$error}"
+              :class="{ 'form__group--error': v$.settings.ping.validDuration.$error }"
             >
               <label for="ping-validDuration">Valid Duration</label>
               <input
                 id="ping-validDuration"
-                v-model.trim="$v.settings.ping.validDuration.$model"
+                v-model.trim="v$.settings.ping.validDuration.$model"
                 name="validDuration"
               >
               <p
-                v-if="!$v.settings.ping.validDuration.required"
+                v-if="!v$.settings.ping.validDuration.required"
                 class="invalid-feedback"
               >
                 Field is required
@@ -83,16 +83,16 @@
             </div>
             <div
               class="form__group"
-              :class="{'form__group--error': $v.settings.ping.rateLimitDuration.$error}"
+              :class="{ 'form__group--error': v$.settings.ping.rateLimitDuration.$error }"
             >
               <label for="ping-rateLimitDuration">Rate Limit Duration</label>
               <input
                 id="ping-rateLimitDuration"
-                v-model.trim="$v.settings.ping.rateLimitDuration.$model"
+                v-model.trim="v$.settings.ping.rateLimitDuration.$model"
                 name="rateLimitDuration"
               >
               <p
-                v-if="!$v.settings.ping.rateLimitDuration.required"
+                v-if="!v$.settings.ping.rateLimitDuration.required"
                 class="invalid-feedback"
               >
                 Field is required
@@ -100,16 +100,16 @@
             </div>
             <div
               class="form__group"
-              :class="{'form__group--error': $v.settings.ping.rateLimitHits.$error}"
+              :class="{ 'form__group--error': v$.settings.ping.rateLimitHits.$error }"
             >
               <label for="ping-rateLimitHits">Rate Limit Hits</label>
               <input
                 id="ping-rateLimitHits"
-                v-model.trim="$v.settings.ping.rateLimitHits.$model"
+                v-model.trim="v$.settings.ping.rateLimitHits.$model"
                 name="rateLimitHits"
               >
               <p
-                v-if="!$v.settings.ping.rateLimitHits.required"
+                v-if="!v$.settings.ping.rateLimitHits.required"
                 class="invalid-feedback"
               >
                 Field is required
@@ -117,12 +117,12 @@
             </div>
             <div
               class="form__group"
-              :class="{'form__group--error': $v.settings.ping.denyList.$error}"
+              :class="{ 'form__group--error': v$.settings.ping.denyList.$error }"
             >
               <label>Deny List</label>
               <ul>
                 <li
-                  v-for="(v, index) in $v.settings.ping.denyList.$each.$iter"
+                  v-for="(v, index) in v$.settings.ping.denyList.$each.$iter"
                   :key="`deny-item-${index}`"
                 >
                   <div class="d-flex align-items-start">
@@ -134,7 +134,7 @@
                       >
                     </div>
                     <a
-                      class="text-danger ml-3 p-1"
+                      class="text-danger ms-3 p-1"
                       :data-cy="`denyLink.${index}.remove`"
                       @click.prevent="removeDenyLink(index)"
                     >
@@ -176,8 +176,9 @@
   </div>
 </template>
 <script lang="ts">
+import { useVuelidate } from '@vuelidate/core'
+import { required, helpers } from '@vuelidate/validators'
 import _ from 'lodash'
-import { required } from 'vuelidate/lib/validators'
 import api from '@/api'
 import Status from '@/utils/Status'
 import Page from '../../components/Page/index.vue'
@@ -188,6 +189,9 @@ export default {
   components: {
     Page,
     StatusFlash,
+  },
+  setup() {
+    return { v$: useVuelidate() }
   },
 
   validations() {
@@ -203,7 +207,7 @@ export default {
           rateLimitDuration: { required },
           rateLimitHits: { required },
           denyList: {
-            $each: { item: {} },
+            $each: helpers.forEach({ item: {} }),
           },
         },
       },
@@ -239,9 +243,9 @@ export default {
     },
 
     async submitSettings() {
-      this.$v.settings.$touch()
+      this.v$.settings.$touch()
 
-      if (!this.$v.settings.$invalid) {
+      if (!this.v$.settings.$invalid) {
         try {
           this.sanitizeDenyList()
           this.submitStatus.setPending()

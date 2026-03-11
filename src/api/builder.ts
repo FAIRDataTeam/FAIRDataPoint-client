@@ -1,9 +1,9 @@
 import config from '@/config'
 import request from '@/api/request'
 
-function build(entity) {
+function build(entity: string) {
   return {
-    get(id) {
+    get(id: any) {
       return request.get(`/${entity}/${id}`, {
         headers: {
           Accept: 'text/turtle',
@@ -19,7 +19,7 @@ function build(entity) {
       })
     },
 
-    getChildren(id, child, page) {
+    getChildren(id: any, child: string, page: number) {
       return request.get(`/${entity}/${id}/page/${child}?page=${page}&size=${config.defaultPageSize}`, {
         headers: {
           Accept: 'text/turtle',
@@ -27,7 +27,7 @@ function build(entity) {
       })
     },
 
-    post(data) {
+    post(data: string) {
       return request.post(`/${entity}`, data, {
         headers: {
           Accept: 'text/turtle',
@@ -36,7 +36,7 @@ function build(entity) {
       })
     },
 
-    put(id, data) {
+    put(id: any, data: string) {
       return request.put(`/${entity}/${id}`, data, {
         headers: {
           Accept: 'text/turtle',
@@ -45,29 +45,29 @@ function build(entity) {
       })
     },
 
-    getMeta(id) {
+    getMeta(id: any) {
       return request.get(`/${entity}/${id}/meta`)
     },
 
-    putMetaState(id, data) {
+    putMetaState(id: any, data: Record<string, unknown>) {
       return request.put(`/${entity}/${id}/meta/state`, data)
     },
 
-    delete(id) {
+    delete(id: any) {
       return request.delete(`/${entity}/${id}`)
     },
 
-    getMembers(id) {
+    getMembers(id: any) {
       return request.get(`/${entity}/${id}/members`)
     },
 
-    putMember(id, userUuid, membershipUuid) {
+    putMember(id: any, userUuid: string, membershipUuid: string) {
       return request.put(`/${entity}/${id}/members/${userUuid}`, {
         membershipUuid,
       })
     },
 
-    deleteMember(id, userUuid) {
+    deleteMember(id: any, userUuid: string) {
       return request.delete(`/${entity}/${id}/members/${userUuid}`)
     },
   }

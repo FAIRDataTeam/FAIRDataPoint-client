@@ -32,13 +32,13 @@ import { RepositoryConfig } from '@/entity/RepositoryConfig'
 //   return getConfigFor(parentEntity)
 // }
 
-export function createEntityConfigs(specs: EntitySpec[]) {
-  const specsByUuid = specs.reduce((acc, spec) => {
+export function createEntityConfigs(specs: EntitySpec[]): Record<string, EntityConfig> {
+  const specsByUuid = specs.reduce<Record<string, EntitySpec>>((acc, spec) => {
     acc[spec.uuid] = spec
     return acc
   }, {})
 
-  return specs.reduce((acc, spec) => {
+  return specs.reduce<Record<string, EntityConfig>>((acc, spec) => {
     const Config = spec.urlPrefix.length > 0 ? EntityConfig : RepositoryConfig
     acc[spec.urlPrefix] = new Config(spec, specsByUuid)
     return acc

@@ -73,44 +73,48 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { defineComponent } from 'vue'
 import Status from '@/utils/Status'
 import api from '../../api'
 import Page from '../../components/Page/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 
-@Component({ components: { Page, StatusFlash } })
-export default class ResetToDefaults extends Vue {
-  reset = {
-    users: false,
-    metadata: false,
-    resourceDefinitions: false,
-    settings: false,
-  }
-
-  status: Status = new Status()
-
-  get anySelected() {
-    return this.reset.users || this.reset.metadata || this.reset.resourceDefinitions
-      || this.reset.settings
-  }
-
-  async submit() {
-    if (!this.anySelected) return
-    if (!window.confirm('This action cannot be undone, are you sure you want to continue?')) return
-
-    try {
-      await api.reset.postReset(this.reset)
-      this.logout()
-    } catch (error) {
-      this.status.setError('FDP could not be reset.')
+export default defineComponent({
+  components: { Page, StatusFlash },
+  data() {
+    return {
+      reset: {
+        users: false,
+        metadata: false,
+        resourceDefinitions: false,
+        settings: false,
+      },
+      status: new Status(),
     }
-  }
+  },
+  computed: {
+    anySelected() {
+      return this.reset.users || this.reset.metadata || this.reset.resourceDefinitions
+        || this.reset.settings
+    },
+  },
+  methods: {
+    async submit() {
+      if (!this.anySelected) return
+      if (!window.confirm('This action cannot be undone, are you sure you want to continue?')) return
 
-  logout() {
-    this.$store.dispatch('auth/logout')
-    this.$router.push('/')
-    window.location.reload()
-  }
-}
+      try {
+        await api.reset.postReset(this.reset)
+        this.logout()
+      } catch (error) {
+        this.status.setError('FDP could not be reset.')
+      }
+    },
+    logout() {
+      this.$store.dispatch('auth/logout')
+      this.$router.push('/')
+      window.location.reload()
+    },
+  },
+})
 </script>

@@ -1,6 +1,6 @@
-@import "../variables";
-@import "../mixins";
-@import "../typography";
+@use "../variables" as *;
+@use "../mixins" as *;
+@use "../typography" as *;
 
 #app {
   display: flex;
@@ -35,12 +35,39 @@ body {
   min-height: 100vh;
 }
 
+.prism-editor-wrapper {
+  @include border-radius($border-radius-small);
+  background: $color-background-highlighted;
+  background-color: $color-background-highlighted;
+  border: 1px solid $color-separator;
+  padding: $space-sm $space-md;
+}
+
+.prism-editor-wrapper .prism-editor__container,
+.prism-editor-wrapper .prism-editor__textarea,
+.prism-editor-wrapper .prism-editor__code,
+.prism-editor-wrapper .prism-editor__editor {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none;
+}
+
+.prism-editor,
+.prism-editor__textarea,
+.prism-editor__code,
+.prism-editor__code * {
+  font-family: $font-family-mono !important;
+}
+
 a {
   cursor: pointer;
   color: $color-primary;
+  text-decoration: none;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     color: $color-primary-lighter;
+    text-decoration: underline;
   }
 
   &.disabled {

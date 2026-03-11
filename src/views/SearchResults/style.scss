@@ -1,6 +1,6 @@
-@import "../../scss/variables";
-@import "../../scss/mixins";
-@import "../../scss/typography";
+@use "../../scss/variables" as *;
+@use "../../scss/mixins" as *;
+@use "../../scss/typography" as *;
 
 .selected-query {
   @include border-radius($border-radius-default);
@@ -13,6 +13,20 @@
 
   p:last-child {
     margin-bottom: 0;
+  }
+}
+
+.search-header {
+  margin-top: $space-lg;
+  margin-bottom: $space-md;
+}
+
+.search-controls {
+  margin-bottom: $space-lg;
+
+  .form--search {
+    gap: $space-md;
+    align-items: center;
   }
 }
 

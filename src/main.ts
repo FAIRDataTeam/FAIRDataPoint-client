@@ -1,29 +1,25 @@
+import './polyfills'
 import _ from 'lodash'
-import Vue from 'vue'
-import BootstrapVue from 'bootstrap-vue'
-import Vuelidate from 'vuelidate'
+import { createApp } from 'vue'
+import { Components, Directives, createBootstrap } from 'bootstrap-vue-next'
 import vSelect from 'vue-select'
-import vueDebounce from 'vue-debounce'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
+import 'prismjs/themes/prism.css'
+import 'vue-prism-editor/dist/prismeditor.min.css'
+import 'vue-select/dist/vue-select.css'
 import 'prismjs'
 import 'prismjs/components/prism-turtle'
 import 'prismjs/components/prism-sparql'
 import { createEntityConfigs } from '@/entity/entityConfigs'
+import type { EntitySpec } from '@/entity/EntityConfig'
 import App from './App.vue'
 import { createRouter } from './router'
 import { createStore } from './store'
 import api from './api'
-import './filters'
-import './font-awesome'
+import { registerFontAwesome } from './font-awesome'
 
-Vue.config.productionTip = false
-
-Vue.use(BootstrapVue)
-// @ts-ignore
-Vue.use(Vuelidate)
-Vue.use(vueDebounce)
-Vue.component('VSelect', vSelect)
-
-let entitySpecs = []
+let entitySpecs: EntitySpec[] = []
 
 api.configs.getBootstrap()
   .then((config) => {
@@ -43,9 +39,28 @@ api.configs.getBootstrap()
     const store = createStore(entityConfigs)
     const router = createRouter(store)
 
-    new Vue({
-      router,
-      store,
-      render: (h) => h(App),
-    }).$mount('#app')
+    const app = createApp(App)
+
+    registerFontAwesome(app)
+    app.use(createBootstrap())
+    Object.entries(Components).forEach(([name, component]) => {
+      app.component(name, component as any)
+    })
+    const directiveMap: Record<string, string> = {
+      vBColorMode: 'b-color-mode',
+      vBModal: 'b-modal',
+      vBPopover: 'b-popover',
+      vBScrollspy: 'b-scrollspy',
+      vBToggle: 'b-toggle',
+      vBTooltip: 'b-tooltip',
+    }
+    Object.entries(Directives).forEach(([key, directive]) => {
+      const name = directiveMap[key] || key
+      app.directive(name, directive)
+    })
+    app.component('VSelect', vSelect)
+    app.use(store)
+    app.use(router)
+
+    app.mount('#app')
   })

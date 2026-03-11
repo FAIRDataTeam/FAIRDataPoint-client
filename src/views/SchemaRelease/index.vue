@@ -23,19 +23,19 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.version.description.$error}"
+            :class="{ 'form__group--error': v$.version.description.$error }"
           >
             <label for="description">
               Description
             </label>
             <textarea
               id="description"
-              v-model.trim="$v.version.description.$model"
+              v-model.trim="v$.version.description.$model"
               placeholder="Description"
               name="description"
             />
             <p
-              v-if="!$v.version.description.required"
+              v-if="!v$.version.description.required"
               class="invalid-feedback"
             >
               Field is required
@@ -44,7 +44,7 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.version.description.$error}"
+            :class="{ 'form__group--error': v$.version.description.$error }"
           >
             <label for="description">
               Version
@@ -52,21 +52,21 @@
             <div class="version-input">
               <input
                 id="major"
-                v-model.trim="$v.version.major.$model"
+                v-model.trim="v$.version.major.$model"
                 type="number"
                 placeholder="major"
                 name="major"
               >
               <input
                 id="minor"
-                v-model.trim="$v.version.minor.$model"
+                v-model.trim="v$.version.minor.$model"
                 type="number"
                 placeholder="minor"
                 name="minor"
               >
               <input
                 id="patch"
-                v-model.trim="$v.version.patch.$model"
+                v-model.trim="v$.version.patch.$model"
                 type="number"
                 placeholder="patch"
                 name="patch"
@@ -87,12 +87,12 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.version.published.$error}"
+            :class="{ 'form__group--error': v$.version.published.$error }"
           >
             <label>
               <input
                 id="abstractSchema"
-                v-model.trim="$v.version.published.$model"
+                v-model.trim="v$.version.published.$model"
                 name="published"
                 type="checkbox"
               >
@@ -115,7 +115,8 @@
   </div>
 </template>
 <script lang="ts">
-import { required } from 'vuelidate/lib/validators'
+import { useVuelidate } from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
 import _ from 'lodash'
 import semverInc from 'semver/functions/inc'
 import api from '../../api'
@@ -130,6 +131,9 @@ export default {
     Breadcrumbs,
     Page,
     StatusFlash,
+  },
+  setup() {
+    return { v$: useVuelidate() }
   },
 
   data() {
@@ -197,9 +201,9 @@ export default {
     },
 
     async release() {
-      this.$v.version.$touch()
+      this.v$.version.$touch()
 
-      if (!this.$v.version.$invalid) {
+      if (!this.v$.version.$invalid) {
         this.submitStatus.setPending()
         this.errors = []
         try {

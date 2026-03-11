@@ -104,52 +104,46 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { defineComponent } from 'vue'
 import SearchField from '@/components/SearchField/index.vue'
 import config from '@/config'
 import Separator from '../Separator/index.vue'
 import UserAvatar from '../UserAvatar/index.vue'
-import VersionInfoTable from '../VersionInfoTable/index.vue'
 
-@Component({
+export default defineComponent({
   components: {
     SearchField,
     Separator,
     UserAvatar,
-    VersionInfoTable,
+  },
+  computed: {
+    authenticated() {
+      return this.$store.getters['auth/authenticated']
+    },
+    user() {
+      return this.$store.getters['auth/user']
+    },
+    isIndex() {
+      return config.isIndex()
+    },
+    appTitle() {
+      return config.appTitle()
+    },
+    appTitleShort() {
+      return config.appTitleShort()
+    },
+    appSubtitle() {
+      return config.appSubtitle()
+    },
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('auth/logout')
+      if (this.$router.currentRoute.value.path !== '/') {
+        this.$router.push('/')
+      }
+      window.location.reload()
+    },
   },
 })
-export default class FdpHeader extends Vue {
-  get authenticated() {
-    return this.$store.getters['auth/authenticated']
-  }
-
-  get user() {
-    return this.$store.getters['auth/user']
-  }
-
-  get isIndex() {
-    return config.isIndex()
-  }
-
-  get appTitle() {
-    return config.appTitle()
-  }
-
-  get appTitleShort() {
-    return config.appTitleShort()
-  }
-
-  get appSubtitle() {
-    return config.appSubtitle()
-  }
-
-  logout() {
-    this.$store.dispatch('auth/logout')
-    if (this.$router.currentRoute.path !== '/') {
-      this.$router.push('/')
-    }
-    window.location.reload()
-  }
-}
 </script>

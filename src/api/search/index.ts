@@ -1,7 +1,7 @@
 import request from '../request'
 
 export default {
-  search({ q }) {
+  search({ q }: { q: string }) {
     return request.post('/search', { query: q })
   },
 
@@ -9,7 +9,7 @@ export default {
     return request.get('/search/query')
   },
 
-  postQuery(data) {
+  postQuery(data: Record<string, unknown>) {
     return request.post('/search/query', data)
   },
 
@@ -21,11 +21,11 @@ export default {
     return request.get('/search/query/saved')
   },
 
-  postSavedQuery(data) {
+  postSavedQuery(data: Record<string, unknown>) {
     return request.post('/search/query/saved', data)
   },
 
-  deleteSavedQuery(uuid) {
+  deleteSavedQuery(uuid: string) {
     return request.delete(`/search/query/saved/${uuid}`)
   },
 }

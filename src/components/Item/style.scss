@@ -1,6 +1,6 @@
-@import "../../scss/variables";
-@import "../../scss/mixins";
-@import "../../scss/typography";
+@use "../../scss/variables" as *;
+@use "../../scss/mixins" as *;
+@use "../../scss/typography" as *;
 
 .item {
   @include border-radius($border-radius-default);
@@ -44,6 +44,10 @@
 
   &__metadata {
     margin: 0;
+
+    &__row {
+      display: contents;
+    }
 
     dt {
       @include typography-default-14-bold;

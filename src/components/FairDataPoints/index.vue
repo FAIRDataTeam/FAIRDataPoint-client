@@ -46,13 +46,13 @@
             <th>
               Endpoint
               <a
-                :class="{ 'sort-link': true, 'active': sort === 'clientUrl,asc' }"
+                :class="{ 'sort-link': true, active: sort === 'clientUrl,asc' }"
                 @click.prevent="sortData('clientUrl,asc')"
               >
                 ▲
               </a>
               <a
-                :class="{ 'sort-link': true, 'active': sort === 'clientUrl,desc' }"
+                :class="{ 'sort-link': true, active: sort === 'clientUrl,desc' }"
                 @click.prevent="sortData('clientUrl,desc')"
               >
                 ▼
@@ -61,13 +61,13 @@
             <th>
               Registration
               <a
-                :class="{ 'sort-link': true, 'active': sort === 'createdAt,asc' }"
+                :class="{ 'sort-link': true, active: sort === 'createdAt,asc' }"
                 @click.prevent="sortData('createdAt,asc')"
               >
                 ▲
               </a>
               <a
-                :class="{ 'sort-link': true, 'active': sort === 'createdAt,desc' }"
+                :class="{ 'sort-link': true, active: sort === 'createdAt,desc' }"
                 @click.prevent="sortData('createdAt,desc')"
               >
                 ▼
@@ -76,13 +76,13 @@
             <th>
               Modification
               <a
-                :class="{ 'sort-link': true, 'active': sort === 'updatedAt,asc' }"
+                :class="{ 'sort-link': true, active: sort === 'updatedAt,asc' }"
                 @click.prevent="sortData('updatedAt,asc')"
               >
                 ▲
               </a>
               <a
-                :class="{ 'sort-link': true, 'active': sort === 'updatedAt,desc' }"
+                :class="{ 'sort-link': true, active: sort === 'updatedAt,desc' }"
                 @click.prevent="sortData('updatedAt,desc')"
               >
                 ▼
@@ -119,8 +119,8 @@
             </td>
             <td v-if="isAdmin">
               <a
-                class="mr-3"
-                :class="{ 'disabled': actionStatus.isPending() }"
+                class="me-3"
+                :class="{ disabled: actionStatus.isPending() }"
                 title="Sync FDP"
                 href=""
                 @click.prevent="syncFdp(fdp)"
@@ -129,7 +129,7 @@
               </a>
               <a
                 class="color-danger"
-                :class="{ 'disabled': actionStatus.isPending() }"
+                :class="{ disabled: actionStatus.isPending() }"
                 title="Remove FDP"
                 href=""
                 @click.prevent="removeFdp(fdp)"
@@ -149,163 +149,146 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import _ from 'lodash'
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import axios from 'axios'
 import moment from 'moment'
 import api from '@/api'
-import Page from '@/components/Page/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import config from '@/config'
 import Status from '@/utils/Status'
 import StatusFlash from '@/components/StatusFlash/index.vue'
 import { stateClass } from '@/utils/fdpIndex'
 
-@Component({ components: { Page, Pagination, StatusFlash } })
-export default class Index extends Vue {
-  data: any = null
-
-  info: any = null
-
-  filter: string = 'ACTIVE'
-
-  permitFilter: string = 'ACCEPTED'
-
-  sort: string = 'updatedAt,desc'
-
-  page: number = 1
-
-  status: Status = new Status()
-
-  actionStatus: Status = new Status()
-
-  states: string[] = ['ALL', 'ACTIVE', 'INACTIVE', 'UNREACHABLE', 'INVALID', 'UNKNOWN']
-
-  permits: string[] = ['ALL', 'ACCEPTED', 'REJECTED', 'PENDING']
-
-  get user() {
-    return this.$store.getters['auth/user']
-  }
-
-  get isAdmin() {
-    return _.get(this.user, 'role') === 'ADMIN'
-  }
-
+export default defineComponent({
+  components: { Pagination, StatusFlash },
+  data() {
+    return {
+      data: null as any,
+      info: null as any,
+      filter: 'ACTIVE' as string,
+      permitFilter: 'ACCEPTED' as string,
+      sort: 'updatedAt,desc' as string,
+      page: 1 as number,
+      status: new Status() as Status,
+      actionStatus: new Status() as Status,
+      states: ['ALL', 'ACTIVE', 'INACTIVE', 'UNREACHABLE', 'INVALID', 'UNKNOWN'] as string[],
+      permits: ['ALL', 'ACCEPTED', 'REJECTED', 'PENDING'] as string[],
+    }
+  },
+  computed: {
+    user() {
+      return this.$store.getters['auth/user']
+    },
+    isAdmin() {
+      return _.get(this.user, 'role') === 'ADMIN'
+    },
+  },
+  watch: {
+    $route: 'init',
+  },
   created(): void {
     this.init()
-  }
+  },
+  methods: {
+    async filterData(filter: string) {
+      this.filter = filter
+      this.page = 0
+      this.updateUrl()
 
-  async filterData(filter: string) {
-    this.filter = filter
-    this.page = 0
-    this.updateUrl()
-
-    await this.loadFdps()
-  }
-
-  async filterPermit(permitFilter: string) {
-    this.permitFilter = permitFilter
-    this.page = 0
-    this.updateUrl()
-
-    await this.loadFdps()
-  }
-
-  async sortData(sort: string) {
-    this.sort = sort
-    this.page = 0
-    this.updateUrl()
-
-    await this.loadFdps()
-  }
-
-  updateUrl(): void {
-    window.history.pushState(null, '', this.createUrl())
-  }
-
-  createUrl(page = null): string {
-    const pageNumber = page || this.page
-    const permitFilter = this.isAdmin ? `&permit=${this.permitFilter}` : ''
-    return `/?state=${this.filter}${permitFilter}&sort=${this.sort}&page=${pageNumber}`
-  }
-
-  formatDateTime(value): string {
-    return moment(value).format(config.dateTimeFormat)
-  }
-
-  stateToReadable(state) {
-    return _.startCase(_.toLower(state))
-  }
-
-  badgeClass(state) {
-    return stateClass(state)
-  }
-
-  openPage(page) {
-    const url = this.createUrl(page + 1)
-    this.$router.push(url)
-  }
-
-  @Watch('$route')
-  async init() {
-    this.filter = _.get(this.$route.query, 'state', this.filter) as string
-    this.sort = _.get(this.$route.query, 'sort', this.sort) as string
-    this.page = parseInt(_.get(this.$route.query, 'page', this.page) as string, 10)
-
-    try {
-      this.status.setPending()
-      const infoResponse = await api.fdpIndex.getInfo()
-      this.info = infoResponse.data
       await this.loadFdps()
-    } catch (error) {
-      this.status.setError('Unable to get FAIR Data Points.')
-    }
-  }
+    },
+    async filterPermit(permitFilter: string) {
+      this.permitFilter = permitFilter
+      this.page = 0
+      this.updateUrl()
 
-  async loadFdps() {
-    try {
-      this.actionStatus.setDone()
+      await this.loadFdps()
+    },
+    async sortData(sort: string) {
+      this.sort = sort
+      this.page = 0
+      this.updateUrl()
 
-      this.status.setPending()
-      this.data = null
+      await this.loadFdps()
+    },
+    updateUrl(): void {
+      window.history.pushState(null, '', this.createUrl())
+    },
+    createUrl(page = null): string {
+      const pageNumber = page || this.page
+      const permitFilter = this.isAdmin ? `&permit=${this.permitFilter}` : ''
+      return `/?state=${this.filter}${permitFilter}&sort=${this.sort}&page=${pageNumber}`
+    },
+    formatDateTime(value): string {
+      return moment(value).format(config.dateTimeFormat)
+    },
+    stateToReadable(state) {
+      return _.startCase(_.toLower(state))
+    },
+    badgeClass(state) {
+      return stateClass(state)
+    },
+    openPage(page) {
+      const url = this.createUrl(page + 1)
+      this.$router.push(url)
+    },
+    async init() {
+      this.filter = _.get(this.$route.query, 'state', this.filter) as string
+      this.sort = _.get(this.$route.query, 'sort', this.sort) as string
+      this.page = parseInt(_.get(this.$route.query, 'page', this.page) as string, 10)
 
-      const dataResponse = await api.fdpIndex.getEntries({
-        state: this.filter,
-        permit: this.permitFilter,
-        sort: this.sort,
-        page: this.page,
-      })
+      try {
+        this.status.setPending()
+        const infoResponse = await api.fdpIndex.getInfo()
+        this.info = infoResponse.data
+        await this.loadFdps()
+      } catch (error) {
+        this.status.setError('Unable to get FAIR Data Points.')
+      }
+    },
+    async loadFdps() {
+      try {
+        this.actionStatus.setDone()
 
-      this.data = dataResponse.data
+        this.status.setPending()
+        this.data = null
 
-      this.status.setDone()
-    } catch (error) {
-      this.status.setError('Unable to get FAIR Data Points.')
-    }
-  }
+        const dataResponse = await api.fdpIndex.getEntries({
+          state: this.filter,
+          permit: this.permitFilter,
+          sort: this.sort,
+          page: this.page,
+        })
 
-  async syncFdp(entry) {
-    try {
-      this.actionStatus.setPending()
-      await api.fdpIndex.ping(entry.clientUrl)
-      await this.init()
-      this.actionStatus.setDone(`Syncing of "${entry.clientUrl}" started!`)
-    } catch (error) {
-      this.actionStatus.setError(`Unable to sync "${entry.clientUrl}"`)
-    }
-  }
+        this.data = dataResponse.data
 
-  async removeFdp(entry) {
-    if (window.confirm(`Are you sure you want to remove "${entry.clientUrl}"?`)) {
+        this.status.setDone()
+      } catch (error) {
+        this.status.setError('Unable to get FAIR Data Points.')
+      }
+    },
+    async syncFdp(entry) {
       try {
         this.actionStatus.setPending()
-        await api.fdpIndex.deleteEntry(entry.uuid)
+        await api.fdpIndex.ping(entry.clientUrl)
         await this.init()
-        this.actionStatus.setDone(`Successfully removed "${entry.clientUrl}"`)
+        this.actionStatus.setDone(`Syncing of "${entry.clientUrl}" started!`)
       } catch (error) {
-        this.actionStatus.setError(`Unable to remove "${entry.clientUrl}"`)
+        this.actionStatus.setError(`Unable to sync "${entry.clientUrl}"`)
       }
-    }
-  }
-}
+    },
+    async removeFdp(entry) {
+      if (window.confirm(`Are you sure you want to remove "${entry.clientUrl}"?`)) {
+        try {
+          this.actionStatus.setPending()
+          await api.fdpIndex.deleteEntry(entry.uuid)
+          await this.init()
+          this.actionStatus.setDone(`Successfully removed "${entry.clientUrl}"`)
+        } catch (error) {
+          this.actionStatus.setError(`Unable to remove "${entry.clientUrl}"`)
+        }
+      }
+    },
+  },
+})
 </script>

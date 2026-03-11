@@ -7,28 +7,28 @@
       v-for="field in spec.fields"
       :key="field.id"
       class="form__group"
-      :class="{'form__group--error': hasError(field.id)}"
+      :class="{ 'form__group--error': hasError(field.id) }"
     >
       <label
         :for="field.id"
-        :class="{'required': field.required}"
+        :class="{ required: field.required }"
       >
         {{ field.label }}
       </label>
       <template v-if="field.multiple">
         <ul>
           <li
-            v-for="(v, index) in $v.model[field.id].$each.$iter"
+            v-for="(v, index) in v$.model[field.id].$each.$iter"
             :key="`${field.id}.${index}`"
             class="form__group__input-item"
-            :class="{'form__group__input-item--error': v.value.$error}"
+            :class="{ 'form__group__input-item--error': v.value.$error }"
           >
             <div class="d-flex">
               <input
                 v-model.trim="v.value.$model"
               >
               <a
-                class="text-danger ml-3 p-1"
+                class="text-danger ms-3 p-1"
                 @click="model[field.id].splice(index, 1)"
               >
                 <fa :icon="['fas', 'times']" />
@@ -50,7 +50,7 @@
         </ul>
         <button
           class="btn btn-outline-secondary btn-rounded"
-          @click.prevent="model[field.id].push({value: ''})"
+          @click.prevent="model[field.id].push({ value: '' })"
         >
           Add
         </button>
@@ -62,7 +62,7 @@
             :key="`radio-${option.id}`"
           >
             <input
-              v-model="$v.model[field.id].$model"
+              v-model="v$.model[field.id].$model"
               type="radio"
               :name="field.id"
               :value="option.id"
@@ -74,19 +74,19 @@
           <input
             :id="option.id"
             :key="`input-${option.id}`"
-            v-model.trim="$v.model[option.id].$model"
+            v-model.trim="v$.model[option.id].$model"
             :name="option.id"
             :placeholder="option.label"
           >
           <p
-            v-if="$v.model[option.id].required === false"
+            v-if="v$.model[option.id].required === false"
             :key="`err-req-${option.id}`"
             class="invalid-feedback"
           >
             Field is required
           </p>
           <p
-            v-if="$v.model[option.id].url === false"
+            v-if="v$.model[option.id].url === false"
             :key="`err-url-${option.id}`"
             class="invalid-feedback"
           >
@@ -98,25 +98,25 @@
         <textarea
           v-if="field.type === 'text'"
           :id="field.id"
-          v-model.trim="$v.model[field.id].$model"
+          v-model.trim="v$.model[field.id].$model"
           :name="field.id"
           :placeholder="field.label"
         />
         <input
           v-else
           :id="field.id"
-          v-model.trim="$v.model[field.id].$model"
+          v-model.trim="v$.model[field.id].$model"
           :name="field.id"
           :placeholder="field.label"
         >
         <p
-          v-if="$v.model[field.id].required === false"
+          v-if="v$.model[field.id].required === false"
           class="invalid-feedback"
         >
           Field is required
         </p>
         <p
-          v-if="$v.model[field.id].url === false"
+          v-if="v$.model[field.id].url === false"
           class="invalid-feedback"
         >
           This is not a valid IRI
@@ -134,7 +134,8 @@
   </form>
 </template>
 <script lang="ts">
-import * as validation from 'vuelidate/lib/validators'
+import { useVuelidate } from '@vuelidate/core'
+import * as validation from '@vuelidate/validators'
 
 export default {
   name: 'FormGenerator',
@@ -152,6 +153,9 @@ export default {
       type: Function,
       required: true,
     },
+  },
+  setup() {
+    return { v$: useVuelidate() }
   },
 
   data() {
@@ -184,7 +188,7 @@ export default {
       }
 
       if (field.multiple) {
-        fieldValidations = { $each: { value: fieldValidations } }
+        fieldValidations = { $each: validation.helpers.forEach({ value: fieldValidations }) }
       }
 
       return { [field.id]: fieldValidations, ...nestedFieldValidations }
@@ -201,14 +205,14 @@ export default {
   methods: {
     hasError(fieldId) {
       const isXor = this.spec.fields.filter((f) => f.id === fieldId && f.type === 'xor').length > 0
-      const optionError = isXor ? this.$v.model[this.model[fieldId]].$error : false
-      return this.$v.model[fieldId].$error || optionError
+      const optionError = isXor ? this.v$.model[this.model[fieldId]].$error : false
+      return this.v$.model[fieldId].$error || optionError
     },
 
     submit() {
-      this.$v.model.$touch()
+      this.v$.model.$touch()
 
-      if (!this.$v.model.$invalid) {
+      if (!this.v$.model.$invalid) {
         this.onSubmit(this.getSanitizedModel())
       }
     },

@@ -1,5 +1,6 @@
-@import "../variables";
-@import "../typography";
+@use "../variables" as *;
+@use "../mixins" as *;
+@use "../typography" as *;
 
 
 .form {
@@ -32,6 +33,7 @@
     justify-content: flex-start;
     align-items: center;
     flex-flow: wrap;
+    gap: $space-sm;
 
     .form-control {
       display: inline-block;
@@ -63,9 +65,7 @@
     & > select,
     & > textarea,
     .input-field,
-    .vdp-datepicker input,
-    .version-input input,
-    .mx-datepicker .mx-input
+    .version-input input
     {
       @include typography-default-18;
       padding: $space-xs 0;
@@ -151,7 +151,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        background: $white;
+        background: $color-light;
         margin: 0;
         padding: 0;
         max-height: 250px;

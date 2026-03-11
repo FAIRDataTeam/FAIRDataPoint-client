@@ -35,8 +35,23 @@ module.exports = {
     'max-classes-per-file': 'off',
     'no-use-before-define': 'off',
     'vue/multi-word-component-names': 'off',
+    '@typescript-eslint/no-unused-vars': ['warn', {
+      argsIgnorePattern: '^_',
+      varsIgnorePattern: '^_',
+      caughtErrorsIgnorePattern: '^_',
+    }],
+    'vue/no-v-for-template-key': 'off',
+    'vue/html-button-has-type': 'off',
+    'vue/no-template-target-blank': 'off',
   },
   parserOptions: {
     parser: '@typescript-eslint/parser',
+  },
+  settings: {
+    'import/resolver': {
+      typescript: {
+        project: './tsconfig.json',
+      },
+    },
   },
 }

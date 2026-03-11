@@ -3,18 +3,27 @@ import { SHACL, XSD } from '@/rdf/namespaces'
 import rdfUtils from '@/rdf/utils'
 import { FormField } from '@/components/ShaclForm/Parser/SHACLFormParser'
 
-function getName(field: FormField): string {
-  const pathToName = (path) => _.upperFirst(_.lowerCase(rdfUtils.pathTerm(path)))
+type FieldName = {
+  name: string | null
+  path: string
+}
+
+type FieldDatatype = {
+  datatype: string | null
+}
+
+function getName(field: FieldName): string {
+  const pathToName = (path: string) => _.upperFirst(_.lowerCase(rdfUtils.pathTerm(path)))
   return field.name ? _.capitalize(field.name) : pathToName(field.path)
 }
 
-function isDatetime(field: FormField): boolean {
+function isDatetime(field: FieldDatatype): boolean {
   // todo: rename to isDate(), consistent with the JS Date type
   const dateDataTypes = [
     XSD('dateTime').value,
     XSD('date').value,
   ]
-  return dateDataTypes.includes(field.datatype)
+  return dateDataTypes.includes(field.datatype ?? '')
 }
 
 function isIRI(field: FormField): boolean {
@@ -30,11 +39,13 @@ function isLiteral(field: FormField): boolean {
 }
 
 function isRequired(field: FormField): boolean {
-  return field.minCount > 0
+  const minCount = field.minCount ?? 0
+  return minCount > 0
 }
 
 function isOptionalNode(field: FormField): boolean {
-  return field.nodeShape && !field.minCount && field.maxCount === 1
+  const minCount = field.minCount ?? 0
+  return !!field.nodeShape && minCount === 0 && field.maxCount === 1
 }
 
 function isBoolean(field: FormField): boolean {
@@ -47,7 +58,7 @@ function isInteger(field: FormField): boolean {
     XSD('long').value,
     XSD('short').value,
   ]
-  return integerDataTypes.includes(field.datatype)
+  return integerDataTypes.includes(field.datatype ?? '')
 }
 
 function isDecimal(field: FormField): boolean {
@@ -56,7 +67,7 @@ function isDecimal(field: FormField): boolean {
     XSD('double').value,
     XSD('float').value,
   ]
-  return decimalDataTypes.includes(field.datatype)
+  return decimalDataTypes.includes(field.datatype ?? '')
 }
 
 export default {

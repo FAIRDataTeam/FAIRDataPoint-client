@@ -1,21 +1,18 @@
-@import "./variables";
-@import "./mixins";
-@import "./typography";
+@use "./variables" as *;
+@use "./mixins" as *;
+@use "./typography" as *;
 
-@import "custom/extra";
+@use "custom/extra" as *;
 
 // 3rd party SCSS
-@import "lib/bootstrap";
-@import "lib/vue2-datepicker";
-@import "lib/vue-select";
-@import '~prismjs/themes/prism';
-
+@use "lib/bootstrap";
+@use "lib/vue-select";
 
 // Application SCSS
-@import "app/common";
-@import "app/form";
-@import "app/item-list";
-@import "app/components";
-@import "app/views";
+@use "app/common";
+@use "app/form";
+@use "app/item-list";
+@use "app/components";
+@use "app/views";
 
-@import "custom/overrides";
+@use "custom/overrides" as *;

@@ -21,7 +21,7 @@
           >
             <a
               class="nav-link"
-              :class="{'active': !viewPreview}"
+              :class="{ active: !viewPreview }"
               @click.prevent="setViewPreview(false)"
             >
               Definition
@@ -32,7 +32,7 @@
           >
             <a
               class="nav-link"
-              :class="{'active': viewPreview}"
+              :class="{ active: viewPreview }"
               @click.prevent="setViewPreview(true)"
             >
               Form Preview
@@ -62,7 +62,7 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.resourceDefinition.name.$error}"
+            :class="{ 'form__group--error': v$.resourceDefinition.name.$error }"
           >
             <label
               for="name"
@@ -72,7 +72,7 @@
             </label>
             <input
               id="name"
-              v-model.trim="$v.resourceDefinition.name.$model"
+              v-model.trim="v$.resourceDefinition.name.$model"
               placeholder="Name"
               name="name"
             >
@@ -91,7 +91,7 @@
               </a>
             </p>
             <p
-              v-if="!$v.resourceDefinition.name.required"
+              v-if="!v$.resourceDefinition.name.required"
               class="invalid-feedback"
             >
               Field is required
@@ -100,12 +100,12 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.resourceDefinition.urlPrefix.$error}"
+            :class="{ 'form__group--error': v$.resourceDefinition.urlPrefix.$error }"
           >
             <label for="urlPrefix">URL Prefix</label>
             <input
               id="urlPrefix"
-              v-model.trim="$v.resourceDefinition.urlPrefix.$model"
+              v-model.trim="v$.resourceDefinition.urlPrefix.$model"
               placeholder="URL prefix"
               name="urlPrefix"
               :disabled="isEdit"
@@ -125,7 +125,7 @@
               </a>
             </p>
             <p
-              v-if="!$v.resourceDefinition.urlPrefix.uniqueness"
+              v-if="!v$.resourceDefinition.urlPrefix.uniqueness"
               class="invalid-feedback"
             >
               This URL Prefix is already used
@@ -134,7 +134,7 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.resourceDefinition.metadataSchemaUuids.$error}"
+            :class="{ 'form__group--error': v$.resourceDefinition.metadataSchemaUuids.$error }"
           >
             <label
               for="urlPrefix"
@@ -144,14 +144,14 @@
             </label>
             <ul>
               <li
-                v-for="(v, index) in $v.resourceDefinition.metadataSchemaUuids.$each.$iter"
+                v-for="(schema, index) in resourceDefinition.metadataSchemaUuids"
                 :key="`target-class-${index}`"
                 data-cy="target-class"
               >
                 <div class="d-flex align-items-start">
                   <div
                     class="form__group flex-grow-1"
-                    :class="{'form__group--error': v.uuid.$error}"
+                    :class="{ 'form__group--error': metadataSchemaValidation(index)?.uuid?.$error }"
                   >
                     <select
                       v-model="resourceDefinition.metadataSchemaUuids[index].uuid"
@@ -166,14 +166,15 @@
                       </option>
                     </select>
                     <p
-                      v-if="!v.uuid.required"
+                      v-if="metadataSchemaValidation(index)
+                        && !metadataSchemaValidation(index).uuid.required"
                       class="invalid-feedback"
                     >
                       Field cannot be empty
                     </p>
                   </div>
                   <a
-                    class="text-danger ml-3 p-1"
+                    class="text-danger ms-3 p-1"
                     :data-cy="`metadataSchemaUuids.${index}.remove`"
                     @click.prevent="removeMetadataSchemaUuid(index)"
                   >
@@ -183,7 +184,7 @@
               </li>
             </ul>
             <p
-              v-if="!$v.resourceDefinition.metadataSchemaUuids.required"
+              v-if="!v$.resourceDefinition.metadataSchemaUuids.required"
               class="invalid-feedback"
             >
               You should specify at least one metadata schema
@@ -202,7 +203,7 @@
             <label>Children</label>
             <ul>
               <li
-                v-for="(v, index) in $v.resourceDefinition.children.$each.$iter"
+                v-for="(child, index) in resourceDefinition.children"
                 :key="`child-${index}`"
                 data-cy="child"
               >
@@ -210,7 +211,7 @@
                   <div class="flex-grow-1">
                     <div
                       class="form__group"
-                      :class="{'form__group--error': v.relationUri.$error}"
+                      :class="{ 'form__group--error': childValidation(index)?.relationUri?.$error }"
                     >
                       <label
                         :for="`child.${index}.resource`"
@@ -231,7 +232,8 @@
                         </option>
                       </select>
                       <p
-                        v-if="!v.resourceDefinitionUuid.required"
+                        v-if="childValidation(index)
+                          && !childValidation(index).resourceDefinitionUuid.required"
                         class="invalid-feedback"
                       >
                         Field is required
@@ -240,7 +242,7 @@
 
                     <div
                       class="form__group"
-                      :class="{'form__group--error': v.relationUri.$error}"
+                      :class="{ 'form__group--error': childValidation(index)?.relationUri?.$error }"
                     >
                       <label
                         :for="`child.${index}.relationUri`"
@@ -249,18 +251,19 @@
                         Child Relation URI
                       </label>
                       <input
-                        v-model.trim="v.relationUri.$model"
+                        v-model.trim="resourceDefinition.children[index].relationUri"
                         placeholder="Child Relation URI"
                         :name="`child.${index}.relationUri`"
                       >
                       <p
-                        v-if="!v.relationUri.required"
+                        v-if="childValidation(index)
+                          && !childValidation(index).relationUri.required"
                         class="invalid-feedback"
                       >
                         Field is required
                       </p>
                       <p
-                        v-if="!v.relationUri.url"
+                        v-if="childValidation(index) && !childValidation(index).relationUri.url"
                         class="invalid-feedback"
                       >
                         Field should be a valid IRI
@@ -269,19 +272,20 @@
 
                     <div
                       class="form__group"
-                      :class="{'form__group--error': v.listView.title.$error}"
+                      :class="{ 'form__group--error': childValidation(index)?.listView?.title?.$error }"
                     >
                       <label
                         :for="`child.${index}.listViewTitle`"
                         class="required"
                       >Child List View Title</label>
                       <input
-                        v-model.trim="v.listView.title.$model"
+                        v-model.trim="resourceDefinition.children[index].listView.title"
                         placeholder="Child Relation URI"
                         :name="`child.${index}.listViewTitle`"
                       >
                       <p
-                        v-if="!v.listView.title.required"
+                        v-if="childValidation(index)
+                          && !childValidation(index).listView.title.required"
                         class="invalid-feedback"
                       >
                         Field is required
@@ -290,18 +294,19 @@
 
                     <div
                       class="form__group"
-                      :class="{'form__group--error': v.listView.tagsUri.$error}"
+                      :class="{ 'form__group--error': childValidation(index)?.listView?.tagsUri?.$error }"
                     >
                       <label :for="`child.${index}.listViewTagsUri`">
                         Child List View Tags URI
                       </label>
                       <input
-                        v-model.trim="v.listView.tagsUri.$model"
+                        v-model.trim="resourceDefinition.children[index].listView.tagsUri"
                         placeholder="Child Relation URI"
                         :name="`child.${index}.listViewTagsUri`"
                       >
                       <p
-                        v-if="!v.listView.tagsUri.url"
+                        v-if="childValidation(index)
+                          && !childValidation(index).listView.tagsUri.url"
                         class="invalid-feedback"
                       >
                         Field should be a valid IRI
@@ -310,38 +315,41 @@
 
                     <div
                       class="form__group"
-                      :class="{'form__group--error': v.listView.metadata.$error}"
+                      :class="{ 'form__group--error': childValidation(index)?.listView?.metadata?.$error }"
                     >
                       <label>Child List View Metadata</label>
                       <ul>
                         <li
-                          v-for="(vm, indexm) in v.listView.metadata.$each.$iter"
+                          v-for="(meta, indexm) in child.listView.metadata"
                           :key="`metadata-${indexm}`"
                           data-cy="metadata"
                         >
                           <div class="d-flex align-items-start">
                             <div class="flex-grow-1">
                               <input
-                                v-model.trim="vm.title.$model"
+                                v-model.trim="resourceDefinition.children[index]
+                                  .listView.metadata[indexm].title"
                                 placeholder="Title"
                                 :name="`child.${index}.metadata.${indexm}.title`"
                                 class="input-field"
                               >
                               <input
-                                v-model.trim="vm.propertyUri.$model"
+                                v-model.trim="resourceDefinition.children[index]
+                                  .listView.metadata[indexm].propertyUri"
                                 placeholder="Property URI"
                                 :name="`child.${index}.metadata.${indexm}.propertyUri`"
                                 class="input-field"
                               >
                               <p
-                                v-if="!vm.propertyUri.url"
+                                v-if="childMetadataValidation(index, indexm)
+                                  && !childMetadataValidation(index, indexm).propertyUri.url"
                                 class="invalid-feedback"
                               >
                                 Field should be a valid IRI
                               </p>
                             </div>
                             <a
-                              class="text-danger ml-3 p-1"
+                              class="text-danger ms-3 p-1"
                               :data-cy="`child.${index}.metadata.${indexm}.remove`"
                               @click.prevent="removeMetadata(index, indexm)"
                             >
@@ -361,7 +369,7 @@
                     </div>
                   </div>
                   <a
-                    class="text-danger ml-3 p-1"
+                    class="text-danger ms-3 p-1"
                     :data-cy="`child.${index}.remove`"
                     @click.prevent="removeChild(index)"
                   >
@@ -383,50 +391,53 @@
 
           <div
             class="form__group"
-            :class="{'form__group--error': $v.resourceDefinition.externalLinks.$error}"
+            :class="{ 'form__group--error': v$.resourceDefinition.externalLinks.$error }"
           >
             <label>External links</label>
             <ul>
               <li
-                v-for="(v, index) in $v.resourceDefinition.externalLinks.$each.$iter"
+                v-for="(link, index) in resourceDefinition.externalLinks"
                 :key="`external-link-${index}`"
                 data-cy="external-link"
               >
                 <div class="d-flex align-items-start">
                   <div class="flex-grow-1">
                     <input
-                      v-model.trim="v.title.$model"
+                      v-model.trim="resourceDefinition.externalLinks[index].title"
                       placeholder="Title"
                       :name="`externalLink.${index}.title`"
                       class="input-field"
                     >
                     <p
-                      v-if="!v.title.required"
+                      v-if="externalLinkValidation(index)
+                        && !externalLinkValidation(index).title.required"
                       class="invalid-feedback"
                     >
                       Field is required
                     </p>
                     <input
-                      v-model.trim="v.propertyUri.$model"
+                      v-model.trim="resourceDefinition.externalLinks[index].propertyUri"
                       placeholder="Property URI"
                       :name="`externalLink.${index}.propertyUri`"
                       class="input-field"
                     >
                     <p
-                      v-if="!v.propertyUri.required"
+                      v-if="externalLinkValidation(index)
+                        && !externalLinkValidation(index).propertyUri.required"
                       class="invalid-feedback"
                     >
                       Field is required
                     </p>
                     <p
-                      v-if="!v.propertyUri.url"
+                      v-if="externalLinkValidation(index)
+                        && !externalLinkValidation(index).propertyUri.url"
                       class="invalid-feedback"
                     >
                       Field should be a valid IRI
                     </p>
                   </div>
                   <a
-                    class="text-danger ml-3 p-1"
+                    class="text-danger ms-3 p-1"
                     :data-cy="`externalLink.${index}.remove`"
                     @click.prevent="removeExternalLink(index)"
                   >
@@ -460,7 +471,8 @@
   </div>
 </template>
 <script lang="ts">
-import { required, url } from 'vuelidate/lib/validators'
+import { useVuelidate } from '@vuelidate/core'
+import { required, url, helpers } from '@vuelidate/validators'
 import axios from 'axios'
 import _ from 'lodash'
 import config from '@/config'
@@ -479,6 +491,9 @@ export default {
     FormRenderer,
     Page,
     StatusFlash,
+  },
+  setup() {
+    return { v$: useVuelidate() }
   },
 
   data() {
@@ -545,31 +560,31 @@ export default {
         },
         metadataSchemaUuids: {
           required,
-          $each: {
+          $each: helpers.forEach({
             uuid: { required },
-          },
+          }),
         },
         children: {
-          $each: {
+          $each: helpers.forEach({
             resourceDefinitionUuid: { required },
             relationUri: { required, url },
             listView: {
               title: { required },
               tagsUri: { url },
               metadata: {
-                $each: {
+                $each: helpers.forEach({
                   title: { required },
                   propertyUri: { required, url },
-                },
+                }),
               },
             },
-          },
+          }),
         },
         externalLinks: {
-          $each: {
+          $each: helpers.forEach({
             title: { required },
             propertyUri: { required, url },
-          },
+          }),
         },
       },
     }
@@ -589,22 +604,17 @@ export default {
         this.status.setPending()
         const [resourceDefinitions, metadataSchemas] = await this.loadData()
 
-        this.resourceOptions = _.orderBy(resourceDefinitions.data, ['name'], ['asc'])
-          .map((resource) => ({ key: resource.uuid, value: resource.name }))
-        this.resourceOptions.unshift({ key: null, value: '- select -' })
-
-        this.metadataSchemas = metadataSchemas.data
-        this.metadataSchemaOptions = _.orderBy(metadataSchemas.data, ['name'], ['asc'])
-          .map((metadataSchema) => ({ key: metadataSchema.uuid, value: metadataSchema.name }))
-        this.metadataSchemaOptions.unshift({ key: null, value: '- select -' })
+        this.setResourceOptions(resourceDefinitions.data)
+        this.setMetadataSchemaOptions(metadataSchemas.data)
 
         if (this.isEdit) {
-          const resourceDefinition = _.first(
-            resourceDefinitions.data.filter((r) => r.uuid === this.$route.params.uuid),
+          const uuid = this.$route.params.uuid as string
+          const resourceDefinition = await this.resolveResourceDefinition(
+            uuid,
+            resourceDefinitions.data,
           )
           if (resourceDefinition) {
-            this.resourceDefinition = this.requestDataToFormData(resourceDefinition)
-            this.currentResourceDefinition = resourceDefinition
+            this.applyResourceDefinition(resourceDefinition)
           }
         }
 
@@ -621,10 +631,46 @@ export default {
       ])
     },
 
-    async submit() {
-      this.$v.resourceDefinition.$touch()
+    async resolveResourceDefinition(uuid, resourceDefinitions) {
+      try {
+        const response = await api.resourceDefinition.getResourceDefinition(uuid)
+        if (Array.isArray(response.data)) {
+          return response.data.find((item) => item.uuid === uuid) || null
+        }
+        return response.data || null
+      } catch (error) {
+        return _.first(resourceDefinitions.filter((item) => item.uuid === uuid)) || null
+      }
+    },
 
-      if (!this.$v.resourceDefinition.$invalid) {
+    setResourceOptions(resourceDefinitions) {
+      this.resourceOptions = _.orderBy(resourceDefinitions, ['name'], ['asc'])
+        .map((resource) => ({ key: resource.uuid, value: resource.name }))
+      this.resourceOptions.unshift({ key: null, value: '- select -' })
+    },
+
+    setMetadataSchemaOptions(metadataSchemas) {
+      this.metadataSchemas = metadataSchemas
+      this.metadataSchemaOptions = _.orderBy(metadataSchemas, ['name'], ['asc'])
+        .map((metadataSchema) => ({ key: metadataSchema.uuid, value: metadataSchema.name }))
+      this.metadataSchemaOptions.unshift({ key: null, value: '- select -' })
+    },
+
+    applyResourceDefinition(resourceDefinition) {
+      const formData = this.requestDataToFormData(resourceDefinition)
+      this.resourceDefinition.name = formData.name
+      this.resourceDefinition.urlPrefix = formData.urlPrefix
+      this.resourceDefinition.targetClassUris = formData.targetClassUris
+      this.replaceArray(this.resourceDefinition.metadataSchemaUuids, formData.metadataSchemaUuids)
+      this.replaceArray(this.resourceDefinition.children, formData.children)
+      this.replaceArray(this.resourceDefinition.externalLinks, formData.externalLinks)
+      this.currentResourceDefinition = resourceDefinition
+    },
+
+    async submit() {
+      this.v$.resourceDefinition.$touch()
+
+      if (!this.v$.resourceDefinition.$invalid) {
         this.submitStatus.setPending()
         this.errors = []
         try {
@@ -656,8 +702,54 @@ export default {
 
     requestDataToFormData(requestData) {
       const formData = { ...requestData }
-      formData.metadataSchemaUuids = requestData.metadataSchemaUuids.map((uuid) => ({ uuid }))
+      formData.metadataSchemaUuids = (requestData.metadataSchemaUuids || [])
+        .map((uuid) => ({ uuid }))
+      formData.children = (requestData.children || []).map((child) => {
+        const listView = child.listView || {}
+        return {
+          resourceDefinitionUuid: child.resourceDefinitionUuid ?? null,
+          relationUri: child.relationUri ?? null,
+          listView: {
+            title: listView.title ?? null,
+            tagsUri: listView.tagsUri ?? null,
+            metadata: Array.isArray(listView.metadata)
+              ? listView.metadata.map((meta) => ({
+                title: meta.title ?? null,
+                propertyUri: meta.propertyUri ?? null,
+              }))
+              : [],
+          },
+        }
+      })
+      formData.externalLinks = (requestData.externalLinks || []).map((link) => ({
+        title: link.title ?? null,
+        propertyUri: link.propertyUri ?? null,
+      }))
       return formData
+    },
+
+    replaceArray(target, source) {
+      const items = Array.isArray(source) ? source : []
+      target.splice(0, target.length, ...items)
+    },
+
+    childValidation(index) {
+      return _.get(this.v$, `resourceDefinition.children.$each.$iter.${index}`)
+    },
+
+    childMetadataValidation(childIndex, metaIndex) {
+      return _.get(
+        this.v$,
+        `resourceDefinition.children.$each.$iter.${childIndex}.listView.metadata.$each.$iter.${metaIndex}`,
+      )
+    },
+
+    metadataSchemaValidation(index) {
+      return _.get(this.v$, `resourceDefinition.metadataSchemaUuids.$each.$iter.${index}`)
+    },
+
+    externalLinkValidation(index) {
+      return _.get(this.v$, `resourceDefinition.externalLinks.$each.$iter.${index}`)
     },
 
     setName(name) {

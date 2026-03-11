@@ -10,7 +10,7 @@
       v-if="item.description"
       class="item__description"
     >
-      {{ item.description | truncate }}
+      {{ truncate(item.description) }}
     </p>
     <div
       v-if="item.tags"
@@ -30,23 +30,33 @@
       v-if="item.metadata"
       class="item__metadata"
     >
-      <template v-for="(metadata, index) in item.metadata">
-        <dt :key="index + '_label'">
+      <div
+        v-for="(metadata, index) in item.metadata"
+        :key="index"
+        class="item__metadata__row"
+      >
+        <dt>
           {{ metadata.label }}
         </dt>
-        <dd :key="index + '_value'">
+        <dd>
           {{ metadata.value }}
         </dd>
-      </template>
+      </div>
     </dl>
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { defineComponent, PropType } from 'vue'
+import { truncate } from '@/filters'
 
-@Component
-export default class Item extends Vue {
-  @Prop({ required: true })
-  readonly item: any
-}
+export default defineComponent({
+  props: {
+    item: { type: Object as PropType<any>, required: true },
+  },
+  methods: {
+    truncate(value: string) {
+      return truncate(value)
+    },
+  },
+})
 </script>

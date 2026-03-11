@@ -1,6 +1,6 @@
-@import "../../scss/variables";
-@import "../../scss/mixins";
-@import "../../scss/typography";
+@use "../../scss/variables" as *;
+@use "../../scss/mixins" as *;
+@use "../../scss/typography" as *;
 
 
 .entity-metadata {
@@ -85,12 +85,6 @@
       @include typography-dark-18-semibold;
       margin: 0;
       word-break: break-word;
-
-      &.download-links {
-        a {
-          margin-right: $space-md;
-        }
-      }
     }
 
     .show-more-link {

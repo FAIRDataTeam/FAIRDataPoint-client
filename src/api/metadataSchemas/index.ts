@@ -13,31 +13,34 @@ export default {
     return request.get('/metadata-schemas?drafts=false&abstract=false')
   },
 
-  get(uuid) {
+  get(uuid: string) {
     return request.get(`/metadata-schemas/${uuid}`)
   },
 
-  getDraft(uuid) {
+  getDraft(uuid: string) {
     return request.get(`/metadata-schemas/${uuid}/draft`)
   },
 
-  post(schema) {
+  post(schema: Record<string, unknown>) {
     return request.post('/metadata-schemas', schema)
   },
 
-  putDraft(schema) {
+  putDraft(schema: { uuid: string } & Record<string, unknown>) {
     return request.put(`/metadata-schemas/${schema.uuid}/draft`, schema)
   },
 
-  postVersion(schema, version) {
+  postVersion(
+    schema: { uuid: string } & Record<string, unknown>,
+    version: Record<string, unknown>,
+  ) {
     return request.post(`/metadata-schemas/${schema.uuid}/versions`, version)
   },
 
-  delete(uuid) {
+  delete(uuid: string) {
     return request.delete(`/metadata-schemas/${uuid}`)
   },
 
-  getImport(url) {
+  getImport(url: string) {
     return request.get(`/metadata-schemas/import?from=${encodeURIComponent(url)}`)
   },
 
@@ -45,11 +48,11 @@ export default {
     return request.get('/metadata-schemas/updates')
   },
 
-  postImport(data) {
+  postImport(data: Record<string, unknown>) {
     return request.post('/metadata-schemas/import', data)
   },
 
-  postPreview(metadataSchemaUuids) {
+  postPreview(metadataSchemaUuids: string[]) {
     return request.post('/metadata-schemas/preview', { metadataSchemaUuids }, {
       headers: {
         Accept: 'text/turtle',

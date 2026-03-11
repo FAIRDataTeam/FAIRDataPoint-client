@@ -1,5 +1,5 @@
-@import "../../scss/variables";
-@import "../../scss/typography";
+@use "../../scss/variables" as *;
+@use "../../scss/typography" as *;
 
 .metadata-schemas-import {
   .item-indented {

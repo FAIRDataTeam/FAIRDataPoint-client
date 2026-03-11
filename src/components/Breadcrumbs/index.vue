@@ -19,14 +19,12 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { defineComponent } from 'vue'
 
-@Component
-export default class Breadcrumbs extends Vue {
-  @Prop({ type: Array, required: true })
-  readonly links: Array<any>
-
-  @Prop({ type: String, required: true })
-  readonly current: String
-}
+export default defineComponent({
+  props: {
+    links: { type: Array, required: true },
+    current: { type: String, required: true },
+  },
+})
 </script>

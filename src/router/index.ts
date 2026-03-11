@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { Store } from 'vuex'
+import { createRouter as createVueRouter, createWebHistory } from 'vue-router'
 import EntityCreatePage from '@/views/EntityCreatePage/index.vue'
 import EntityViewPage from '@/views/EntityViewPage/index.vue'
 import EntityEditPage from '@/views/EntityEditPage/index.vue'
@@ -29,9 +29,7 @@ import Login from '../views/Login/index.vue'
 import Dashboard from '../views/MyMetadata/index.vue'
 import ApiKeys from '../views/ApiKeys/index.vue'
 
-Vue.use(VueRouter)
-
-export function createRouter(store) {
+export function createRouter(store: Store<any>) {
   const indexRoutes : any[] = [
     { path: '/index/settings', component: IndexSettings, meta: { requiresAuth: true, roles: ['ADMIN'] } },
     { path: '/trigger-ping', component: IndexPing, meta: { requiresAuth: true } },
@@ -67,19 +65,19 @@ export function createRouter(store) {
     { path: '/:parentEntity/:id/create-:entity', component: EntityCreatePage, meta: { requiresAuth: true } },
     { path: '/search', component: SearchResults },
     { path: '/not-allowed', component: NotAllowed },
-    { path: '*', component: NotFound },
+    { path: '/:pathMatch(.*)*', component: NotFound },
   ]
 
-  const router = new VueRouter({
-    mode: 'history',
-    base: process.env.BASE_URL,
+  const router = createVueRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes: config.isIndex() ? _.concat(indexRoutes, fdpRoutes) : fdpRoutes,
   })
 
   router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth && !store.getters['auth/authenticated']) {
       next('/login')
-    } else if (to.meta.roles && to.meta.roles.indexOf(store.getters['auth/role']) === -1) {
+    } else if (Array.isArray(to.meta.roles)
+      && to.meta.roles.indexOf(store.getters['auth/role']) === -1) {
       next('/not-allowed')
     } else {
       next()

@@ -1,4 +1,5 @@
 import * as $rdf from 'rdflib'
+import type { ValueType } from 'rdflib/lib/types'
 import { Field, SHACLParser, Shape } from '@/components/ShaclForm/Parser/SHACLParser'
 import { SHACL } from '@/rdf/namespaces'
 
@@ -27,7 +28,7 @@ export class FormField extends Field<FormShape> {
   in : string[] | null
 
   constructor(
-    name: string,
+    name: string | null,
     description : string | null,
     path: string,
     datatype: string | null,
@@ -62,7 +63,7 @@ export class SHACLFormParser extends SHACLParser<FormField, FormShape> {
     return new FormShape()
   }
 
-  protected createShape(properties: FormField[], shape: $rdf.ValueType): FormShape {
+  protected createShape(properties: FormField[], shape: ValueType): FormShape {
     const targetClasses = this.store
       .match(shape, SHACL('targetClass'), null, null)
       .map((s) => s.object)
@@ -78,20 +79,20 @@ export class SHACLFormParser extends SHACLParser<FormField, FormShape> {
   }
 
   protected createField(
-    name: string,
-    description: string,
-    path: string,
-    datatype: string,
-    order: number,
-    minCount: number,
-    maxCount: number,
+    name: string | null,
+    description: string | null,
+    path: string | null,
+    datatype: string | null,
+    order: number | null,
+    minCount: number | null,
+    maxCount: number | null,
     nodeShape: FormShape | null,
     group: string | null,
-    prop: $rdf.ValueType,
+    prop: any,
   ): FormField[] {
     const editor = this.getDashValue(prop, 'editor')
 
-    if (!editor) {
+    if (!editor || !path) {
       return []
     }
 

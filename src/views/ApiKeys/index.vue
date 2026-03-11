@@ -42,55 +42,57 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { defineComponent } from 'vue'
 import Page from '@/components/Page/index.vue'
 import Status from '@/utils/Status'
 import api from '../../api'
-import ItemSimple from '../../components/ItemSimple/index.vue'
 import StatusFlash from '../../components/StatusFlash/index.vue'
 
-@Component({ components: { Page, StatusFlash, ItemSimple } })
-export default class ApiKeys extends Vue {
-  status: Status = new Status()
-
-  apiKeys: any = null
-
+export default defineComponent({
+  components: { Page, StatusFlash },
+  data() {
+    return {
+      status: new Status(),
+      apiKeys: [] as any[],
+    }
+  },
+  watch: {
+    $route: 'fetchData',
+  },
   created() {
     this.fetchData()
-  }
-
-  @Watch('$route')
-  async fetchData() {
-    try {
-      this.status.setPending()
-      const response = await api.apiKeys.getApiKeys()
-      this.apiKeys = response.data
-      this.status.setDone()
-    } catch (error) {
-      this.status.setError('Unable to get API keys.')
-    }
-  }
-
-  async deleteApiKey(apiKey) {
-    if (window.confirm('Are you sure you want to delete the API key?')) {
+  },
+  methods: {
+    async fetchData() {
       try {
-        await api.apiKeys.deleteApiKey(apiKey)
-        this.fetchData()
+        this.status.setPending()
+        const response = await api.apiKeys.getApiKeys()
+        this.apiKeys = response.data
+        this.status.setDone()
       } catch (error) {
-        this.status.setError('Unable to delete API key.')
+        this.status.setError('Unable to get API keys.')
       }
-    }
-  }
-
-  async generateApiKey() {
-    try {
-      this.status.setPending()
-      await api.apiKeys.postApiKey({})
-      this.status.setDone()
-      await this.fetchData()
-    } catch (error) {
-      this.status.setError('Unable to generate API key.')
-    }
-  }
-}
+    },
+    async deleteApiKey(apiKey) {
+      if (window.confirm('Are you sure you want to delete the API key?')) {
+        try {
+          await api.apiKeys.deleteApiKey(apiKey)
+          this.fetchData()
+        } catch (error) {
+          this.status.setError('Unable to delete API key.')
+        }
+      }
+    },
+    async generateApiKey() {
+      try {
+        this.status.setPending()
+        await api.apiKeys.postApiKey()
+        this.status.setDone()
+        await this.fetchData()
+      } catch (error) {
+        this.status.setError('Unable to generate API key.')
+      }
+    },
+  },
+})
 </script>

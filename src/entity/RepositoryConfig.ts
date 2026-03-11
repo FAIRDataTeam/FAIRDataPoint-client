@@ -1,7 +1,6 @@
-import _ from 'lodash'
 import { ChildSpec, EntityConfig } from '@/entity/EntityConfig'
+import { BreadcrumbItem } from '@/utils/breadcrumbs'
 import api from '@/api'
-import Graph from '@/rdf/Graph'
 import config from '@/config'
 
 export class RepositoryConfig extends EntityConfig {
@@ -13,7 +12,7 @@ export class RepositoryConfig extends EntityConfig {
     return api.repository
   }
 
-  public subject(_entityId): string {
+  public subject(_entityId: string | null): string {
     return config.persistentURL()
   }
 
@@ -21,15 +20,18 @@ export class RepositoryConfig extends EntityConfig {
     return ['edit']
   }
 
-  public canCreateChild(authenticated, _entity) {
+  public canCreateChild(authenticated: boolean, _entity: unknown) {
     return authenticated
   }
 
-  public createChildUrl(child: ChildSpec, _entityId): string {
+  public createChildUrl(child: ChildSpec, _entityId: string | null): string {
     return `/create-${this.getChildUrlPrefix(child)}`
   }
 
-  public createBreadcrumbs(_graph: Graph, _entityId) {
+  public createBreadcrumbs(
+    _path: Record<string, any>,
+    _entityIri: string | null,
+  ): BreadcrumbItem[] {
     return []
   }
 }

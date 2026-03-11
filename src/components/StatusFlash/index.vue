@@ -3,9 +3,9 @@
     <div
       v-if="!status.isDefault()"
       :class="{
-        'loader': status.isPending() && !noLoading,
+        loader: status.isPending() && !noLoading,
         'status-flash__alert status-flash__alert--danger': status.isError(),
-        'status-flash__alert status-flash__alert--success': status.isSuccess()
+        'status-flash__alert status-flash__alert--success': status.isSuccess(),
       }"
     >
       <template v-if="status.isPending() && !noLoading">
@@ -29,15 +29,13 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { defineComponent, PropType } from 'vue'
 import Status from '../../utils/Status'
 
-@Component
-export default class StatusFlash extends Vue {
-  @Prop({ type: Status, required: true })
-  readonly status: Status
-
-  @Prop({ type: Boolean, default: false })
-  readonly noLoading: boolean
-}
+export default defineComponent({
+  props: {
+    status: { type: Object as PropType<Status>, required: true },
+    noLoading: { type: Boolean, default: false },
+  },
+})
 </script>

@@ -2,10 +2,7 @@
   <div class="separator" />
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 
-import { Component, Vue } from 'vue-property-decorator'
-
-@Component
-export default class Separator extends Vue {
-}
+export default defineComponent({})
 </script>
