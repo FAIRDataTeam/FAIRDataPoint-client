@@ -154,7 +154,7 @@ export default defineComponent({
         this.buildGraph(entity.data)
         this.members = _.orderBy(members.data, ['user.firstName', 'user.lastName'], ['asc'])
         this.users = this.createUsers(users.data, this.members)
-        this.memberships = this.createMemberships(memberships.data)
+        this.memberships = memberships.data
         this.inviteForm.membershipUuid = _.get(this.memberships, '0.uuid')
         this.breadcrumbs = this.config.createBreadcrumbsWithSelf(meta.data.path, this.subject)
         this.status.setDone()
@@ -182,9 +182,6 @@ export default defineComponent({
           ...u,
           fullName: `${u.firstName} ${u.lastName}`,
         })), ['firstName', 'lastName'], ['asc'])
-    },
-    createMemberships(memberships: Array<any>): Array<any> {
-      return memberships.filter((m) => _.includes(m.allowedEntities, this.config.uuid))
     },
     async submitInvite(): Promise<void> {
       if (this.inviteForm.userUuid !== null && this.inviteForm.membershipUuid !== null) {
